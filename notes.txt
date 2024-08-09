@@ -1,0 +1,39 @@
+# A place to keep my notes while working on the veterans survey experiment
+
+# Date: 2024-08-09
+# Start: 12:55:02
+# End: 
+# Duration: 
+
+These are the notes I've kept while working on a survey experiment as a research assistant for the Center for Democracy and Civic Engagement at the University of Maryland at College Park. This file was created quite late; before today I kept my notes elsewhere. I will transfer over what I am able to soon.
+
+
+# TODO:
+
+[x] review and incorporate revisions to vignettes
+[x] check the survey order, flow, and address any standing concerns
+
+
+Survey flow
+
+- Randomizes the sample evenly so one group sees the treatment vignette (TV1) while the other sees the control vignette (CV1)
+
+  - Includes a timer to record how long a participant stays on a vignette, and the next page button won’t display until 15 seconds have passed. 
+  
+  "The timing question is a hidden question that can be added on any page of your survey to track and manage the time a respondent spends on that page."
+  
+  "A timing question can be added at any point in your survey. This question will be hidden from respondents, and it will record 4 main metrics:
+
+    First Click: How many total seconds the page was visible before the respondent clicks the first time.
+    Last Click: How many total seconds the page was visible before the respondent clicks the last time (not including clicking the next button).
+    Page Submit: How many total seconds pass before the respondent clicks the next button (i.e., the total amount of time the respondent spends on the page).
+    Click Count: How many total times the respondent clicks on the page.
+
+- Randomizes the sample evenly so one group responds to the "Confidence Impact" block, while the other group responds to the "Confidence Impact, majority language" block. Each block contains two question items that have respondents rate a list of statements (potentialities) on the impact each would have on their confidence over 
+  1) the fairness and accuracy of elections, and 
+  2) confidence that voters would be safe from violence, threats of violence, or intimidation while voting in-person.
+  
+The only difference between the two question blocks is the wording of the statements. The "Confidence Impact, majority language" block statement items convey the potential that "The majority of election staff and volunteers consist of [group]". In the contrasting block, the statement items do not use any such majority language, but instead simply state the potential that "Election staff and volunteers include..." the identified group. There are three groups mentioned: veterans and their family members, lawyers, or college students; all of which are stated to be "from the community".
+
+
+
