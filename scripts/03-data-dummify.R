@@ -661,6 +661,102 @@ rm(smrt, dum, smrt_labels, smrt_names, dum_names, dum_labels, real_dum_names)
 
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::####
 
+# collapse categorical variables with 4-point response items into factors with
+# two levels. Those with 5-point response options are converted into factors
+# with 3 levels. Affix ".clps" to colname to identify collapsed factor vars,
+# e.g., q19.clps
+
+df <- df |>
+  mutate(across(
+    c(q19, q20, q22, q23, q24, q26, q30, q31, q33, q34, q35, q37),
+    ~ forcats::fct_collapse(
+      .,
+      Not_confident = c("Not at all confident", "Not too confident"),
+      Confident = c("Somewhat confident", "Very confident")
+    ),
+    .names = "{.col}.clps"
+  )) |>
+  mutate(across(
+    c(q21, q32),
+    ~ forcats::fct_collapse(
+      .,
+      not_committed = c("Not at all committed", "Not too committed"),
+      committed = c("Somewhat committed", "Very committed")
+    ),
+    .names = "{.col}.clps"
+  )) |>
+  # whoops. Need to change "somewhat unconcerned" to "Not too concerned"
+  # recall: fct_recode(x, old_level = new_level)
+  mutate(
+    q36 = forcats::fct_recode(
+      q36,
+      "Not at all concerned" = "Not at all concerned",
+      "Not too concerned" = "Somewhat unconcerned",
+      "Somewhat concerned" = "Somewhat concerned",
+      "Very concerned" = "Very concerned"
+    )
+  ) |>
+  mutate(across(
+    c(q25, q36),
+    ~ forcats::fct_collapse(
+      .,
+      not_concerned = c("Not at all concerned", "Not too concerned"),
+      concerned = c("Somewhat concerned", "Very concerned")
+    ),
+    .names = "{.col}.clps"
+  )) |>
+  mutate(q38 =
+           forcats::fct_collapse(
+             q38,
+             unsafe = c("Not safe at all", "Not too safe"),
+             safe = c("Somewhat safe", "Very safe")
+           )) |>
+  mutate(across(
+    c(q27, q39),
+    ~ forcats::fct_collapse(
+      .,
+      disapprove = c("Strongly disapprove", "Somewhat disapprove"),
+      approve = c("Somewhat approve", "Strongly approve")
+    ),
+    .names = "{.col}.clps"
+  )) |>
+  mutate(q29 = forcats::fct_collapse(
+    q29,
+    oppose = c("Definitely should not adopt", "Probably should not adopt"),
+    support = c("Probably should adopt", "Definitely should adopt")
+  )) |> 
+  mutate(across(q28_1:q28_5 | q40_1:q40_5, ~forcats::fct_collapse(
+    .,
+    Not_likely = c("Not likely at all", "Not too likely"),
+    Likely = c("Somewhat likely", "Very likely")))) |>
+  mutate(
+    across(
+      q41_1:q41_6 |
+        q43_1:q43_6 | q44_1:q44_6 | q46_1:q46_6,
+      ~ forcats::fct_collapse(
+        .,
+        decrease = c("Decrease confidence a lot", "Decrease confidence somewhat"),
+        no_impact = "No impact on confidence",
+        increase = c("Increase confidence somewhat", "Increase confidence a lot")
+      ),
+    .names = "{.col}.clps"
+    )
+  )
+
+df <- df |> 
+  mutate(
+    q5.clps = datawizard::categorize(q5, "mean", labels = c("Inattentive", "Attentive")),
+    q6.clps = datawizard::categorize(q6, "equal_length", n_groups = 3, labels = c("Low Favor", "Mid Favor", "High Favor")),
+    q8.clps = datawizard::categorize(q8, "equal_length", n_groups = 3, labels = c("Low Trust", "Moderate Trust", "High Trust")))
+
+levels(df$gender)
+
+df <- df |> 
+  mutate(gender_3cat = fct_collapse(
+    gender,
+    "Male" = "Male",
+    "Female" = "Female",
+    "Other/Refused" = c("Non-binary / third gender", "Prefer not to say")))
 
 
-
+ 

@@ -73,11 +73,11 @@ library(gt)
 
 
 ```{r}
-#| label: load-data
+#| label: load-df
 #| include: false
 
 # load data
-load("data/data_vets_survey-exp-2024-09-11.Rdata") # data set as factor
+load("data/df-2024-09-11.Rdata") # df set as factor with dummy vars
 load("data/data_numeric_vets_survey-exp-2024-09-11.Rdata") # numeric only
 
 
@@ -85,35 +85,24 @@ load("data/data_numeric_vets_survey-exp-2024-09-11.Rdata") # numeric only
 
 
 ```{r}
-#| label: data-dict
+#| label: df-dict
 
-# generate data dictionary
-data_dict <- labelled::generate_dictionary(data)
+# load data dictionary/codebook
+df_dict <- read.csv("codebooks/df_dict.csv")
 
 ```
 
 ```{r}
-#| label: partyid-3cat
+#| label: read-crabs
 
-# construct the partyid var with 3 categories, true independents
-data <- data |>
-  mutate(
-    partyid_3cat = pewmethods::fct_case_when(
-      partyid == "Republican" ~ "Republican",
-      partystr_rep == "Strong" ~ "Republican",
-      partystr_rep == "Not very strong" ~ "Republican",
-      partylean == "Republican" ~ "Republican",
-      partyid == "Democrat" ~ "Democrat",
-      partystr_dem == "Strong" ~ "Democrat",
-      partystr_dem == "Not very strong" ~ "Democrat",
-      partylean == "Democratic" ~ "Democrat",
-      partyid == "Independent" ~ "Independent",
-      partyid == "Other" ~ "Independent",
-      partylean == "Neither" ~ "Independent"
-    ),
-    .before = partyid)
-
+# these are crosstabs contained in one list each
+readRDS("data/q5_crabs.RData")
+readRDS("data/q6_crabs.RData")
+readRDS("data/q7_crabs.RData")
+readRDS("data/q8_crabs.RData")
+readRDS("data/party_crabs.RData")
 ```
+
 
 # Overview of demographic variables and balance
 
@@ -148,3 +137,28 @@ data |>
 
 
 ```
+
+## Q5. Attention Paid to Political Affairs
+
+The following crosstabulations 
+
+```{r}
+#| label: tbl-q5q19
+#| results: asis
+
+# iv = q5, dv = q19, z = group
+print(kableExtra::kable(q5_crabs[[1]], format = "simple"))
+
+
+```
+
+
+```{r}
+#| label: tbl-q5q20
+#| results: asis
+
+# iv = q5, dv = q20, z = group
+print(kableExtra::kable(q5_crabs[[2]], format = "html"))
+
+```
+
