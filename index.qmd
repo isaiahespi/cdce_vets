@@ -1,0 +1,150 @@
+---
+title: "Survey Experiment"
+author:
+  - name: Isaiah
+    #orcid: 0000-0002-0760-5497
+    #corresponding: true
+    degrees: Research Assistant
+    email: gespinoz@umd.edu
+    roles:
+      - Research Assistant
+      - Reviewer
+      - Analyst
+    affiliations:
+      - Center for Democracy and Civic Engagement
+      - University of Maryland at College Park 
+  # - name: Rowan Cockett
+  #   orcid: 0000-0002-7859-8394
+  #   corresponding: false
+  #   roles: []
+  #   affiliations:
+  #     - Curvenote
+
+phone: (410) 903 6911
+email: ssnovey@umd.edu
+department: Center for Democracy and Civic Engagement
+keywords:
+  - Election Workers
+  - Poll workers
+  - Veterans
+  - Public opinion
+  - Election administration
+plain-language-summary: |
+  Analysis and results of survey experiment.
+key-points:  
+  - Lorem ipsum odor amet, consectetuer adipiscing elit.
+  - Lorem ipsum odor amet, consectetuer adipiscing elit.
+  - Lorem ipsum odor amet, consectetuer adipiscing elit.
+date: last-modified
+# bibliography: empowerment.bib
+csl: american-political-science-association.csl
+link-citations: true
+tbl-cap-location: top
+reference-location: document
+filters: 
+  - abstract-section
+citation:
+  container-title: Center for Democracy and Civic Engagement, University of Maryland
+number-sections: false
+---
+
+# Abstract
+
+
+## Introduction
+
+```{r}
+#| label: packages
+#| echo: false
+#| output: false
+
+# load packages
+library(tidyverse)
+library(janitor)
+library(easystats)
+library(labelled)
+library(sjlabelled)
+library(pewmethods)
+library(surveytoolbox)
+library(gtsummary)
+library(gt)
+
+```
+
+
+```{r}
+#| label: load-data
+#| include: false
+
+# load data
+load("data/data_vets_survey-exp-2024-09-11.Rdata") # data set as factor
+load("data/data_numeric_vets_survey-exp-2024-09-11.Rdata") # numeric only
+
+
+```
+
+
+```{r}
+#| label: data-dict
+
+# generate data dictionary
+data_dict <- labelled::generate_dictionary(data)
+
+```
+
+```{r}
+#| label: partyid-3cat
+
+# construct the partyid var with 3 categories, true independents
+data <- data |>
+  mutate(
+    partyid_3cat = pewmethods::fct_case_when(
+      partyid == "Republican" ~ "Republican",
+      partystr_rep == "Strong" ~ "Republican",
+      partystr_rep == "Not very strong" ~ "Republican",
+      partylean == "Republican" ~ "Republican",
+      partyid == "Democrat" ~ "Democrat",
+      partystr_dem == "Strong" ~ "Democrat",
+      partystr_dem == "Not very strong" ~ "Democrat",
+      partylean == "Democratic" ~ "Democrat",
+      partyid == "Independent" ~ "Independent",
+      partyid == "Other" ~ "Independent",
+      partylean == "Neither" ~ "Independent"
+    ),
+    .before = partyid)
+
+```
+
+# Overview of demographic variables and balance
+
+```{r}
+#| label: tbl-balance
+#| warning: false
+#| message: false
+
+# table of treatment and control groups
+data |>  
+  gtsummary::tbl_summary(
+    by = group,
+    include = c(age, gender, race, educ, milserv1, milserv2, milservfam),
+    statistic = list(age ~ "{mean} ({sd})",
+                     all_categorical()~ "{n} ({p}%)"),
+    type = list(milserv1 ~ "categorical",
+                milserv2 ~ "categorical",
+                milservfam ~"categorical"), 
+    missing = "ifany") |> 
+  gtsummary::add_n() |> 
+  gtsummary::add_overall() |> 
+  gtsummary::modify_header(label = "**Variable**") |> 
+  gtsummary::bold_labels() |> 
+  gtsummary::as_gt() |> 
+  gt::tab_header("Table 1. Balance") |> 
+  gt::tab_footnote("Failure to complete survey, n = 120") |> 
+  gt::tab_options(
+    table.font.size = "small",
+    data_row.padding = gt::px(1)
+  )
+
+
+
+```

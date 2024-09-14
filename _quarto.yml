@@ -1,0 +1,23 @@
+project:
+  type: manuscript
+
+execute:
+  freeze: auto
+
+bibliography: references.bib
+mainfont: Palatino Linotype
+
+format:
+  html:
+    toc: true
+    toc-location: left
+    smooth-scroll: true
+    embed-resources: true
+    footnotes-hover: false
+    # Use a CSL to style (https://www.zotero.org/styles/)
+    csl: https://www.zotero.org/styles/american-political-science-review
+  docx: default
+  jats: default
+  report-pdf:
+    keep-md: true
+    keep-tex: true

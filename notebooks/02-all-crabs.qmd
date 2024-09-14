@@ -1,0 +1,41 @@
+---
+title: "Crabs"
+subtitle: "All Tables and Crosstables"
+author: Isaiah
+---
+
+```{r}
+#| label: packages
+#| echo: false
+#| output: false
+
+# load packages
+library(tidyverse)
+library(easystats)
+library(pewmethods)
+library(surveytoolbox)
+library(gtsummary)
+library(gt)
+
+```
+
+
+```{r}
+#| label: data
+#| echo: fenced
+
+# load data
+load("data/data_fct_survey-exp-2024-09-04.Rdata") # cleaned & processed
+load("data/data_num_survey-exp-2024-09-04.Rdata") # numeric, labels 'zapped'
+
+```
+
+
+# check balance of treatment and control groups
+
+```{r}
+
+
+
+```
+

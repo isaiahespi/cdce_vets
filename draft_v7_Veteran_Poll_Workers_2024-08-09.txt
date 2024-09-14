@@ -1,749 +1,0 @@
-Veteran and Military Family Members Election Worker Recruitment Survey
-
-Start of Block: Informed Consent
-
-Q1 
- 
-Welcome to the research study!    
-   
-We are interested in understanding your views related to elections in the United States.  You will be presented with relevant information and asked to answer some questions. Please be assured that your responses will be kept completely confidential.??
- 
-The study should take you around 10 to 15 minutes to complete. Your participation in this research is voluntary. You have the right to withdraw at any point during the study, for any reason, and without any prejudice. If you would like to contact the Principal Investigator in the study to discuss this research, please e-mail Michael Hanmer at mhanmer@umd.edu.?
- 
-By clicking the button below, you acknowledge that your participation in the study is voluntary, you are 18 years of age, you are a U.S citizen, and that you are aware that you may choose to terminate your participation in the study at any time and for any reason.
- 
-Please note that this survey will be best displayed on a laptop or desktop computer.  Some features may be less compatible for use on a mobile device.    
- 
-o I consent, begin the study  (1) 
-o I do not consent, I do not wish to participate  (2) 
-
-Skip To: End of Survey If Q1 = 2
-End of Block: Informed Consent
-
-
-
-Start of Block: Age and citizenship
-
-age How old are you?
-? 18 (1) ... 96 or older (80)
-
-
-Page Break
-cit Are you a citizen of the United States?
-o Yes, U.S. citizen by birth  (1) 
-o Yes, U.S. citizen by naturalization  (2) 
-o No, I am not a U.S. citizen  (3) 
-
-Skip To: End of Survey If cit = 3
-
-Page Break
-state In which state do you currently reside?
-? Alabama (1) ... I do not reside in the United States (53)
-
-
-
-
-Page Breakattention How often do you pay attention to what is going on in government and politics?
-o Always  (4) 
-o Most of the time  (3) 
-o About half the time  (4) 
-o Sometimes  (2) 
-o Never  (1) 
-
-
-Page Break
-EO_favorability In general, how favorable or unfavorable is your impression of local election officials?
-o Strongly favorable  (5) 
-o Somewhat favorable  (4) 
-o Neither favorable nor unfavorable  (3) 
-o Somewhat unfavorable  (2) 
-o Strongly unfavorable  (1) 
-
-
-
-
-Page Break
-legit Regardless of whom you supported in the 2020 election, do you think Joe Biden's election as president was legitimate, or was he not legitimately elected?
-o Legitimate  (1) 
-o Not legitimate  (2) 
-
-
-Page Break
-trust Generally speaking, how often can you trust other people?
-o Always  (5) 
-o Most of the time  (4) 
-o About half of the time  (3) 
-o Some of the time  (2) 
-o Never  (1) 
-
-End of Block: Age and citizenship
-
-
-
-Start of Block: Attention check
-
-attentioncheck1 To ensure the accuracy of our survey data, we need to confirm that you are a real person. To confirm that you are a real person, please select "Watermelon" from the list below.
-o Apple  (0) 
-o Banana  (0) 
-o Watermelon  (1) 
-o Orange  (0) 
-o Grape  (0) 
-
-
-Page BreakDisplay This Question:
-    If attentioncheck1 != 1
-
-attentioncheck2 Your response to the last question was not correct. We would like to give you a chance to reconsider.
-To confirm that you are a real person, please select "Watermelon" from the list below.
-
-o Apple  (0) 
-o Banana  (0) 
-o Watermelon  (1) 
-o Orange  (0) 
-o Grape  (0) 
-
-Skip To: End of Survey If attentioncheck2 != 1
-End of Block: Attention check
-
-[PROGRAMMING NOTE: RESPONDENTS WILL BE RANDOMLY ASSIGNED TO READ ONE OF THE FOLLOWING VIGNETTES (EITHER TV1 (treatment) or CV1 (control)]
-Start of Block: Vignette Prep
-
-VP The following page will present an excerpt from a recent news article. Please read the article carefully and continue on once you have finished reading. Click the next button to continue. 
-
-
-Page Break
-End of Block: Vignette Prep
-
-
-
-Start of Block: Treatment Vignette: Recruiting Veterans as Poll Workers
-
-TV1 Local Military Veterans Recruited for Election Jobs in Maricopa County 
- PHOENIX (AP) — Election officials in Maricopa County, Arizona, announced a program designed to recruit military veterans and their family members from the community to serve as election administrators, including election polling place workers, temporary workers, and full-time staff. As the U.S. general elections in November near, election officials must fill several thousand temporary positions and hundreds of other open positions to ensure sufficient staffing for the 2024 elections and beyond. 
- 
-Army veteran Jordan Braxton just joined the elections workforce. Jordan believes their role is important to ensuring a secure, accurate, and transparent election, “Many places are short on staff this election cycle. I served my country in the Army, and I want to do my part as a veteran and a citizen to ensure that everyone trusts the process and the outcome of the election.”
- 
-
-
-[PROGRAMMING NOTE: RESPONDENTS WILL NOT BE ABLE TO PROCEED UNTIL 15 SECONDS HAVE ELAPSED]
-
-Includes a timer to record how long a participant stays on a vignette, and the next page button won’t display until 15 seconds have passed.
-
-TV_timing Timing
-First Click  (1) [How many total seconds the page was visible before the respondent clicks the first time.]
-Last Click  (2) [How many total seconds the page was visible before the respondent clicks the last time (not including clicking the next button).]
-Page Submit  (3) [How many total seconds pass before the respondent clicks the next button (i.e., the total amount of time the respondent spends on the page).]
-Click Count  (4) [How many total times the respondent clicks on the page.]
-
-
-Page Break
-
-
-TV1_check Did the text from the article display correctly?
-o No  (2) 
-o Yes  (1) 
-
-End of Block: Treatment Vignette: Recruiting Veterans as Poll Workers
-
-
-
-Start of Block: Control Vignette: Recruiting Poll Workers
-
-CV1 Local Residents Recruited for Election Jobs in Maricopa County 
- PHOENIX (AP) —Election officials in Maricopa County, Arizona, announced a program to recruit members of the community to serve as election administrators, including election polling place workers, temporary workers, and full-time staff. As the U.S. general elections in November near, election officials must fill several thousand temporary positions and hundreds of other open positions to ensure sufficient staffing for the 2024 elections and beyond.
-
- Jordan Braxton just joined the elections workforce. Jordan believes their role is important to ensuring a secure, accurate, and transparent election, “Many places are short on staff this election cycle. I want to do my part as a citizen to ensure that everyone trusts the process and the outcome of the election.”
- 
-
-[PROGRAMMING NOTE: RESPONDENTS WILL NOT BE ABLE TO PROCEED UNTIL 15 SECONDS HAVE ELAPSED]
-
-CV_timing Timing
-First Click  (1) 
-[How many total seconds the page was visible before the respondent clicks the first time.]
-Last Click  (2) 
-[How many total seconds the page was visible before the respondent clicks the last time (not including clicking the next button).]
-Page Submit  (3) 
-[How many total seconds pass before the respondent clicks the next button (i.e., the total amount of time the respondent spends on the page).]
-Click Count  (4) 
-[How many total times the respondent clicks on the page.]
-
-Page Break
-
-
-CV1_check Did the text from the article display correctly?
-o No  (2) 
-o Yes  (1) 
-
-End of Block: Control Vignette: Recruiting Poll Workers
-
-
-
-Start of Block: Trust and Confidence in Elections in Maricopa County, AZ
-
-prep_text The next set of questions are going to ask you about elections in the place you read about, Maricopa County, Arizona. 
-
-
-Page Break
-confvote_az How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November?
-o Very confident  (4) 
-o Somewhat confident  (3) 
-o Not too confident  (2) 
-o Not at all confident  (1) 
-
-
-Page Break
-confadmin_az How confident are you that election officials, their staff, and volunteers in Maricopa County, AZ will do a good job conducting the elections this November?
-o Very confident  (4) 
-o Somewhat confident  (3) 
-o Not too confident  (2) 
-o Not confident at all  (1) 
-
-
-Page Break
-
-
-truststaff_az Think about the election staff and volunteers who handle the administration and conduct of elections in Maricopa County, AZ. How committed do you think they will be at making sure the elections held this November are fair and accurate?
-o Very committed  (4) 
-o Somewhat committed  (3) 
-o Not too committed  (2) 
-o Not at all committed  (1) 
-
-
-Page Break
-approval_az Do you approve or disapprove of the way election officials in Maricopa County, AZ are handling their jobs?
-o Strongly approve  (4) 
-o Somewhat approve  (3) 
-o Somewhat disapprove  (2) 
-o Strongly disapprove  (1) 
-
-
-Page Break
-trustprocess_az How confident are you that the voting process will be fair in Maricopa County, AZ?
-o Very confident  (4) 
-o Somewhat confident  (3) 
-o Not too confident  (2) 
-o Not at all confident  (1) 
-
-
-Page Break
-trustoutcome_az How confident are you that the voting outcomes will be fair in Maricopa County, AZ?
-o Very confident  (4) 
-o Somewhat confident  (3) 
-o Not too confident  (2) 
-o Not at all confident  (1) 
-
-
-Page Breakconftech_az How confident are you that election systems in Maricopa County, AZ will be secure from hacking and other technological threats?
-o Very confident  (4) 
-o Somewhat confident  (3) 
-o Not too confident  (2) 
-o Not at all confident  (1) 
-
-
-Page Breakexpctfraud_az How likely do you think any or all of the following will happen during this year´s elections in Maricopa County, AZ?
-Very likely (4)Somewhat likely (3)Not too likely (2)Not likely at all (1)There will be voter fraud, that is, people who are not eligible to vote will vote, or vote more than once (1) o o o o Many votes will not actually be counted (2) o o o o Many people will show up to vote and be told they are not eligible (3) o o o o A foreign country will tamper with the votes cast in this area to change the results (4) o o o o Election officials in Maricopa County, Arizona will try to discourage some people from voting (5) o o o o 
-
-End of Block: Trust and Confidence in Elections in Maricopa County, AZ
-
-
-
-Start of Block: Concern for Safety of Voters in Maricopa County, AZ
-
-violence_az Thinking about Maricopa County, AZ, how concerned should voters feel about potential violence, threats of violence, or intimidation while voting in person at their local polling place?
-
-o Very concerned  (4) 
-o Somewhat concerned  (3) 
-o Somewhat unconcerned  (2) 
-o Not at all concerned  (1) 
-
-
-Page Break
-
-safe_az How confident, if at all, are you that in person polling places in Maricopa County, AZ will be safe places for voters to cast their ballots during the upcoming elections in November?
-o Very confident  (4) 
-o Somewhat confident  (3) 
-o Not too confident  (2) 
-o Not at all confident  (1) 
-
-End of Block: Concern for Safety of Voters in Maricopa County, AZ
-
-Start of Block: Trust and Confidence in Elections in Local Area
-
-adopt How much would you like to see your local community adopt a program for recruiting elections staff like the one you read about in Maricopa County, AZ?
-o Definitely should adopt  (4) 
-o Probably should adopt  (3) 
-o Probably should not adopt  (2) 
-o Definitely should not adopt  (1) 
-
-
-Page Break
-
-
-confvote_local Think about vote counting throughout your local area, and not just your own personal vote. How confident are you that votes in your community will be counted as voters intend in the elections this November?
-o Very confident  (4) 
-o Somewhat confident  (3) 
-o Not too confident  (2) 
-o Not at all confident  (1) 
-
-
-Page Break
-
-
-confadmin_local How confident are you that election officials, their staff, and volunteers in your local community will do a good job administering the elections this November?
-o Very confident  (4) 
-o Somewhat confident  (3) 
-o Not too confident  (2) 
-o Not confident at all  (1) 
-
-
-Page Break
-
-
-approval_local Do you approve or disapprove of the way election officials in your community are handling their jobs?
-o Strongly approve  (4) 
-o Somewhat approve  (3) 
-o Somewhat disapprove  (2) 
-o Strongly disapprove  (1) 
-
-
-Page Break
-
-
-truststaff_local Now think about the election staff and volunteers who handle the administration and conduct of elections in your local area. How committed do you think they will be to making sure the elections held this November are fair and accurate? 
-o Very committed  (4) 
-o Somewhat committed  (3) 
-o Not too committed  (2) 
-o Not at all committed  (1) 
-
-
-Page Break
-
-
-trustproces_local How confident are you that the voting process will be fair in your local area?
-o Very confident  (4) 
-o Somewhat confident  (3) 
-o Not too confident  (2) 
-o Not at all confident  (1) 
-
-
-Page Break
-
-
-trustoutcomes_local How confident are you that the voting outcomes will be fair in your local area?
-o Very confident  (4) 
-o Somewhat confident  (3) 
-o Not too confident  (2) 
-o Not at all confident  (1) 
-
-
-Page Break
-
-
-conftech_local How confident are you that election systems in your local area are secure from hacking and other technological threats?
-o Very confident  (4) 
-o Somewhat confident  (3) 
-o Not too confident  (2) 
-o Not at all confident  (1) 
-
-
-Page Break
-
-
-expctfraud_local How likely do you think any or all of the following will happen during this year´s elections in your local area?
-Very likely (4)Somewhat likely (3)Not too likely (2)Not likely at all (1)There will be voter fraud, that is, people who are not eligible to vote will vote, or vote more than once (1) o o o o Many votes will not actually be counted (2) o o o o Many people will show up to vote and be told they are not eligible (3) o o o o A foreign country will tamper with the votes cast to change the results (4) o o o o Election officials in your community will try to discourage some people from voting (5) o o o o 
-
-End of Block: Trust and Confidence in Elections in Local Area
-
-Start of Block: Concern for Safety of Self and Voters in Local Area
-
-safe_local How confident, if at all, are you that in person polling places in your local area will be safe places for voters to cast their ballots during the upcoming elections in November?
-o Very confident  (4) 
-o Somewhat confident  (3) 
-o Not too confident  (2) 
-o Not at all confident  (1) 
-
-
-Page Break
-
-
-violence_local Thinking about your local area, how concerned should voters feel about potential violence, threats of violence, or intimidation while voting in person at their local polling place?
-
-o Very concerned  (4) 
-o Somewhat concerned  (3) 
-o Somewhat unconcerned  (2) 
-o Not at all concerned  (1) 
-
-
-Page Break
-
-
-safe_self Overall, how safe would you feel voting in person in your local area?
-o Very safe  (4) 
-o Somewhat safe  (3) 
-o Not too safe  (2) 
-o Not safe at all  (1) 
-
-End of Block: Concern for Safety of Self and Voters in Local Area
-
-Start of Block: Confidence Impact
-
-confimpact Regardless of whether any of these are actually the case, how would the following impact how your confidence in the fairness and accuracy of elections conducted this November?
-Increase confidence a lot (5)Increase confidence somewhat (4)No impact on confidence (3)Decrease confidence somewhat (2)Decrease confidence a lot (1)Election officials test every machine used in the election to ensure they are secure. (1) o o o o o Election officials conduct audits of ballots after every election to confirm the results were accurate. (4) o o o o o Poll watchers affiliated with the political parties or candidates observe the election to ensure it’s fair. (5) o o o o o Election staff and volunteers include military veterans and their family members from the community. (8) o o o o o Election staff and volunteers include lawyers from the community. (9) o o o o o Election staff and volunteers include college students from the community. (10) o o o o o 
-
-
-Page Break
-
-
-safeimpct How would the following impact your confidence that voters are safe from violence, threats of violence, or intimidation while voting in-person during elections this November?
-Increase confidence a lot (5)Increase confidence somewhat (4)No impact on confidence (3)Decrease confidence somewhat (2)Decrease confidence a lot (1)Election officials ensure that law enforcement officers are present at polling sites. (4) o o o o o Poll watchers affiliated with the political parties or candidates observe the election to ensure it’s fair. (5) o o o o o People holding signs or giving out literature in support of a candidate or ballot question. (7) o o o o o Election staff and volunteers include military veterans and their family members from the community. (6) o o o o o Election staff and volunteers include lawyers from the community. (3) o o o o o Election staff and volunteers include college students from the community. (2) o o o o o 
-
-End of Block: Confidence Impact
-
-Start of Block: Confidence Impact, majority language
-
-confimpact_maj Regardless of whether any of these are actually the case, how would the following impact your confidence in the fairness and accuracy of elections conducted this November?
-Increase confidence a lot (5)Increase confidence somewhat (4)No impact on confidence (3)Decrease confidence somewhat (2)Decrease confidence a lot (1)Election officials test every machine used in the election to ensure they are secure. (1) o o o o o The majority of election staff and volunteers consist of military veterans and their family members from the community. (2) o o o o o The majority of election staff and volunteers consist of lawyers from the community. (3) o o o o o Election officials conduct audits of ballots after every election to confirm the results were accurate. (4) o o o o o Poll watchers affiliated with the political parties or candidates observe the election to ensure it’s fair. (5) o o o o o The majority of election staff and volunteers consist of college students from the community. (6) o o o o o 
-
-
-Page Break
-
-
-safeimpact_maj How would the following impact your confidence that voters are safe from violence, threats of violence, or intimidation while voting in-person during elections this November?
-Increase confidence a lot (5)Increase confidence somewhat (4)No impact on confidence (3)Decrease confidence somewhat (2)Decrease confidence a lot (1)Election officials ensure that law enforcement officers are present at polling sites. (4) o o o o o The majority of election staff and volunteers consist of military veterans and their family members from the community. (2) o o o o o The majority of election staff and volunteers consist of lawyers from the community. (3) o o o o o Poll watchers affiliated with the political parties or candidates observe the election to ensure it’s fair. (5) o o o o o The majority of election staff and volunteers consist of college students from the community. (6) o o o o o People holding signs or giving out literature in support of a candidate or ballot question. (7) o o o o o 
-
-End of Block: Confidence Impact, majority language
-
-Start of Block: Willingness for Election work
-
-pollwrk_exp Have you ever worked as an election worker at polling place, as a volunteer or otherwise?
-o Yes  (1) 
-o No  (2) 
-
-
-Page Break
-
-
-pollwrk_vol How likely would you be to agree to volunteer work as an election worker at polling place in your local area for the upcoming elections this November?
-o Very likely  (4) 
-o Somewhat likely  (3) 
-o Somewhat unlikely  (2) 
-o Not likely at all  (1) 
-
-
-Page Break
-
-
-pollwrk_temp How likely would you be to consider applying for a temporary job in elections for the upcoming elections this November?
-o Very likely  (4) 
-o Somewhat likely  (3) 
-o Somewhat unlikely  (2) 
-o Not likely at all  (1) 
-
-
-Page Break
-
-
-pollwrk_perm How likely would you be to consider applying for a permanent job in elections?
-o Very likely  (4) 
-o Somewhat likely  (3) 
-o Somewhat unlikely  (2) 
-o Not likely at all  (1) 
-
-End of Block: Willingness for Election work
-
-Start of Block: Popular Efficacy: agent-aim
-
-popeff1 Is the following statement closer to being true or false:
-
-The people of this country have power to reform the way the system works. 
-
-o True -- this is the case  (5) 
-o More true than false -- this is mostly the case, but not completely true  (4) 
-o More false than true -- this is mostly not the case, but not completely false  (3) 
-o False -- this is not the case at all  (2) 
-o Unsure  (1) 
-
-
-Page Break
-
-
-popeff2 Is the following statement closer to being true or false:
-
-The people of this country have power to shape the rules that govern society.
-
-o True -- this is the case  (5) 
-o More true than false -- this is mostly the case, but not completely true  (4) 
-o More false than true -- this is mostly not the case, but not completely false  (3) 
-o False -- this is not the case at all  (2) 
-o Unsure  (1) 
-
-
-Page Break
-
-
-popeff3 Is the following statement closer to being true or false: 
-
-The people of this country have power to bring about change to the political conditions that govern the lives of everyone. 
-
-o True -- this is the case  (5) 
-o More true than false -- this is mostly the case, but not completely true  (4) 
-o More false than true -- this is mostly not the case, but not completely false  (3) 
-o False -- this is not the case at all  (2) 
-o Unsure  (1) 
-
-
-Page Break
-
-
-popeff4 Is the following statement closer to being true or false:
-
-The people of this country can secure themselves against tyrannical rule.
-
-o True -- this is the case  (5) 
-o More true than false -- this is mostly the case, but not completely true  (4) 
-o More false than true -- this is mostly not the case, but not completely false  (3) 
-o False -- this is not the case at all  (2) 
-o Unsure  (1) 
-
-End of Block: Popular Efficacy: agent-aim
-
-Start of Block: Popular efficacy: agent-action-aim
-
-popeff5 Is the following statement closer to being true or false:
-
-By participating in the political process, the people of this country can change the way the system works
-
-o True -- this is the case  (5) 
-o More true than false -- this is mostly the case, but not completely true  (4) 
-o More false than true -- this is mostly not the case, but not completely false  (3) 
-o False -- this is not the case at all  (2) 
-o Unsure  (1) 
-
-
-Page Break
-
-
-popeff6 Is the following statement closer to being true or false:
-
-The people of this country can solve problems that affect the lives of everyone by participating in the political process 
-
-o True -- this is the case  (5) 
-o More true than false -- this is mostly the case, but not completely true  (4) 
-o More false than true -- this is mostly not the case, but not completely false  (3) 
-o False -- this is not the case at all  (2) 
-o Unsure  (1) 
-
-
-Page Break
-
-
-popeff7 Is the following statement closer to being true or false:
-
- By participating in the political process, the people of this country can hold government officials accountable to the people's authority.
-
-o True -- this is the case  (5) 
-o More true than false -- this is mostly the case, but not completely true  (4) 
-o More false than true -- this is mostly not the case, but not completely false  (3) 
-o False -- this is not the case at all  (2) 
-o Unsure  (1) 
-
-
-Page Break
-
-
-popeff8 Is the following statement closer to being true or false:
-
- The people of this country can change the existing state of affairs through their political participation.
-
-o True -- this is the case  (5) 
-o More true than false -- this is mostly the case, but not completely true  (4) 
-o More false than true -- this is mostly not the case, but not completely false  (3) 
-o False -- this is not the case at all  (2) 
-o Unsure  (1) 
-
-End of Block: Popular efficacy: agent-action-aim
-
-Start of Block: Demographic questions
-
-gender What is your current gender?
-o Male  (1) 
-o Female  (2) 
-o Non-binary / third gender  (3) 
-o Prefer not to say  (99) 
-
-
-Page Break
-
-
-hisp Are you of Hispanic, Latino, or Spanish origin?
-o Yes  (1) 
-o No  (2) 
-o Prefer not to say  (99) 
-
-
-Page Break
-
-
-race Do you consider yourself primarily White or Caucasian, Black or African American, American Indian, Asian, or something else?
-o White or Caucasian  (1) 
-o Black or African American  (2) 
-o American Indian  (3) 
-o Asian  (4) 
-o Other  (5) 
-
-
-Page Break
-
-
-educ What is the highest level of school you have completed or the highest degree you have received? 
-o Less than high school degree  (1) 
-o High school graduate (high school diploma or equivalent including GED)  (2) 
-o Some college but no degree  (3) 
-o Associate degree in college (2-year)  (4) 
-o Bachelor's degree in college (4-year)  (5) 
-o Master's degree  (6) 
-o Doctoral degree  (7) 
-o Professional degree (JD, MD)  (8) 
-
-
-Page Break
-
-
-activeduty Have you ever served on active duty in the US Armed Forces?
-o Yes  (1) 
-o No  (2) 
-
-
-Page Break
-
-Display This Question:
-    If activeduty = 1
-
-currentduty Are you now serving in the Armed Forces?
-o Yes  (1) 
-o No  (2) 
-
-
-Page Break
-
-
-service_family Has a member of your immediate family ever served or is currently serving in the US military, the National Guard, or military reserves?
-o Yes  (1) 
-o No  (2) 
-
-
-Page Break
-
-
-voted In 2020, Joe Biden ran on the Democratic ticket against Donald Trump for the Republicans. Do you remember for sure whether or not you voted in that election?
-o Yes  (1) 
-o No  (2) 
-
-
-Page Break
-
-Display This Question:
-    If voted = 1
-
-vote_choice Who did you vote for?
-o Donald Trump  (1) 
-o Joe Biden  (2) 
-o Other  (3) 
-
-
-Page Break
-
-
-vote_intent Do you plan to vote in the elections this November?
-o Yes  (1) 
-o No  (2) 
-o Undecided  (3) 
-
-
-Page Break
-
-
-partyid Generally speaking, do you usually think of yourself as a Republican, a Democrat, an Independent, or something else?
-o Republican  (1) 
-o Democrat  (2) 
-o Independent  (3) 
-o Other (please specify)  (4) __________________________________________________
-
-
-Page Break
-
-Display This Question:
-    If partyid = 1
-
-repubstrength Would you call yourself a strong Republican or a not very strong Republican?
-o Strong  (1) 
-o Not very strong  (2) 
-
-
-Page Break
-
-Display This Question:
-    If partyid = 2
-
-demstrength Would you call yourself a strong Democrat or a not very strong Democrat?
-o Strong  (1) 
-o Not very strong  (2) 
-
-
-Page Break
-
-Display This Question:
-    If partyid = 3
-
-party_lean Do you think of yourself as closer to the Republican or Democratic party?
-o Republican  (1) 
-o Democratic  (2) 
-o Neither  (3) 
-
-
-Page Break
-
-
-ideology Where would you place yourself on this scale, or haven't you thought much about this?
-o Extremely Liberal  (1) 
-o Liberal  (2) 
-o Slightly liberal  (3) 
-o Moderate: middle of the road  (4) 
-o Slightly conservative  (5) 
-o Conservative  (6) 
-o Extremely conservative  (7) 
-o Haven't thought much about this  (8) 
-
-
-Page Break
-
-Display This Question:
-    If ideology = 8
-
-ideology_lean If you had to choose, would you consider yourself a liberal or a conservative?
-o Liberal  (1) 
-o Conservative  (2) 
-o None of these  (3) 
-
-End of Block: Demographic questions
-
-Start of Block: Debrief
-
-Q21 Thank you for completing this survey! 
- During this survey you might have read stories about on-going recruitment of election staff or poll workers from veteran U.S. service members or from the general public. These stories were modeled after actual news stories but were not real. We apologize for this. We created them in order to better understand how the news about elections influences people’s opinions about politics.
- 
- Please do not, therefore, base your own evaluations of policies, public officials, political parties, poll workers, election staff, or veteran U.S. service members on the material you read in this study. Researching election worker volunteer shortages on your own via various information sources is the best way to understand how elections are administrated in the United States and any current issues. These are all the questions we have for you.
- 
- Thank you for your time and should you have questions, please contact: Professor Michael Hanmer, 3140 Tydings Hall, College Park Maryland 20910 Tel. 301-405-7379 or email: mhanmer@umd.edu.
-
-End of Block: Debrief
-
-
-
-
-Page of 
-
-
-Page 1 of 20
-
-
