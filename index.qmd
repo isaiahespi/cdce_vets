@@ -36,8 +36,8 @@ key-points:
   - Lorem ipsum odor amet, consectetuer adipiscing elit.
   - Lorem ipsum odor amet, consectetuer adipiscing elit.
 date: last-modified
-# bibliography: empowerment.bib
-csl: american-political-science-association.csl
+# bibliography: references.bib
+# csl: american-political-science-association.csl
 link-citations: true
 tbl-cap-location: top
 reference-location: document
@@ -61,6 +61,7 @@ number-sections: false
 # load packages
 library(tidyverse)
 library(janitor)
+library(kableExtra)
 library(easystats)
 library(labelled)
 library(sjlabelled)
@@ -95,12 +96,18 @@ df_dict <- read.csv("codebooks/df_dict.csv")
 ```{r}
 #| label: read-crabs
 
-# these are crosstabs contained in one list each
-readRDS("data/q5_crabs.RData")
-readRDS("data/q6_crabs.RData")
-readRDS("data/q7_crabs.RData")
-readRDS("data/q8_crabs.RData")
-readRDS("data/party_crabs.RData")
+# these are crosstabs contained in one list each saved as .RData
+# each file contains a list of multiple crosstabs where responses from q19 to
+# q46 are crossed by one pre-treatment survey question (e.g., q5) and grouped by
+# experiment condition. That is, the explanatory variable is in the rows,
+# responses from question 19 to question 46 are in the columns, and cross
+# tabulation is further stratified by experimental condition, treatment or
+# control.
+q5_crabs <- readRDS("data/q5_crabs.RData")
+q6_crabs <- readRDS("data/q6_crabs.RData")
+q7_crabs <- readRDS("data/q7_crabs.RData")
+q8_crabs <- readRDS("data/q8_crabs.RData")
+party_crabs <- readRDS("data/party_crabs.RData")
 ```
 
 
@@ -112,7 +119,7 @@ readRDS("data/party_crabs.RData")
 #| message: false
 
 # table of treatment and control groups
-data |>  
+df |>  
   gtsummary::tbl_summary(
     by = group,
     include = c(age, gender, race, educ, milserv1, milserv2, milservfam),
@@ -147,7 +154,7 @@ The following crosstabulations
 #| results: asis
 
 # iv = q5, dv = q19, z = group
-print(kableExtra::kable(q5_crabs[[1]], format = "simple"))
+kableExtra::kable(q5_crabs[[1]], format = "html")
 
 
 ```
@@ -158,7 +165,7 @@ print(kableExtra::kable(q5_crabs[[1]], format = "simple"))
 #| results: asis
 
 # iv = q5, dv = q20, z = group
-print(kableExtra::kable(q5_crabs[[2]], format = "html"))
+kableExtra::kable(q5_crabs[[2]], format = "html")
 
 ```
 

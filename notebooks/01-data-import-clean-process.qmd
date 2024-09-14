@@ -4,7 +4,7 @@ author: Isaiah
 ---
 
 
-This document describes and executes the cleaning and processing of the survey data set downloaded from Qualtrics on 2024-09-11 at 11:39AM.
+This document describes and executes the cleaning and processing of the survey data set downloaded from Qualtrics on 2024-09-11 at 11:39AM. Currently, this notebook is mainly to describe and explain the process undertaken in R to import, clean, and wrangle the data set for later analysis, but is derived from an R script that can be viewed [here](https://github.com/isaiahespi/cdce_vets/blob/80e843e8a9fa24d1d7524c76631b709f9f675876/scripts/01-data.R).  
 
 ## Load data
 
@@ -412,10 +412,87 @@ data <- data |>
 
 ```
 
+## Add Variables to the dataframe
+
+Here I construct the `partyid_3cat` variable from partisanship-related variables in the dataframe. Simply, this variable simplifies a respondent's self-reported party identification into either Democrat, Republican, or Independent by re-coding and combining responses to survey questions Q69, Q70, Q71, and Q72. I combined everyone who indicates some attachment to either the Democrat or Republican party (e.g., "Strong" and "Not very strong") to include self-described Independents who reportedly 'lean' more towards one party over the other. So, strong and weak Democrats as well as those who lean Democratic are all lumped into the Democrat group, and likewise for Republicans. Independents in this case only consist of true or 'pure' independents who don't think of themselves as Democrat or Republican and don't think of themselves as closer to either political party. 
+
+```{r}
+#| label: add-partyid_3cat
+
+# construct the partyid var with 3 categories, true independents
+data <- data |>
+  mutate(
+    partyid_3cat = pewmethods::fct_case_when(
+      partyid == "Republican" ~ "Republican",
+      partystr_rep == "Strong" ~ "Republican",
+      partystr_rep == "Not very strong" ~ "Republican",
+      partylean == "Republican" ~ "Republican",
+      partyid == "Democrat" ~ "Democrat",
+      partystr_dem == "Strong" ~ "Democrat",
+      partystr_dem == "Not very strong" ~ "Democrat",
+      partylean == "Democratic" ~ "Democrat",
+      partyid == "Independent" ~ "Independent",
+      partyid == "Other" ~ "Independent",
+      partylean == "Neither" ~ "Independent"
+    ),
+    .before = partyid) |> 
+  labelled::set_variable_labels(
+    partyid_3cat = "Party ID 3 categories, with true Independents")
+
+
+
+```
+
+Next I construct a variable consisting of eight age groups: 18-24, 25-34, 35-44, 45-54, 55-64, 65-74, 75-84, and 85-92 years of age.
+
+
+```{r}
+
+# create an age group variable
+data <- data |>    
+  mutate(age_cat = 
+           forcats::fct_collapse(
+             as_factor(age),
+             "18-24" = c(18:24),
+             "25-34" = c(25:34),
+             "35-44" = c(35:44),
+             "45-54" = c(45:54),
+             "55-64" = c(55:64),
+             "65-74" = c(65:74),
+             "75-84" = c(75:82, 84),
+             "85-92" = c(85:88, 92)
+             ),
+         .after = age) |> 
+  labelled::set_variable_labels(
+    age_cat = "Age categorized into eight groups"
+  )
+
+
+```
+
+## Dummify and Collapse Factors
+
+Most survey items consisted of Likert-type items with four or five response options to choose from. Many response items were ordinal in nature, with four options ranging from "Not at all___", "Not too ___", to "Somewhat ___",  "Very ___" or "Always". Collapsing such response options into two levels is done to illustrate comparison and highlight treatment effects should any be present between treatment and control groups. For instance, to illustrate distinction between expressing concern and expressing little to no concern about potential violence at polling sites, the four levels of the `q25` factor variable were collapsed into two levels, "not_concerned" and "concerned" and the modified variable name was affixed with ".clps" to distinguish it in the dataframe. For survey items Q41 through Q46 where there were five response options, factor levels were collapsed into three levels where a neutral middle option was maintained: "Increase confidence", "No impact", and "Decrease confidence". 
+
+The following code merely calls and runs the source code from an R script located in the project directory, which can be found and viewed [here](https://github.com/isaiahespi/cdce_vets/blob/80e843e8a9fa24d1d7524c76631b709f9f675876/scripts/03-data-dummify.R).
+
+```{r}
+#| label: add-dummy
+
+# call the dummify script sourced from the 'scripts/' directory
+source(here::here('scripts', '03-data-dummify.R'))
+
+
+
+
+```
+
 
 ## Creating a purely numeric dataframe
 
 For whatever reasons, it is sometimes preferred to use a purely numeric dataframe. The following code creates a dataframe from the earlier `data_spss` dataframe that removes all value labels from the numeric values of the variables, i.e., drops all the `lbl` from `<dbl+lbl>`.
+
+The following code merely calls and runs the source code from an R script located in the project directory, which can be found and viewed [here](https://github.com/isaiahespi/cdce_vets/blob/80e843e8a9fa24d1d7524c76631b709f9f675876/scripts/02-data-numeric.R).
 
 ```{r}
 #| label: numeric-data-clean
@@ -451,6 +528,4 @@ data2 <- data_spss |>
 
 
 ```
-
-
 

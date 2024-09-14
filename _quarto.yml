@@ -1,10 +1,27 @@
 project:
   type: manuscript
 
+manuscript: 
+  resources: 
+  - df-2024-09-11.Rdata
+  - df-2024-09-11.csv
+  code-links: 
+    - repo
+    - text: 01-data
+      icon: file-code
+      href: 01-data.R
+    - text: 02-data-numeric
+      icon: file-code
+      href: 02-data-numeric.R
+    - text: 03-data-dummify
+      icon: file-code
+      href: 03-data-dummify.R
+    
+
 execute:
   freeze: auto
 
-bibliography: references.bib
+# bibliography: references.bib
 mainfont: Palatino Linotype
 
 format:
@@ -13,6 +30,7 @@ format:
     toc-location: left
     smooth-scroll: true
     embed-resources: true
+    link-external-newwindow: true
     footnotes-hover: false
     # Use a CSL to style (https://www.zotero.org/styles/)
     csl: https://www.zotero.org/styles/american-political-science-review
