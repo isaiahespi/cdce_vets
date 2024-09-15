@@ -4,7 +4,7 @@ author:
   - name: Isaiah
     #orcid: 0000-0002-0760-5497
     #corresponding: true
-    degrees: Research Assistant
+    degrees:
     email: gespinoz@umd.edu
     roles:
       - Research Assistant
@@ -41,6 +41,7 @@ date: last-modified
 link-citations: true
 tbl-cap-location: top
 reference-location: document
+notebook-links: false
 filters: 
   - abstract-section
 citation:
@@ -119,27 +120,30 @@ party_crabs <- readRDS("data/party_crabs.RData")
 #| message: false
 
 # table of treatment and control groups
-df |>  
+df |>
   gtsummary::tbl_summary(
     by = group,
     include = c(age, gender, race, educ, milserv1, milserv2, milservfam),
-    statistic = list(age ~ "{mean} ({sd})",
-                     all_categorical()~ "{n} ({p}%)"),
-    type = list(milserv1 ~ "categorical",
-                milserv2 ~ "categorical",
-                milservfam ~"categorical"), 
-    missing = "ifany") |> 
-  gtsummary::add_n() |> 
-  gtsummary::add_overall() |> 
-  gtsummary::modify_header(label = "**Variable**") |> 
-  gtsummary::bold_labels() |> 
-  gtsummary::as_gt() |> 
-  gt::tab_header("Table 1. Balance") |> 
-  gt::tab_footnote("Failure to complete survey, n = 120") |> 
-  gt::tab_options(
-    table.font.size = "small",
-    data_row.padding = gt::px(1)
-  )
+    statistic = list(
+      age ~ "{mean} ({sd})",
+      gtsummary::all_categorical() ~ "{n} ({p}%)"
+    ),
+    type = list(
+      milserv1 ~ "categorical",
+      milserv2 ~ "categorical",
+      milservfam ~ "categorical"
+    ),
+    missing = "ifany"
+  ) |>
+  gtsummary::add_n() |>
+  gtsummary::add_overall() |>
+  gtsummary::modify_header(label = "**Variable**") |>
+  gtsummary::bold_labels() |>
+  gtsummary::as_gt() |>
+  gt::tab_header("Table 1. Balance") |>
+  gt::tab_footnote("Failure to complete survey, n = 120") |>
+  gt::tab_options(table.font.size = "small",
+                  data_row.padding = gt::px(1))
 
 
 

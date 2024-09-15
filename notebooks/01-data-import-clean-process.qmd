@@ -10,8 +10,9 @@ This document describes and executes the cleaning and processing of the survey d
 
 ```{r}
 #| label: load-data
+
 # load raw SPSS export that includes display order vars
-raw_spss <- haven::read_sav(file = "data-raw/vets_spss_do_2024-09-11_11.38.sav") 
+raw_spss <- haven::read_sav(file = "vets_spss.sav") 
 
 ```
 
@@ -21,6 +22,7 @@ A data dictionary contains metadata about the data. The `labelled::generate_dict
 
 ```{r}
 #| label: raw-data-dict
+#| eval: false
 
 raw_spss_dict <- raw_spss |> labelled::generate_dictionary()
 
@@ -320,7 +322,7 @@ As done with the raw data imported from .sav file (`raw_spss`), here I create an
 # create data dictionary using `labelled::generate_dictionary()`
 data_spss_dict <- data_spss |> 
   # subset spss data set to omit the display order variables
-  select(!contains("_do_")
+  dplyr::select(!contains("_do_")
          & !contains("_ado_")
          & !contains("_click")
          & !contains("_count")) |>
@@ -402,7 +404,7 @@ It's easier to analyze variables in data as factors, but losing the variable lab
 # deframe() with values as the variable labels and names as the variable names.
 data_labels <- data_spss_dict |>
   dplyr::select(variable, label) |> 
-  deframe()
+  tibble::deframe()
 
 # Now assign the labels using the splice operator. Using the splice operator,
 # labels are assigned via matching against the variable name, which means that
@@ -421,7 +423,7 @@ Here I construct the `partyid_3cat` variable from partisanship-related variables
 
 # construct the partyid var with 3 categories, true independents
 data <- data |>
-  mutate(
+  dplyr::mutate(
     partyid_3cat = pewmethods::fct_case_when(
       partyid == "Republican" ~ "Republican",
       partystr_rep == "Strong" ~ "Republican",
@@ -450,9 +452,9 @@ Next I construct a variable consisting of eight age groups: 18-24, 25-34, 35-44,
 
 # create an age group variable
 data <- data |>    
-  mutate(age_cat = 
+  dplyr::mutate(age_cat = 
            forcats::fct_collapse(
-             as_factor(age),
+             forcats::as_factor(age),
              "18-24" = c(18:24),
              "25-34" = c(25:34),
              "35-44" = c(35:44),
