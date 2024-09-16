@@ -3,7 +3,8 @@
 
 
 /.quarto/
-/_manuscript
+/_site/
+/_manuscript/
 /.quarto/
 /dumpster/
 /IRB/

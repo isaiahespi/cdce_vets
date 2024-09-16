@@ -180,6 +180,7 @@ df |>
 
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::####
 
+# save variables of interest as character vectors (or objects or whatever)
 dvs_az <- df |> select(q19:q29) |> colnames()
 dv_lcl <- df |> select(q30:q40_5) |> colnames()
 confimpct_vars <- df |> select(q41_1:q43_6) |> colnames()
@@ -207,26 +208,22 @@ qs <- df |>
          -contains("popeff_qdo")) |>
   colnames()
 
+# do the same for the factor variables where levels have been collapsed
+# excludes q5 through q8
 qs.clps <- df |> 
-  select(contains(".clps"), -q5.clps, -q6.clps, -q8.clps, -q7) |>
+  select(contains(".clps"), -q5.clps, -q6.clps, -q7, -q8.clps) |>
   colnames()
 
+# now only the collapsed versions of q5 to q8 (q7 doesn't need collapsing)
 ex.clps <- df |>
   select(q5.clps, q6.clps, q7, q8.clps) |>
   colnames()
 
 
-ex.clps[1]
-qs
-ex.clps
-qs.clps
-glimpse(df)
+## attempts to produce multiple tables at once :::::::::::::::::::::::::::::####
 
-
-
-# so this works
-df |> select(q7, q19.clps, group) |> table() |> prop.table(margin = 1) |> round(3) |> 
-  tibble::as_tibble()
+# so the base prop.table works with just a dataframe
+df |> select(q7, q19.clps, group) |> table() |> prop.table(margin = 1) |> round(3)
 
 # I can create a function to make prop.tables by group
 make_ptabs <- function(x, y){
@@ -236,25 +233,38 @@ make_ptabs <- function(x, y){
 
 # using map2(), I can iterate a function over two arguments at a time, which
 # would be the variables in the dataframe
+# ex.clps[3] = q7, qs.clps[1:9] = q19,q20,q22,q23,q24,q26,q30,q31,q33
 ptabs_q7 <- map2(ex.clps[3], qs.clps[1:9], make_ptabs)
 
 ptabs_q7[1] # output display is not great
 
-kableExtra::kbl(ptabs_q7[1], format = "simple") # this doesn't help too much
+# helps a bit but not great. 
+kableExtra::kbl(ptabs_q7[1], format = "simple")
 
-# I can do the same for janitor::tabyl() as well
+# janitor::tabyl is nicer, simple, and pretty easy.
+df |> 
+  janitor::tabyl(q7, q26.clps, group, show_na = F) |> 
+  janitor::adorn_percentages("row") |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |> 
+  janitor::adorn_ns(position = "rear") |> 
+  janitor::adorn_title("top",
+                       row_name = "Q7.Legitimacy",
+                       col_name = "Q19.Vote Count Trust")
+
+# I can also write a function for janitor::tabyl() as well
 # write function to make tabyl crosstabs 
 make_crabs <- function(x, y){
   crab_df <- df |> 
     select(all_of(x), all_of(y), group) |>
     janitor::tabyl(!!sym(x), !!sym(y), group, show_na = F) |>
-    janitor::adorn_percentages() |>
+    janitor::adorn_percentages("row") |>
     janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
     janitor::adorn_ns() |> 
-    janitor::adorn_title("combined")
+    janitor::adorn_title("top")
 }
 
 # same thing
+# iterate a function over two arguments at a time
 tabyls.q7 <- map2(ex.clps[3], qs.clps[1:9], make_crabs)
 
 # Now I want to print them out one by one
@@ -347,10 +357,10 @@ make_crab_as_kable <- function(x, y){
 
 
 # repeating usage of map2(),
-kbl_crabs.q5 <- map2(ex.clps[1], qs.clps[1:9], make_crab_as_kable)
-kbl_crabs.q6 <- map2(ex.clps[2], qs.clps[1:9], make_crab_as_kable)
-kbl_crabs.q7 <- map2(ex.clps[3], qs.clps[1:9], make_crab_as_kable)
-kbl_crabs.q8 <- map2(ex.clps[4], qs.clps[1:9], make_crab_as_kable)
+kbl_crabs.q5 <- map2(ex.clps[1], qs.clps, make_crab_as_kable)
+kbl_crabs.q6 <- map2(ex.clps[2], qs.clps, make_crab_as_kable)
+kbl_crabs.q7 <- map2(ex.clps[3], qs.clps, make_crab_as_kable)
+kbl_crabs.q8 <- map2(ex.clps[4], qs.clps, make_crab_as_kable)
 
 
 kbl_crabs.q5[1]
@@ -364,32 +374,17 @@ for (i in kbl_crabs.q7){
 }
 
 
-
+# other variables to run across 
 party_crabs <- map2("partyid_3cat", qs.clps, make_crab_as_kable)
 age_crabs <- map2("age_cat", qs.clps, make_crab_as_kable)
 gender_crabs <- map2("gender", qs.clps, make_crab_as_kable)
 race_crabs <- map2("race", qs.clps, make_crab_as_kable)
-
-
-
-
 
 saveRDS(kbl_crabs.q5, file = "data/kbl_crabs.q5.RData")
 saveRDS(kbl_crabs.q6, file = "data/kbl_crabs.q6.RData")
 saveRDS(kbl_crabs.q7, file = "data/kbl_crabs.q7.RData")
 saveRDS(kbl_crabs.q8, file = "data/kbl_crabs.q8.RData")
 saveRDS(party_crabs, file = "data/party_crabs.RData")
-
-
-readRDS("data/q5_crabs.RData")
-readRDS("data/q6_crabs.RData")
-readRDS("data/q7_crabs.RData")
-readRDS("data/q8_crabs.RData")
-readRDS("data/party_crabs.RData")
-
-
-```{r}
-#| label: read-crabs
 
 # these are crosstabs contained in one list each saved as .RData
 # each file contains a list of multiple crosstabs where responses from q19 to
@@ -398,87 +393,19 @@ readRDS("data/party_crabs.RData")
 # responses from question 19 to question 46 are in the columns, and cross
 # tabulation is further stratified by experimental condition, treatment or
 # control.
-q5_crabs <- readRDS("data/q5_crabs.RData")
-q6_crabs <- readRDS("data/q6_crabs.RData")
-q7_crabs <- readRDS("data/q7_crabs.RData")
-q8_crabs <- readRDS("data/q8_crabs.RData")
-party_crabs <- readRDS("data/party_crabs.RData")
-```
+readRDS("data/kbl_crabs.q5.RData")
+readRDS("data/kbl_crabs.q6.RData")
+readRDS("data/kbl_crabs.q7.RData")
+readRDS("data/kbl_crabs.q8.RData")
+readRDS("data/party_crabs.RData")
 
 
-df |>
-  gtsummary::tbl_cross(
-    row = q5.clps,
-    col = q27,
-    percent = "row",
-    margin = "row",
-    missing = "no"
-  ) |>
-  gtsummary::add_p() |> 
-  gtsummary::bold_labels() |>
-  gtsummary::as_gt()
-  
-# This helps see the difference between treatment/control groups but may not be
-# the best option for all going forward
-df |>
-  labelled::set_variable_labels(
-    q26.clps = "Q26.Confidence Maricopa County, AZ will be safe for voters",
-    q5.clps = "Q5.Attentiveness to Political Affairs"
-  ) |> 
-  mutate(group = forcats::fct_rev(group)) |> 
-  gtsummary::tbl_strata(
-    strata = q5.clps,
-    ~ .x |>
-      gtsummary::tbl_cross(
-        row = group,
-        col = q26.clps,
-        statistic = "{p}%",
-        percent = "row",
-        margin = "row",
-        missing = "no"
-      )
-  ) |>
-  gtsummary::bold_labels() |>
-  gtsummary::as_gt() |> 
-  gt::tab_header(
-    title = gt::md("**Will Maricopa County, AZ be Safe for Voters?**")) |> 
-  gt::tab_footnote("NA omitted. Table reflects row percentages") |> 
-  gt::tab_options(
-    table.font.size = "small",
-    data_row.padding = gt::px(1)
-  )
 
-# This is, essentially, a 3-way crosstab shwoing x across y by z
-# The only problem is that the variable lable for the column question is omitted
-df |>
-  labelled::set_variable_labels(
-    q26.clps = "Q26.Confidence Maricopa County, AZ will be safe for voters",
-    q5.clps = "Q5.Attentiveness to Political Affairs"
-  ) |> 
-  mutate(group = forcats::fct_rev(group)) |> 
-  gtsummary::tbl_strata(
-    strata = group,
-    ~ .x |>
-      gtsummary::tbl_cross(
-        row = q5.clps,
-        col = q26.clps,
-        statistic = "{p}%",
-        percent = "row",
-        margin = "row",
-        missing = "no"
-      )
-  ) |>
-  gtsummary::bold_labels() |>
-  gtsummary::as_gt() |> 
-  gt::tab_header(
-    title = gt::md("**Will Maricopa County, AZ be Safe for Voters?**")) |> 
-  gt::tab_footnote("NA omitted. Table reflects row percentages") |> 
-  gt::tab_options(
-    table.font.size = "small",
-    data_row.padding = gt::px(1)
-  )
 
-attr(df$q26.clps, "label")
+
+
+
+
 
 
 

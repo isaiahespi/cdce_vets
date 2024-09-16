@@ -1,29 +1,10 @@
 project:
-  type: manuscript
-  output-dir: _manuscript
-
-manuscript: 
-  notebooks: 
-    - notebook: notebooks/01-data-import-clean-process.qmd
-      title: Data Import and Processing
-      download-url: notebooks/01-data-import-clean-process.qmd
-      url: https://github.com/isaiahespi/cdce_vets/blob/6c4422083bde3e4286360c38b2a886aff9b6179c/notebooks/01-data-import-clean-process.qmd
-  resources: 
-  - data/df-2024-09-11.Rdata
-  - data/df-2024-09-11.csv
-  - codebooks/df_dict.csv
-  code-links: 
-    - repo
-    - text: 01-data
-      icon: file-code
-      href: 01-data.R
-    - text: 02-data-numeric
-      icon: file-code
-      href: 02-data-numeric.R
-    - text: 03-data-dummify
-      icon: file-code
-      href: 03-data-dummify.R
-    
+  type: website
+  output-dir: docs
+  render: 
+    - index.qmd
+    - "!_manuscript/"
+    - "!notebooks/"
 
 execute:
   freeze: auto
@@ -43,7 +24,7 @@ format:
     footnotes-hover: false
     # Use a CSL to style (https://www.zotero.org/styles/)
     # csl: https://www.zotero.org/styles/american-political-science-review
-  docx: default
+  # docx: default
   # jats: default
   report-pdf:
     keep-md: true
