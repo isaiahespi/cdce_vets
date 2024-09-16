@@ -35,21 +35,18 @@ key-points:
   - Lorem ipsum odor amet, consectetuer adipiscing elit.
   - Lorem ipsum odor amet, consectetuer adipiscing elit.
   - Lorem ipsum odor amet, consectetuer adipiscing elit.
-date: last-modified
+date: 2024-09-12
 # bibliography: references.bib
 # csl: american-political-science-association.csl
 link-citations: true
 tbl-cap-location: top
 reference-location: document
+notebook-view: false
 notebook-links: false
-filters: 
-  - abstract-section
 citation:
   container-title: Center for Democracy and Civic Engagement, University of Maryland
 number-sections: false
 ---
-
-# Abstract
 
 
 ## Introduction
@@ -63,13 +60,14 @@ number-sections: false
 library(tidyverse)
 library(janitor)
 library(kableExtra)
+library(gtsummary)
+library(gt)
 library(easystats)
 library(labelled)
 library(sjlabelled)
 library(pewmethods)
 library(surveytoolbox)
-library(gtsummary)
-library(gt)
+
 
 ```
 
@@ -95,29 +93,103 @@ df_dict <- read.csv("codebooks/df_dict.csv")
 ```
 
 ```{r}
-#| label: read-crabs
+#| label: var-names
+#| include: false
 
-# these are crosstabs contained in one list each saved as .RData
-# each file contains a list of multiple crosstabs where responses from q19 to
-# q46 are crossed by one pre-treatment survey question (e.g., q5) and grouped by
-# experiment condition. That is, the explanatory variable is in the rows,
-# responses from question 19 to question 46 are in the columns, and cross
-# tabulation is further stratified by experimental condition, treatment or
-# control.
-q5_crabs <- readRDS("data/q5_crabs.RData")
-q6_crabs <- readRDS("data/q6_crabs.RData")
-q7_crabs <- readRDS("data/q7_crabs.RData")
-q8_crabs <- readRDS("data/q8_crabs.RData")
-party_crabs <- readRDS("data/party_crabs.RData")
+
+# assign column names as character vectors. 
+# qs = questions, 
+# clps = collapsed levels 
+# ex.clps = explanatory variables collapsed
+qs.clps <- df |>
+  select(contains(".clps"), -q5.clps, -q6.clps, -q8.clps, -q7) |>
+  colnames()
+
+ex.clps <- df |> select(q5.clps, q6.clps, q7, q8.clps) |> colnames()
+
+
+
 ```
 
+```{r}
+#| label: setup-functions
+#| include: false
+
+# make crabs kable style
+make_crab_as_kable <- function(x, y){
+  crab_gtkbl_df <- df |> 
+    select(group, all_of(x), all_of(y)) |>
+    dplyr::mutate(group = forcats::fct_rev(group)) |> 
+    gtsummary::tbl_strata(
+    strata = group,
+    ~ .x |>
+      gtsummary::tbl_cross(
+        row = !!sym(x),
+        col = !!sym(y),
+        percent = "row",
+        statistic = "{p}%",
+        margin = "row",
+        missing = "no"
+      )
+  ) |> 
+    gtsummary::bold_labels() |> 
+    gtsummary::as_kable_extra(
+      booktabs = T,
+      longtable = T,
+      linesep = ""
+    ) |> 
+    kableExtra::kable_styling(
+      position = "left",
+      bootstrap_options = c("striped", "hover", "responsive")
+    )
+}
+
+# make crabs gt style
+make_crab_gtsummary <- function(x, y){
+  crab_gt_df <- df |> select(group, all_of(x), all_of(y)) |>
+    dplyr::mutate(group = forcats::fct_rev(group)) |> 
+    gtsummary::tbl_strata(
+    strata = group,
+    ~ .x |>
+      gtsummary::tbl_cross(
+        row = !!sym(x),
+        col = !!sym(y),
+        percent = "row",
+        statistic = "{p}%",
+        margin = "row",
+        missing = "no"
+      )
+  ) |> 
+    gtsummary::bold_labels() |> 
+    gtsummary::as_gt() |> 
+    gt::tab_footnote("NA omitted. Table reflects row percentages") |>
+    gt::tab_options(table.font.size = "small",
+                    data_row.padding = gt::px(1))
+}
+
+
+```
+
+```{r}
+#| label: make-kbl-crabs
+#| include: false
+
+
+# using map2(), I can iterate a function over two arguments at a time, which
+# would be the variables of interest in the dataframe
+kbl_crabs.q5 <- map2(ex.clps[1], qs.clps[1:9], make_crab_as_kable)
+kbl_crabs.q6 <- map2(ex.clps[2], qs.clps[1:9], make_crab_as_kable)
+kbl_crabs.q7 <- map2(ex.clps[3], qs.clps[1:9], make_crab_as_kable)
+kbl_crabs.q8 <- map2(ex.clps[4], qs.clps[1:9], make_crab_as_kable)
+
+```
 
 # Overview of demographic variables and balance
 
 ```{r}
-#| label: tbl-balance
-#| warning: false
-#| message: false
+#| label: tbl-1
+
+
 
 # table of treatment and control groups
 df |>
@@ -140,7 +212,7 @@ df |>
   gtsummary::modify_header(label = "**Variable**") |>
   gtsummary::bold_labels() |>
   gtsummary::as_gt() |>
-  gt::tab_header("Table 1. Balance") |>
+  gt::tab_header("Description of Sample") |>
   gt::tab_footnote("Failure to complete survey, n = 120") |>
   gt::tab_options(table.font.size = "small",
                   data_row.padding = gt::px(1))
@@ -149,27 +221,52 @@ df |>
 
 ```
 
+
+
 ## Q5. Attention Paid to Political Affairs
 
+```{r}
+#| label: tbl-q5q26
+
+
+
+# This is, essentially, a 3-way crosstab shwoing x across y by z
+# The only problem is that the variable lable for the column question is omitted
+df |>
+  labelled::set_variable_labels(
+    q26.clps = "Confidence Maricopa County, AZ will be safe for voters",
+    q5.clps = "Attentiveness to Political Affairs"
+  ) |> 
+  mutate(group = forcats::fct_rev(group)) |> 
+  gtsummary::tbl_strata(
+    strata = group,
+    ~ .x |>
+      gtsummary::tbl_cross(
+        row = q5.clps,
+        col = q26.clps,
+        statistic = "{p}%",
+        percent = "row",
+        margin = "row",
+        missing = "no"
+      )
+  ) |>
+  gtsummary::bold_labels() |>
+  gtsummary::as_gt() |> 
+  gt::tab_header(
+    title = gt::md("**Will Maricopa County, AZ be Safe for Voters?**")) |> 
+  gt::tab_footnote("NA omitted. Table reflects row percentages") |> 
+  gt::tab_options(
+    table.font.size = "small",
+    data_row.padding = gt::px(1))
+
+
+```
+
+
+
+
+## Testing without use of functions
 The following crosstabulations 
 
-```{r}
-#| label: tbl-q5q19
-#| results: asis
 
-# iv = q5, dv = q19, z = group
-kableExtra::kable(q5_crabs[[1]], format = "html")
-
-
-```
-
-
-```{r}
-#| label: tbl-q5q20
-#| results: asis
-
-# iv = q5, dv = q20, z = group
-kableExtra::kable(q5_crabs[[2]], format = "html")
-
-```
 

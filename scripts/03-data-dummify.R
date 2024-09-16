@@ -9,8 +9,8 @@ library(surveytoolbox)
 
 # collapse factor vars and add new collapsed factors to data frame
 dumdf <- data |>
-  select(rowID, q19, q20, q22, q23, q24, q26, q30, q31, q33, q34, q35, q37) |>
-  mutate(across(
+  dplyr::select(rowID, q19, q20, q22, q23, q24, q26, q30, q31, q33, q34, q35, q37) |>
+  dplyr::mutate(across(
     c(q19, q20, q22, q23, q24, q26, q30, q31, q33, q34, q35, q37),
     ~ forcats::fct_collapse(
       .,
@@ -21,12 +21,12 @@ dumdf <- data |>
   ))
 
 dumdf <- dumdf |> 
-  select(rowID, contains("_2lvl")) |> 
+  dplyr::select(rowID, contains("_2lvl")) |> 
   pewmethods::dummify_factors(sep = "_")
 
 dumdf <- dumdf |>
-  select(rowID, contains("_2lvl")) |>
-  mutate(
+  dplyr::select(rowID, contains("_2lvl")) |>
+  dplyr::mutate(
     q19_dum = dplyr::case_when(
       q19_2lvl_Not_confident == 1 ~ 0,
       q19_2lvl_Confident == 1 ~ 1,
@@ -93,16 +93,16 @@ dumdf <- dumdf |>
 # dummy q21 q32 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::####
 
 dum_q2132 <- data |>
-  select(rowID, q21, q32) |> 
-  mutate(across(c(q21, q32), ~forcats::fct_collapse(
+  dplyr::select(rowID, q21, q32) |> 
+  dplyr::mutate(across(c(q21, q32), ~forcats::fct_collapse(
     .,
     not_committed = c("Not at all committed", "Not too committed"),
     committed = c("Somewhat committed", "Very committed")))) 
 
 dum_q2132 <- dum_q2132 |> 
-  select(rowID, q21, q32) |> 
+  dplyr::select(rowID, q21, q32) |> 
   pewmethods::dummify_factors(sep = "_") |> 
-  mutate(
+  dplyr::mutate(
     q21_dum = dplyr::case_when(
       q21_not_committed == 1 ~ 0,
       q21_committed == 1 ~ 1,
@@ -124,17 +124,17 @@ dum_q2132 <- dum_q2132 |>
 # forcats::fct_na_value_to_level(data$q36) |> levels()
 
 dum_q2536 <- data |>
-  select(rowID, q25, q36) |>
+  dplyr::select(rowID, q25, q36) |>
   # whoops. Need to change "somewhat unconcerned" to "Not too concerned"
   # recall: fct_recode(x, old_level = new_level)
-  mutate(q36 =forcats::fct_recode(
+  dplyr::mutate(q36 =forcats::fct_recode(
     q36, 
     "Not at all concerned" = "Not at all concerned",
     "Not too concerned" = "Somewhat unconcerned",
     "Somewhat concerned" = "Somewhat concerned",
     "Very concerned" = "Very concerned")
     ) |>
-  mutate(across(
+  dplyr::mutate(across(
     c(q25, q36),
     ~ forcats::fct_collapse(
       .,
@@ -144,9 +144,9 @@ dum_q2536 <- data |>
   )) 
 
 dum_q2536 <- dum_q2536 |> 
-  select(rowID, q25, q36) |> 
+  dplyr::select(rowID, q25, q36) |> 
   pewmethods::dummify_factors(sep = "_") |> 
-  mutate(
+  dplyr::mutate(
     q25_dum = dplyr::case_when(
       q25_not_concerned == 1 ~ 0,
       q25_concerned == 1 ~ 1,
@@ -165,8 +165,8 @@ dum_q2536 <- dum_q2536 |>
 # forcats::fct_na_value_to_level(data$q38) |> levels()
 
 dum_q38 <- data |>
-  select(rowID, q38) |>
-  mutate(q38 =
+  dplyr::select(rowID, q38) |>
+  dplyr::mutate(q38 =
            forcats::fct_collapse(
              q38,
              unsafe = c("Not safe at all", "Not too safe"),
@@ -174,9 +174,9 @@ dum_q38 <- data |>
 
 
 dum_q38 <- dum_q38 |> 
-  select(rowID, q38) |> 
+  dplyr::select(rowID, q38) |> 
   pewmethods::dummify_factors(sep = "_") |> 
-  mutate(
+  dplyr::mutate(
     q38_dum = dplyr::case_when(
       q38_unsafe == 1 ~ 0,
       q38_safe == 1 ~ 1,
@@ -191,7 +191,7 @@ dum_q38 <- dum_q38 |>
 
 # dummy q27 q39 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::####
 
-data |> select(q27, q39) |> summarise_all(~sum(is.na(.)))
+data |> dplyr::select(q27, q39) |> summarise_all(~sum(is.na(.)))
 table(data$q27)
 table(data$q39)
 
@@ -199,8 +199,8 @@ forcats::fct_na_value_to_level(data$q27) |> levels()
 forcats::fct_na_value_to_level(data$q39) |> levels()
 
 dum_q2739 <- data |>
-  select(rowID, q27, q39) |>
-  mutate(across(
+  dplyr::select(rowID, q27, q39) |>
+  dplyr::mutate(across(
     c(q27, q39),
     ~ forcats::fct_collapse(
       .,
@@ -211,9 +211,9 @@ dum_q2739 <- data |>
 
 
 dum_q2739 <- dum_q2739 |> 
-  select(rowID, q27, q39) |> 
+  dplyr::select(rowID, q27, q39) |> 
   pewmethods::dummify_factors(sep = "_") |> 
-  mutate(
+  dplyr::mutate(
     q27_dum = dplyr::case_when(
       q27_disapprove == 1 ~ 0,
       q27_approve == 1 ~ 1,
@@ -232,22 +232,22 @@ dum_q2739 <- dum_q2739 |>
 # dummy q29 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::####
 
 
-data |> select(q29) |> summarise_all(~sum(is.na(.)))
+data |> dplyr::select(q29) |> summarise_all(~sum(is.na(.)))
 table(data$q29)
 
 forcats::fct_na_value_to_level(data$q29) |> levels()
 
 dum_q29 <- data |>
-  select(rowID, q29) |>
-  mutate(q29 = forcats::fct_collapse(q29,
+  dplyr::select(rowID, q29) |>
+  dplyr::mutate(q29 = forcats::fct_collapse(q29,
       oppose = c("Definitely should not adopt", "Probably should not adopt"),
       support = c("Probably should adopt", "Definitely should adopt")
     )) 
 
 dum_q29 <- dum_q29 |> 
-  select(rowID, q29) |> 
+  dplyr::select(rowID, q29) |> 
   pewmethods::dummify_factors(sep = "_") |> 
-  mutate(
+  dplyr::mutate(
     q29_dum = dplyr::case_when(
       q29_oppose == 1 ~ 0,
       q29_support == 1 ~ 1,
@@ -261,24 +261,24 @@ dum_q29 <- dum_q29 |>
 # dummy q28 q40 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::####
 
 # get levels for matrix style question Q28
-data |>  select(contains("28_"), contains("40_")) |>  sapply(levels)
+data |>  dplyr::select(contains("28_"), contains("40_")) |>  sapply(levels)
 
-data |> select(rowID, contains("28_"), contains("40_")) |> 
-  select(contains("_"))
+data |> dplyr::select(rowID, contains("28_"), contains("40_")) |> 
+  dplyr::select(contains("_"))
 
 # collapse factor vars and add new collapsed factors to data frame
 dum_2840 <- data |>
-  select(rowID, contains("28_"), contains("40_")) |> 
-  mutate(across(contains("_"), ~forcats::fct_collapse(
+  dplyr::select(rowID, contains("28_"), contains("40_")) |> 
+  dplyr::mutate(across(contains("_"), ~forcats::fct_collapse(
     .,
     Not_likely = c("Not likely at all", "Not too likely"),
     Likely = c("Somewhat likely", "Very likely")),
     .names = "{.col}_2lvl"))
 
 dum_2840 <- dum_2840 |> 
-  select(rowID, contains("_2lvl")) |> 
+  dplyr::select(rowID, contains("_2lvl")) |> 
   pewmethods::dummify_factors(sep = "_") |>  
-  mutate(
+  dplyr::mutate(
     q28_1_dum = dplyr::case_when(
     q28_1_2lvl_Not_likely == 1 ~ 0,
     q28_1_2lvl_Likely == 1 ~ 1,
@@ -331,13 +331,13 @@ dum_2840 <- dum_2840 |>
 # I can't really "dummify" these factors into simply binary variables with
 # values 1, 0. There were five response options with a neutral middle.
 dum_q41434446 <- data |>
-  select(rowID, 
+  dplyr::select(rowID, 
          contains("41_"),
          contains("43_"), 
          contains("44_"),
          contains("46_")
          ) |>  
-  mutate(across(contains("_"), ~forcats::fct_collapse(
+  dplyr::mutate(across(contains("_"), ~forcats::fct_collapse(
     .,
     decrease = c("Decrease confidence a lot",
                       "Decrease confidence somewhat"),
@@ -350,9 +350,9 @@ dum_q41434446 |>
   summarise_all(~sum(is.na(.)))
 
 dum_q41434446 <- dum_q41434446 |> 
-  select(rowID, contains("_")) |> 
+  dplyr::select(rowID, contains("_")) |> 
   pewmethods::dummify_factors(sep = "_") |>
-  mutate(
+  dplyr::mutate(
     q41_1_clps = dplyr::case_when(
     q41_1_decrease == 1 ~ -1,
     q41_1_no_impact == 1 ~ 0,
@@ -534,18 +534,18 @@ rm(dumdf,
 # column 114 to 167 are the dummy vars
 
 # check that lengths of selected vars are equal
-# df |> select(36:89) |> colnames() |> length()
-# df |> select(114:167) |> colnames() |> length()
+# df |> dplyr::select(36:89) |> colnames() |> length()
+# df |> dplyr::select(114:167) |> colnames() |> length()
 
 # look at the var labels (i.e., 'label_var' column)
 # df |> surveytoolbox::data_dict() |> View()
 
 
 # create a `dum` df containing only the dummy vars
-dum <- df |> select(contains("_dum") | contains("clps"))
+dum <- df |> dplyr::select(contains("_dum") | contains("clps"))
 
 # create a `smrt` df containing only the associated factor vars
-smrt <- df |> select(36:89)
+smrt <- df |> dplyr::select(36:89)
 
 # Briefly, here are the steps
 # 1. create named vector of smart_labels containing variable and variable label
@@ -553,8 +553,8 @@ smrt <- df |> select(36:89)
 # To quickly assign the variable labels, first create a named vector via
 # deframe() with values as the variable labels and names as the variable names.
 smrt_labels <- smrt |> labelled::generate_dictionary() |>
-  select(variable, label) |> 
-  deframe()
+  dplyr::select(variable, label) |> 
+  tibble::deframe()
 
 # 2. pull `smrt_names` and `dum_names` each into a character vector
 
@@ -646,8 +646,8 @@ data.table::setnames(dum, old = dum_names, new = real_dum_names)
 # 7. rip out `dum_labels` from `dum` dataframe using the deframe() method from
 # before
 dum_labels <- dum |> labelled::generate_dictionary() |> 
-  select(variable, label) |> 
-  deframe()
+  dplyr::select(variable, label) |> 
+  tibble::deframe()
 
 
 # 8. assign those `dum_labels` to the dummy vars in the main df, achieving the
@@ -667,7 +667,7 @@ rm(smrt, dum, smrt_labels, smrt_names, dum_names, dum_labels, real_dum_names)
 # e.g., q19.clps
 
 df <- df |>
-  mutate(across(
+  dplyr::mutate(across(
     c(q19, q20, q22, q23, q24, q26, q30, q31, q33, q34, q35, q37),
     ~ forcats::fct_collapse(
       .,
@@ -676,7 +676,7 @@ df <- df |>
     ),
     .names = "{.col}.clps"
   )) |>
-  mutate(across(
+  dplyr::mutate(across(
     c(q21, q32),
     ~ forcats::fct_collapse(
       .,
@@ -687,7 +687,7 @@ df <- df |>
   )) |>
   # whoops. Need to change "somewhat unconcerned" to "Not too concerned"
   # recall: fct_recode(x, old_level = new_level)
-  mutate(
+  dplyr::mutate(
     q36 = forcats::fct_recode(
       q36,
       "Not at all concerned" = "Not at all concerned",
@@ -696,7 +696,7 @@ df <- df |>
       "Very concerned" = "Very concerned"
     )
   ) |>
-  mutate(across(
+  dplyr::mutate(across(
     c(q25, q36),
     ~ forcats::fct_collapse(
       .,
@@ -705,13 +705,13 @@ df <- df |>
     ),
     .names = "{.col}.clps"
   )) |>
-  mutate(q38 =
+  dplyr::mutate(q38 =
            forcats::fct_collapse(
              q38,
              unsafe = c("Not safe at all", "Not too safe"),
              safe = c("Somewhat safe", "Very safe")
            )) |>
-  mutate(across(
+  dplyr::mutate(across(
     c(q27, q39),
     ~ forcats::fct_collapse(
       .,
@@ -720,16 +720,16 @@ df <- df |>
     ),
     .names = "{.col}.clps"
   )) |>
-  mutate(q29 = forcats::fct_collapse(
+  dplyr::mutate(q29 = forcats::fct_collapse(
     q29,
     oppose = c("Definitely should not adopt", "Probably should not adopt"),
     support = c("Probably should adopt", "Definitely should adopt")
   )) |> 
-  mutate(across(q28_1:q28_5 | q40_1:q40_5, ~forcats::fct_collapse(
+  dplyr::mutate(across(q28_1:q28_5 | q40_1:q40_5, ~forcats::fct_collapse(
     .,
     Not_likely = c("Not likely at all", "Not too likely"),
     Likely = c("Somewhat likely", "Very likely")))) |>
-  mutate(
+  dplyr::mutate(
     across(
       q41_1:q41_6 |
         q43_1:q43_6 | q44_1:q44_6 | q46_1:q46_6,
@@ -744,15 +744,14 @@ df <- df |>
   )
 
 df <- df |> 
-  mutate(
+  dplyr::mutate(
     q5.clps = datawizard::categorize(q5, "mean", labels = c("Inattentive", "Attentive")),
     q6.clps = datawizard::categorize(q6, "equal_length", n_groups = 3, labels = c("Low Favor", "Mid Favor", "High Favor")),
     q8.clps = datawizard::categorize(q8, "equal_length", n_groups = 3, labels = c("Low Trust", "Moderate Trust", "High Trust")))
 
-levels(df$gender)
 
 df <- df |> 
-  mutate(gender_3cat = fct_collapse(
+  dplyr::mutate(gender_3cat = forcats::fct_collapse(
     gender,
     "Male" = "Male",
     "Female" = "Female",

@@ -1,10 +1,17 @@
 project:
   type: manuscript
+  output-dir: _manuscript
 
 manuscript: 
+  notebooks: 
+    - notebook: notebooks/01-data-import-clean-process.qmd
+      title: Data Import and Processing
+      download-url: notebooks/01-data-import-clean-process.qmd
+      url: https://github.com/isaiahespi/cdce_vets/blob/6c4422083bde3e4286360c38b2a886aff9b6179c/notebooks/01-data-import-clean-process.qmd
   resources: 
-  - df-2024-09-11.Rdata
-  - df-2024-09-11.csv
+  - data/df-2024-09-11.Rdata
+  - data/df-2024-09-11.csv
+  - codebooks/df_dict.csv
   code-links: 
     - repo
     - text: 01-data
@@ -23,6 +30,8 @@ execute:
 
 # bibliography: references.bib
 mainfont: Palatino Linotype
+date-modified: last-modified
+date-format: "YYYY-M-D"
 
 format:
   html:

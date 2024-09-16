@@ -444,3 +444,6 @@ write.csv(data2, file = "data/data_numeric_vets_survey-exp-2024-09-11.csv")
 # generate data dictionary
 df_dict <- surveytoolbox::data_dict(df) # I prefer this to the labelled dict
 write.csv(df_dict, file = "codebooks/df_dict.csv")
+
+
+
