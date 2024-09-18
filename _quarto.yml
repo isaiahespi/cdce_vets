@@ -37,6 +37,6 @@ format:
     # csl: https://www.zotero.org/styles/american-political-science-review
   # docx: default
   # jats: default
-  # report-pdf:
-  #   keep-md: true
-  #   keep-tex: true
+  report-pdf:
+    keep-md: true
+    keep-tex: true
