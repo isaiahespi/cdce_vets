@@ -14,10 +14,10 @@ raw_spss <- haven::read_sav(file = "data-raw/vets_spss_do_2024-09-11_11.38.sav")
 
 # despite being a .sav file imported using `haven::read_sav()`, 
 # the data set is not "haven_labelled"
-haven::is.labelled(raw_spss)
+# haven::is.labelled(raw_spss)
 
 # take a look
-glimpse(raw_spss)
+# glimpse(raw_spss)
 
 # A data dictionary contains metadata about the data. The
 # `labelled::generate_dictionary` function is used to create a data
@@ -29,7 +29,7 @@ write.csv(raw_spss_dict, file = "codebooks/raw_spss_dict.csv")
 
 
 # 1553 total observations, including non-citizens and non-consenters 
-dim(raw_spss)
+# dim(raw_spss)
 
 # clean and process (wrangle) data set
 data_spss <- raw_spss |>
@@ -131,10 +131,10 @@ data_spss <- raw_spss |>
   # add a column of ascending sequential row ids starting at 1 at start of df
   tibble::rowid_to_column("rowID")
 
-dim(data_spss)
+# dim(data_spss)
 # 1388 valid respondents
 
-dplyr::glimpse(data_spss)
+# dplyr::glimpse(data_spss)
 
 # verify that `age` and `q2` do not match at all in the numeric data frame
 # due to `q2` reflecting codes, not ages
@@ -236,13 +236,13 @@ data_spss <- data_spss |>
 # it is still possible that `lucid_age` doesn't match the re-coded `age`
 # This is the case, in fact. There are a total of 170 discrepancies, which
 # accounts to a proportion of 0.122 or 12.2% of sample
-data_spss |> 
-  select(rowID, lucid_age, age) |> 
-  mutate(match = ifelse(age == lucid_age, TRUE, FALSE)) |>
-  summarise(
-    "Matches" = sum(match == TRUE, na.rm = T),
-    "Non-match" = sum(match == FALSE, na.rm = T)
-  )
+# data_spss |> 
+#   select(rowID, lucid_age, age) |> 
+#   mutate(match = ifelse(age == lucid_age, TRUE, FALSE)) |>
+#   summarise(
+#     "Matches" = sum(match == TRUE, na.rm = T),
+#     "Non-match" = sum(match == FALSE, na.rm = T)
+#   )
 
 
 # Question items Q51 to Q58 were split up into two question sets, Q51:Q54 and
@@ -278,11 +278,11 @@ data_spss_dict <- data_spss |>
 # further process data set for later analysis ::::::::::::::::::::::::::::::####
 
 # check to see if there are missing values in the data set (there are)
-any(is.na(data_spss))
-
-# determine which variables (columns) contain missing values and how many
-colSums(is.na(data_spss)) |> broom::tidy() |> 
-  filter(x > 0)
+# any(is.na(data_spss))
+# 
+# # determine which variables (columns) contain missing values and how many
+# colSums(is.na(data_spss)) |> broom::tidy() |> 
+#   filter(x > 0)
 
 
 # since SPSS data is labelled, usually, the variables are <dbl+lbl> instead of
@@ -322,14 +322,14 @@ data <- data_spss |>
 
 # save into output folder as html file
 # omit display order, answer display order, and needless timing variables
-data |> 
-  sjPlot::view_df(file = "output/vets_survey_data_dict.html",
-                  show.frq = T, show.prc = T)
-
-data_spss |>
-  sjPlot::view_df(file = "output/spss_survey_dict.html",
-                  show.frq = T, show.prc = T)
-
+# data |> 
+#   sjPlot::view_df(file = "output/vets_survey_data_dict.html",
+#                   show.frq = T, show.prc = T)
+# 
+# data_spss |>
+#   sjPlot::view_df(file = "output/spss_survey_dict.html",
+#                   show.frq = T, show.prc = T)
+# 
 
 
 # add variable labels back into factorized data set ::::::::::::::::::::::::####
@@ -447,3 +447,5 @@ write.csv(df_dict, file = "codebooks/df_dict.csv")
 
 
 
+# remove uneeded dataframes and leave df and df_dict
+rm(data, data_dict_spss, data_spss, data_spss_dict, data2_dict_num, raw_spss, raw_spss_dict)

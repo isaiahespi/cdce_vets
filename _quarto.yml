@@ -18,10 +18,21 @@ format:
   html:
     toc: true
     toc-location: left
+    title-block-style: manuscript
     smooth-scroll: true
     embed-resources: true
     link-external-newwindow: true
     footnotes-hover: false
+    page-layout: article
+    code-tools: true
+    code-fold: true
+    code-overflow: wrap
+    code-copy: hover
+    code-links:
+      - text: Data Import and Processing
+        icon: file-code
+        href: 01-data-import-clean-process.qmd
+      - repo
     # Use a CSL to style (https://www.zotero.org/styles/)
     # csl: https://www.zotero.org/styles/american-political-science-review
   # docx: default

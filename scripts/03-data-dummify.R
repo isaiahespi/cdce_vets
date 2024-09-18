@@ -705,7 +705,7 @@ df <- df |>
     ),
     .names = "{.col}.clps"
   )) |>
-  dplyr::mutate(q38 =
+  dplyr::mutate(q38.clps =
            forcats::fct_collapse(
              q38,
              unsafe = c("Not safe at all", "Not too safe"),
@@ -720,15 +720,17 @@ df <- df |>
     ),
     .names = "{.col}.clps"
   )) |>
-  dplyr::mutate(q29 = forcats::fct_collapse(
+  dplyr::mutate(q29.clps = forcats::fct_collapse(
     q29,
     oppose = c("Definitely should not adopt", "Probably should not adopt"),
     support = c("Probably should adopt", "Definitely should adopt")
   )) |> 
-  dplyr::mutate(across(q28_1:q28_5 | q40_1:q40_5, ~forcats::fct_collapse(
+  dplyr::mutate(across(q28_1:q28_5 | q40_1:q40_5,~forcats::fct_collapse(
     .,
     Not_likely = c("Not likely at all", "Not too likely"),
-    Likely = c("Somewhat likely", "Very likely")))) |>
+    Likely = c("Somewhat likely", "Very likely")),
+    .names = "{.col}.clps"
+    )) |>
   dplyr::mutate(
     across(
       q41_1:q41_6 |
@@ -743,11 +745,23 @@ df <- df |>
     )
   )
 
-df <- df |> 
+df <- df |>
   dplyr::mutate(
-    q5.clps = datawizard::categorize(q5, "mean", labels = c("Inattentive", "Attentive")),
-    q6.clps = datawizard::categorize(q6, "equal_length", n_groups = 3, labels = c("Low Favor", "Mid Favor", "High Favor")),
-    q8.clps = datawizard::categorize(q8, "equal_length", n_groups = 3, labels = c("Low Trust", "Moderate Trust", "High Trust")))
+    q5.clps = datawizard::categorize(q5, "mean", 
+                                     labels = c("Inattentive", "Attentive")),
+    q6.clps = datawizard::categorize(
+      q6,
+      "equal_length",
+      n_groups = 3,
+      labels = c("Low Favor", "Mid Favor", "High Favor")
+    ),
+    q8.clps = datawizard::categorize(
+      q8,
+      "equal_length",
+      n_groups = 3,
+      labels = c("Low Trust", "Moderate Trust", "High Trust")
+    )
+  )
 
 
 df <- df |> 
@@ -755,7 +769,77 @@ df <- df |>
     gender,
     "Male" = "Male",
     "Female" = "Female",
-    "Other/Refused" = c("Non-binary / third gender", "Prefer not to say")))
+    "Other/Refused" = c("Non-binary / third gender", "Prefer not to say")),
+    voted2020.clps = forcats::fct_collapse(
+      voted2020,
+      "Voted" = "Yes, I'm sure I voted",
+      "Didn't vote" = c("I'm sure I didn't vote", "I don't think I voted"),
+      "Unsure/Ineligible" = c("I think I voted","I was not eligible to vote")
+      )) |>
+  labelled::set_variable_labels(
+    voted2020.clps = "Q66. Turnout 2020"
+  )
 
 
- 
+
+df <- df |>
+  labelled::set_variable_labels(
+    q5.clps    = "Q5. Attention to Political Affairs",
+    q6.clps    = "Q6. EO Favorability",
+    q7         = "Q7. Legitimacy of 2020 election",
+    q8.clps    = "Q8. General Trust in others",
+    q19.clps   = "Q19. Accurate counts, AZ",
+    q20.clps   = "Q20. Competence of Election Staff, AZ",
+    q21.clps   = "Q21. Commitment of Election Staff, AZ",
+    q22.clps   = "Q22. Fair Process, AZ",
+    q23.clps   = "Q23. Fair Outcomes, AZ",
+    q24.clps   = "Q24. Secure Voting Tech, AZ",
+    q25.clps   = "Q25. Voter Intimidation/Violence, AZ",
+    q26.clps   = "Q26. Safe In-person Voting, AZ",
+    q27.clps   = "Q27. Election Official Approval, AZ",
+    q28_1.clps = "Q28_1. Voter fraud, AZ",
+    q28_2.clps = "Q28_2. Votes won't be counted, AZ",
+    q28_3.clps = "Q28_3. People will turned away, AZ",
+    q28_4.clps = "Q28_4. Foreign interference with votes, AZ",
+    q28_5.clps = "Q28_5. EOs discourage people from voting, AZ",
+    q29.clps   = "Q29. Adopt AZ Program",
+    q30.clps   = "Q30. Accurate counts, Local",
+    q31.clps   = "Q31. Competence of Election Staff, Local" ,
+    q32.clps   = "Q32. Commitment of Election Staff, Local",
+    q33.clps   = "Q33. Fair Process, Local",
+    q34.clps   = "Q34. Fair Outcomes, Local",
+    q35.clps   = "Q35. Secure Voting Tech, Local",
+    q36.clps   = "Q36. Voter Intimidation/Violence, Local",
+    q37.clps   = "Q37. Safe in-person voting, Local",
+    q38.clps   = "Q38. Safe to vote in-person, Local",
+    q39.clps   = "Q39. EO Approval, Local",
+    q40_1.clps = "Q40_1. Voter fraud, Local",
+    q40_2.clps = "Q40_2. Votes won't be counted, Local",
+    q40_3.clps = "Q40_3. People will be turned away, Local",
+    q40_4.clps = "Q40_4. Foreign interference with votes, Local",
+    q40_5.clps = "Q40_5. EO discourage people from voting, Local",
+    q41_1.clps = "Q41_1. Election officials test machines",
+    q41_2.clps = "Q41_2. Election officials conduct audits",
+    q41_3.clps = "Q41_3. Partisan Poll watchers observe the election.",
+    q41_4.clps = "Q41_4. Election staff include veterans and family",
+    q41_5.clps = "Q41_5. Election staff include lawyers",
+    q41_6.clps = "Q41_6. Election staff include college students",
+    q43_1.clps = "Q43_1. Law enforcement presence.",
+    q43_2.clps = "Q43_2. Partisan Poll watchers observe the election",
+    q43_3.clps = "Q43_3. People holding signs or giving out literature",
+    q43_4.clps = "Q43_4. Election staff includes veterans",
+    q43_5.clps = "Q43_5. Election staff includes lawyers",
+    q43_6.clps = "Q43_6. Election staff includes students",
+    q44_1.clps = "Q44_1. Election officials test machines",
+    q44_2.clps = "Q44_2. Election officials conduct audits",
+    q44_3.clps = "Q44_3. Partisan Poll watchers observe the election",
+    q44_4.clps = "Q44_4. Majority of Election staff are veterans",
+    q44_5.clps = "Q44_5. Majority of Election staff are lawyers",
+    q44_6.clps = "Q44_6. Majority of Election staff are students",
+    q46_1.clps = "Q46_1. Law enforcement presence.",
+    q46_2.clps = "Q46_2. Partisan Poll watchers observe the election",
+    q46_3.clps = "Q46_3. People holding signs or giving out literature",
+    q46_4.clps = "Q46_4. Majority of Election staff are veterans",
+    q46_5.clps = "Q46_5. Majority of Election staff are lawyers",
+    q46_6.clps = "Q46_6. Majority of Election staff are students",
+  )

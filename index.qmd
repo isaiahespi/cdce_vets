@@ -41,15 +41,14 @@ date: 2024-09-12
 link-citations: true
 tbl-cap-location: top
 reference-location: document
-notebook-view: false
-notebook-links: false
 citation:
   container-title: Center for Democracy and Civic Engagement, University of Maryland
 number-sections: false
+execute: 
+  cache: true
 ---
 
 
-## Introduction
 
 ```{r}
 #| label: packages
@@ -60,13 +59,6 @@ number-sections: false
 library(tidyverse)
 library(janitor)
 library(kableExtra)
-library(gtsummary)
-library(gt)
-library(easystats)
-library(labelled)
-library(sjlabelled)
-library(pewmethods)
-library(surveytoolbox)
 
 
 ```
@@ -86,109 +78,18 @@ load("data/data_numeric_vets_survey-exp-2024-09-11.Rdata") # numeric only
 
 ```{r}
 #| label: df-dict
+#| include: false
 
 # load data dictionary/codebook
 df_dict <- read.csv("codebooks/df_dict.csv")
 
 ```
 
-```{r}
-#| label: var-names
-#| include: false
 
-
-# assign column names as character vectors. 
-# qs = questions, 
-# clps = collapsed levels 
-# ex.clps = explanatory variables collapsed
-qs.clps <- df |>
-  select(contains(".clps"), -q5.clps, -q6.clps, -q8.clps, -q7) |>
-  colnames()
-
-ex.clps <- df |> select(q5.clps, q6.clps, q7, q8.clps) |> colnames()
-
-
-
-```
-
-```{r}
-#| label: setup-functions
-#| include: false
-
-# make crabs kable style
-make_crab_as_kable <- function(x, y){
-  crab_gtkbl_df <- df |> 
-    select(group, all_of(x), all_of(y)) |>
-    dplyr::mutate(group = forcats::fct_rev(group)) |> 
-    gtsummary::tbl_strata(
-    strata = group,
-    ~ .x |>
-      gtsummary::tbl_cross(
-        row = !!sym(x),
-        col = !!sym(y),
-        percent = "row",
-        statistic = "{p}%",
-        margin = "row",
-        missing = "no"
-      )
-  ) |> 
-    gtsummary::bold_labels() |> 
-    gtsummary::as_kable_extra(
-      booktabs = T,
-      longtable = T,
-      linesep = ""
-    ) |> 
-    kableExtra::kable_styling(
-      position = "left",
-      bootstrap_options = c("striped", "hover", "responsive")
-    )
-}
-
-# make crabs gt style
-make_crab_gtsummary <- function(x, y){
-  crab_gt_df <- df |> select(group, all_of(x), all_of(y)) |>
-    dplyr::mutate(group = forcats::fct_rev(group)) |> 
-    gtsummary::tbl_strata(
-    strata = group,
-    ~ .x |>
-      gtsummary::tbl_cross(
-        row = !!sym(x),
-        col = !!sym(y),
-        percent = "row",
-        statistic = "{p}%",
-        margin = "row",
-        missing = "no"
-      )
-  ) |> 
-    gtsummary::bold_labels() |> 
-    gtsummary::as_gt() |> 
-    gt::tab_footnote("NA omitted. Table reflects row percentages") |>
-    gt::tab_options(table.font.size = "small",
-                    data_row.padding = gt::px(1))
-}
-
-
-```
-
-```{r}
-#| label: make-kbl-crabs
-#| include: false
-
-
-# using map2(), I can iterate a function over two arguments at a time, which
-# would be the variables of interest in the dataframe
-kbl_crabs.q5 <- map2(ex.clps[1], qs.clps[1:9], make_crab_as_kable)
-kbl_crabs.q6 <- map2(ex.clps[2], qs.clps[1:9], make_crab_as_kable)
-kbl_crabs.q7 <- map2(ex.clps[3], qs.clps[1:9], make_crab_as_kable)
-kbl_crabs.q8 <- map2(ex.clps[4], qs.clps[1:9], make_crab_as_kable)
-
-```
-
-# Overview of demographic variables and balance
+## Overview of demographic variables and balance
 
 ```{r}
 #| label: tbl-1
-
 
 
 # table of treatment and control groups
@@ -207,66 +108,226 @@ df |>
     ),
     missing = "ifany"
   ) |>
-  gtsummary::add_n() |>
   gtsummary::add_overall() |>
   gtsummary::modify_header(label = "**Variable**") |>
   gtsummary::bold_labels() |>
-  gtsummary::as_gt() |>
-  gt::tab_header("Description of Sample") |>
-  gt::tab_footnote("Failure to complete survey, n = 120") |>
-  gt::tab_options(table.font.size = "small",
-                  data_row.padding = gt::px(1))
-
+    gtsummary::as_kable_extra(
+      booktabs = T,
+      longtable = T
+    ) |>  
+    kableExtra::kable_styling(
+      position = "left", 
+      fixed_thead = T,
+      font_size = 12,  
+      bootstrap_options = c("striped", "hover", "responsive")
+    )
 
 
 ```
+
+# Crosstabs
 
 
 
 ## Q5. Attention Paid to Political Affairs
 
 ```{r}
-#| label: tbl-q5q26
+#| label: tbl-q5q19
+#| results: asis
 
-
-
-# This is, essentially, a 3-way crosstab shwoing x across y by z
-# The only problem is that the variable lable for the column question is omitted
-df |>
-  labelled::set_variable_labels(
-    q26.clps = "Confidence Maricopa County, AZ will be safe for voters",
-    q5.clps = "Attentiveness to Political Affairs"
-  ) |> 
-  mutate(group = forcats::fct_rev(group)) |> 
-  gtsummary::tbl_strata(
-    strata = group,
-    ~ .x |>
-      gtsummary::tbl_cross(
-        row = q5.clps,
-        col = q26.clps,
-        statistic = "{p}%",
-        percent = "row",
-        margin = "row",
-        missing = "no"
-      )
-  ) |>
-  gtsummary::bold_labels() |>
-  gtsummary::as_gt() |> 
-  gt::tab_header(
-    title = gt::md("**Will Maricopa County, AZ be Safe for Voters?**")) |> 
-  gt::tab_footnote("NA omitted. Table reflects row percentages") |> 
-  gt::tab_options(
-    table.font.size = "small",
-    data_row.padding = gt::px(1))
+df |> 
+  janitor::tabyl(q5.clps, q19.clps, group, show_na = F) |> 
+  janitor::adorn_percentages("row") |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
+  janitor::adorn_title("combined", 
+                       row_name = "Q5", col_name = "Q19") |>
+  bind_rows(.id = "group_var") |>    
+  gt::gt(
+    rowname_col = "row_var",
+    groupname_col = "group_var") |> 
+  gt::tab_style(
+    style = gt::cell_text(weight = "bold"),
+    locations = gt::cells_row_groups()
+  )
 
 
 ```
 
 
+```{r}
+#| label: tbl-q5q20
+#| results: asis
+
+df |> 
+  janitor::tabyl(q5.clps, q20.clps, group, show_na = F) |> 
+  janitor::adorn_percentages("row") |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
+  janitor::adorn_title("combined", 
+                       row_name = "Q5", col_name = "Q20") |>
+  bind_rows(.id = "group_var") |>    
+  gt::gt(
+    rowname_col = "row_var",
+    groupname_col = "group_var") |> 
+  gt::tab_style(
+    style = gt::cell_text(weight = "bold"),
+    locations = gt::cells_row_groups()
+  )
+
+```
+
+```{r}
+#| results: asis
+
+df |> 
+  janitor::tabyl(q5.clps, q21.clps, group, show_na = F) |> 
+  janitor::adorn_percentages("row") |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
+  janitor::adorn_title("combined", 
+                       row_name = "Q5", col_name = "Q21") |>
+  bind_rows(.id = "group_var") |>    
+  gt::gt(
+    rowname_col = "row_var",
+    groupname_col = "group_var") |> 
+  gt::tab_style(
+    style = gt::cell_text(weight = "bold"),
+    locations = gt::cells_row_groups()
+  )
 
 
-## Testing without use of functions
-The following crosstabulations 
+```
+
+```{r}
+#| results: asis
+
+df |> 
+  janitor::tabyl(q5.clps, q22.clps, group, show_na = F) |> 
+  janitor::adorn_percentages("row") |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
+  janitor::adorn_title("combined", 
+                       row_name = "Q5", col_name = "Q22") |>
+  bind_rows(.id = "group_var") |>    
+  gt::gt(
+    rowname_col = "row_var",
+    groupname_col = "group_var") |> 
+  gt::tab_style(
+    style = gt::cell_text(weight = "bold"),
+    locations = gt::cells_row_groups()
+  )
 
 
+```
+
+
+```{r}
+#| results: asis
+
+df |> 
+  janitor::tabyl(q5.clps, q23.clps, group, show_na = F) |> 
+  janitor::adorn_percentages("row") |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
+  janitor::adorn_title("combined", 
+                       row_name = "Q5", col_name = "Q23") |>
+  bind_rows(.id = "group_var") |>    
+  gt::gt(
+    rowname_col = "row_var",
+    groupname_col = "group_var") |> 
+  gt::tab_style(
+    style = gt::cell_text(weight = "bold"),
+    locations = gt::cells_row_groups()
+  )
+
+
+```
+
+```{r}
+#| results: asis
+
+df |> 
+  janitor::tabyl(q5.clps, q24.clps, group, show_na = F) |> 
+  janitor::adorn_percentages("row") |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
+  janitor::adorn_title("combined", 
+                       row_name = "Q5", col_name = "Q24") |>
+  bind_rows(.id = "group_var") |>    
+  gt::gt(
+    rowname_col = "row_var",
+    groupname_col = "group_var") |> 
+  gt::tab_style(
+    style = gt::cell_text(weight = "bold"),
+    locations = gt::cells_row_groups()
+  )
+
+
+```
+
+```{r}
+#| results: asis
+
+df |> 
+  janitor::tabyl(q5.clps, q25.clps, group, show_na = F) |> 
+  janitor::adorn_percentages("row") |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
+  janitor::adorn_title("combined", 
+                       row_name = "Q5", col_name = "Q25") |>
+  bind_rows(.id = "group_var") |>    
+  gt::gt(
+    rowname_col = "row_var",
+    groupname_col = "group_var") |> 
+  gt::tab_style(
+    style = gt::cell_text(weight = "bold"),
+    locations = gt::cells_row_groups()
+  )
+
+
+```
+
+```{r}
+#| results: asis
+
+df |> 
+  janitor::tabyl(q5.clps, q26.clps, group, show_na = F) |> 
+  janitor::adorn_percentages("row") |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
+  janitor::adorn_title("combined", 
+                       row_name = "Q5", col_name = "Q26") |>
+  bind_rows(.id = "group_var") |>    
+  gt::gt(
+    rowname_col = "row_var",
+    groupname_col = "group_var") |> 
+  gt::tab_style(
+    style = gt::cell_text(weight = "bold"),
+    locations = gt::cells_row_groups()
+  )
+
+
+```
+
+```{r}
+#| results: asis
+
+df |> 
+  janitor::tabyl(q5.clps, q27.clps, group, show_na = F) |> 
+  janitor::adorn_percentages("row") |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
+  janitor::adorn_title("combined", 
+                       row_name = "Q5", col_name = "Q27") |>
+  bind_rows(.id = "group_var") |>    
+  gt::gt(
+    rowname_col = "row_var",
+    groupname_col = "group_var") |> 
+  gt::tab_style(
+    style = gt::cell_text(weight = "bold"),
+    locations = gt::cells_row_groups()
+  )
+
+
+```
+
+### Q6
+
+
+### Q7
+
+
+### Q8
 
