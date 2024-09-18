@@ -2,8 +2,10 @@
 
 # load packages
 library(tidyverse)
+library(rlang)
 library(janitor)
-library(easystats)
+library(kableExtra)
+# library(easystats)
 library(gtsummary)
 library(gt)
 # library(labelled)
@@ -39,7 +41,7 @@ df |>
 
 # quick, informative, easy
 df |> 
-  select(group, age, gender, race, educ, milserv1, milserv2, milservfam) |> 
+  select(group, age_cat, gender_3cat, race, educ, milserv1, milserv2, milservfam) |> 
   datawizard::data_tabulate(drop_levels = T,
                             remove_na = F,
                             collapse = T)
@@ -69,6 +71,44 @@ df |>
     data_row.padding = gt::px(1)
   )
 
+
+# table of treatment and control groups
+df |>
+  gtsummary::tbl_summary(
+    by = group,
+    include = c(age, gender, race, educ, milserv1, milserv2, milservfam),
+    statistic = list(
+      age ~ "{mean} ({sd})",
+      gtsummary::all_categorical() ~ "{n} ({p}%)"
+    ),
+    type = list(
+      milserv1 ~ "categorical",
+      milserv2 ~ "categorical",
+      milservfam ~ "categorical"
+    ),
+    missing = "ifany"
+  ) |>
+  gtsummary::add_n() |>
+  gtsummary::add_overall() |>
+  gtsummary::modify_header(label = "**Variable**") |>
+  gtsummary::bold_labels() |>
+    gtsummary::as_kable_extra(
+      booktabs = T,
+      longtable = T
+    ) |> 
+    kableExtra::kable_styling(
+      position = "left",
+      fixed_thead = T,
+      font_size = 14,
+      bootstrap_options = c("striped", "hover", "responsive")
+    ) |> 
+  kableExtra::footnote(general = "Failure to complete survey, n = 120") |> 
+  kableExtra::scroll_box(height = "400px")
+
+
+
+
+
 # describe distribution (as best as possible with given data)
 # better for particular variables
 data2 |> 
@@ -89,6 +129,8 @@ table(df$q7, df$q19, df$group, useNA = "ifany")
 # prop.table with row percentages
 # recall: prop.table(table(iv, dv, z), margin = 1) for row percentages
 round(prop.table(table(df$q7, df$q19, df$group), margin = 1), 4)
+round(prop.table(table(df$q6.clps, df$q21.clps, df$group), margin = 1), 4)
+
 
 
 # crosstab using the janitor package for comparison
@@ -181,15 +223,49 @@ df |>
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::####
 
 # save variables of interest as character vectors (or objects or whatever)
-dvs_az <- df |> select(q19:q29) |> colnames()
-dv_lcl <- df |> select(q30:q40_5) |> colnames()
-confimpct_vars <- df |> select(q41_1:q43_6) |> colnames()
-confimpct_maj_vars <- df |> select(q44_1:q46_6) |> colnames()
-ex_vars <- df |> select(q5:q8) |> colnames()
-demo_vars <- df |>
-  select(age_cat, gender, hisp, race, educ, milserv1, milserv2, milservfam) |>
+# questions related to Maricopa County, AZ 
+qs_az <- df |> select(
+  q19.clps,
+  q20.clps,
+  q21.clps,
+  q22.clps,
+  q23.clps,
+  q24.clps,
+  q25.clps,
+  q26.clps,
+  q27.clps,
+  q28_1.clps,
+  q28_2.clps,
+  q28_3.clps,
+  q28_4.clps,
+  q28_5.clps,
+  q29.clps
+) |> colnames()
+
+# questions related to local area 
+qs_lcl <- df |>
+  select(
+    q30.clps,
+    q31.clps,
+    q32.clps,
+    q33.clps,
+    q34.clps,
+    q35.clps,
+    q36.clps,
+    q37.clps,
+    q38.clps,
+    q39.clps
+  ) |>
   colnames()
-poli_vars <- df |> select(voted2020, choice2020, voteintent, partyid_3cat,
+
+# questions q41 to q43 confidence impact questions
+confimpct_qs <- df |> select(q41_1.clps:q43_6.clps) |> colnames()
+
+# questions q44 to q46 confidence impact questions, majority language
+confimpct_maj_vars <- df |> select(q44_1.clps:q46_6.clps) |> colnames()
+
+
+political_qs <- df |> select(voted2020.clps, choice2020, voteintent, partyid_3cat,
                             ideo, ideolean) |> colnames()
 
 # put column names of vars into a character vector
@@ -213,6 +289,7 @@ qs <- df |>
 qs.clps <- df |> 
   select(contains(".clps"), -q5.clps, -q6.clps, -q7, -q8.clps) |>
   colnames()
+
 
 # now only the collapsed versions of q5 to q8 (q7 doesn't need collapsing)
 ex.clps <- df |>
@@ -249,14 +326,14 @@ df |>
   janitor::adorn_ns(position = "rear") |> 
   janitor::adorn_title("top",
                        row_name = "Q7.Legitimacy",
-                       col_name = "Q19.Vote Count Trust")
+                       col_name = "Q26. Safe to vote in AZ")
 
 # I can also write a function for janitor::tabyl() as well
 # write function to make tabyl crosstabs 
 make_crabs <- function(x, y){
   crab_df <- df |> 
     select(all_of(x), all_of(y), group) |>
-    janitor::tabyl(!!sym(x), !!sym(y), group, show_na = F) |>
+    janitor::tabyl(group, !!sym(y), !!sym(x), show_na = F) |>
     janitor::adorn_percentages("row") |>
     janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
     janitor::adorn_ns() |> 
@@ -265,126 +342,57 @@ make_crabs <- function(x, y){
 
 # same thing
 # iterate a function over two arguments at a time
-tabyls.q7 <- map2(ex.clps[3], qs.clps[1:9], make_crabs)
+tabyls.q5 <- map2(ex.clps[1], qs_az, make_crabs)
+tabyls.q6 <- map2(ex.clps[2], qs_az, make_crabs)
+tabyls.q7 <- map2(ex.clps[3], qs_az, make_crabs)
+tabyls.q8 <- map2(ex.clps[4], qs_az, make_crabs)
+tabyls.partyid <- map2(political_qs[4], qs_az, make_crabs)
+
+saveRDS(tabyls.q5, file = "data/tabyls.q5.RData")
+saveRDS(tabyls.q6, file = "data/tabyls.q6.RData")
+saveRDS(tabyls.q7, file = "data/tabyls.q7.RData")
+saveRDS(tabyls.q8, file = "data/tabyls.q8.RData")
+saveRDS(tabyls.partyid, file = "data/tabyls.partyid.RData")
+
+tabyls.q5[1][[1]]
+
 
 # Now I want to print them out one by one
 for (i in tabyls.q7){
   print(i)
 }
 
+
 # Now I want to print them out as kableExtra::kbl() one by one
 # this works to print the tables in the console
-# but this doesn't give a table header to identify the treatment condition
+for (i in tabyls.q5){
+  print(kableExtra::kbl(i, format = "pipe"))
+}
+
+
+for (i in tabyls.q6){
+  print(kableExtra::kbl(i, format = "pipe"))
+}
+
+
 for (i in tabyls.q7){
-  print(kableExtra::kbl(i, format = "simple"))
+  print(kableExtra::kbl(i, format = "pipe"))
 }
 
 
-# I can make another function that uses `gtsummary` instead of janitor
-# write function but using gtsummary::tbl_cross instead of tabyl
-# gtsummary alternative
-make_crab_gtsummary <- function(x, y){
-  crab_gt_df <- df |> select(group, all_of(x), all_of(y)) |>
-    dplyr::mutate(group = forcats::fct_rev(group)) |> 
-    gtsummary::tbl_strata(
-    strata = group,
-    ~ .x |>
-      gtsummary::tbl_cross(
-        row = !!sym(x),
-        col = !!sym(y),
-        percent = "row",
-        statistic = "{p}%",
-        margin = "row",
-        missing = "no"
-      )
-  ) |> 
-    gtsummary::bold_labels() |> 
-    gtsummary::as_gt() |> 
-    gt::tab_footnote("NA omitted. Table reflects row percentages") |>
-    gt::tab_options(table.font.size = "small",
-                    data_row.padding = gt::px(1))
+for (i in tabyls.q8){
+  print(kableExtra::kbl(i, format = "pipe"))
 }
 
 
-# using map2(), I generate multiple crosstabs into a list within a list,
-# assigned to 'gttabs.qx'
-gttabs.q5 <- map2(ex.clps[1], qs.clps[1:9], make_crab_gtsummary)
-gttabs.q6 <- map2(ex.clps[2], qs.clps[1:9], make_crab_gtsummary)
-gttabs.q7 <- map2(ex.clps[3], qs.clps[1:9], make_crab_gtsummary)
-gttabs.q8 <- map2(ex.clps[4], qs.clps[1:9], make_crab_gtsummary)
 
-# example
-gttabs.q7[1]
-
-# now for each crosstab (i) in the list containing all my crosstabs, I print
-for (i in gttabs.q7){
-  print(i)
-}
+# iterate a function over two arguments at a time
+tabyls.q5 <- map2(ex.clps[1], qs_az, make_crabs)
+tabyls.q6 <- map2(ex.clps[2], qs_az, make_crabs)
+tabyls.q7 <- map2(ex.clps[3], qs_az, make_crabs)
+tabyls.q8 <- map2(ex.clps[4], qs_az, make_crabs)
 
 
-# Finally, I make another function that uses `gtsummary::as_kable_extra` instead
-# of `as_gt` to see if I can generate and print the crosstabs in the style and
-# format I want.
-# This is supposedly better for PDFs, whereas gt is better for html
-# I'm going to try it with HTML anyway, however
-make_crab_as_kable <- function(x, y){
-  crab_gtkbl_df <- df |> 
-    select(group, all_of(x), all_of(y)) |>
-    dplyr::mutate(group = forcats::fct_rev(group)) |> 
-    gtsummary::tbl_strata(
-    strata = group,
-    ~ .x |>
-      gtsummary::tbl_cross(
-        row = !!sym(x),
-        col = !!sym(y),
-        percent = "row",
-        statistic = "{p}%",
-        margin = "row",
-        missing = "no"
-      )
-  ) |> 
-    gtsummary::bold_labels() |> 
-    gtsummary::as_kable_extra(
-      booktabs = T,
-      longtable = T,
-      linesep = ""
-    ) |> 
-    kableExtra::kable_styling(
-      position = "left",
-      bootstrap_options = c("striped", "hover", "responsive")
-    )
-}
-
-
-# repeating usage of map2(),
-kbl_crabs.q5 <- map2(ex.clps[1], qs.clps, make_crab_as_kable)
-kbl_crabs.q6 <- map2(ex.clps[2], qs.clps, make_crab_as_kable)
-kbl_crabs.q7 <- map2(ex.clps[3], qs.clps, make_crab_as_kable)
-kbl_crabs.q8 <- map2(ex.clps[4], qs.clps, make_crab_as_kable)
-
-
-kbl_crabs.q5[1]
-kbl_crabs.q7[1]
-
-
-
-# now for each crosstab (i) in the list containing all my crosstabs, I print
-for (i in kbl_crabs.q7){
-  print(i)
-}
-
-
-# other variables to run across 
-party_crabs <- map2("partyid_3cat", qs.clps, make_crab_as_kable)
-age_crabs <- map2("age_cat", qs.clps, make_crab_as_kable)
-gender_crabs <- map2("gender", qs.clps, make_crab_as_kable)
-race_crabs <- map2("race", qs.clps, make_crab_as_kable)
-
-saveRDS(kbl_crabs.q5, file = "data/kbl_crabs.q5.RData")
-saveRDS(kbl_crabs.q6, file = "data/kbl_crabs.q6.RData")
-saveRDS(kbl_crabs.q7, file = "data/kbl_crabs.q7.RData")
-saveRDS(kbl_crabs.q8, file = "data/kbl_crabs.q8.RData")
-saveRDS(party_crabs, file = "data/party_crabs.RData")
 
 # these are crosstabs contained in one list each saved as .RData
 # each file contains a list of multiple crosstabs where responses from q19 to
@@ -393,76 +401,154 @@ saveRDS(party_crabs, file = "data/party_crabs.RData")
 # responses from question 19 to question 46 are in the columns, and cross
 # tabulation is further stratified by experimental condition, treatment or
 # control.
-readRDS("data/kbl_crabs.q5.RData")
-readRDS("data/kbl_crabs.q6.RData")
-readRDS("data/kbl_crabs.q7.RData")
-readRDS("data/kbl_crabs.q8.RData")
-readRDS("data/party_crabs.RData")
+readRDS("data/tabyls.q5.RData")
+readRDS("data/tabyls.q6.RData")
+readRDS("data/tabyls.q7.RData")
+readRDS("data/tabyls.q8.RData")
+readRDS("data/tabyls.partyid.RData")
+
+round(prop.table(table(Q5=df$q5.clps, Q19=df$q19.clps, Group=df$group), margin = 1), 4) |> 
+  gt::gt(rowname_col = "rowname", groupname_col = "group_var")
+
+
+crosstable::crosstable(data = df, cols = c(q5.clps, q19.clps), by = group, 
+                       percent_pattern = "{p_row} ({n})", percent_digits = 2,
+                       showNA = "no", label = T) |>
+  crosstable::as_gt() |>
+  gt::tab_footnote("NA omitted. Table reflects row percentages") |>
+  gt::tab_options(table.font.size = "small",
+                    data_row.padding = gt::px(15), table.width = gt::pct(64))
+  
+
+crosstable::crosstable(data = df, cols = c(group, q5.clps), by = q19.clps, 
+                       percent_pattern = "{p_row} ({n})", percent_digits = 2,
+                       showNA = "no", label = T) |> 
+  kableExtra::kbl()
+
+crosstable::crosstable(data = df, cols = group, by = c(q5.clps, q19.clps), 
+                       percent_pattern = "{p_row} ({n})", percent_digits = 2,
+                       showNA = "no", label = F) |>
+  crosstable::as_flextable()
 
 
 
+df |> 
+  janitor::tabyl(q5.clps, q19.clps, group, show_na = F) |> 
+  janitor::adorn_percentages("row") |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
+  janitor::adorn_title("top", 
+                       row_name = "Q5", col_name = "Q19") |>
+  bind_rows(.id = "group_var") |>    
+  gt::gt(
+    rowname_col = "row_var",
+    groupname_col = "group_var") |> 
+  gt::tab_style(
+    style = gt::cell_text(weight = "bold"),
+    locations = gt::cells_row_groups()
+  )
+
+
+df |>  
+  janitor::tabyl(q5.clps, q19.clps, group, show_na = F) |> 
+  janitor::adorn_percentages("row") |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
+  janitor::adorn_title("top") |>
+  kableExtra::kbl() |>  
+  kableExtra::add_header_above(c("Attentive" =1, "Inattentive" = 1), align = "l") |>
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
+                            row_label_position = "l")
 
 
 
+df |> 
+  janitor::tabyl(q5.clps, q19.clps, group, show_na = F) |> 
+  janitor::adorn_totals("both") |> 
+  janitor::adorn_percentages("row") |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
+  janitor::adorn_ns("rear") |> 
+  janitor::adorn_title("top", 
+                       row_name = "Q5",
+                       col_name = "Q19") |>
+  bind_rows(.id = "group_var") |>   
+  gt::gt(
+    rowname_col = "row_var",
+    groupname_col = "group_var") |>  
+  gt::row_group_order(groups = c("Control", "Treatment")) |> 
+  gt::cols_label(c('...3', '...4') ~ " ",
+                 "Q19" ~ " ") |>
+  gt::cols_label_with(columns = '...1', fn = ~sjlabelled::get_label(df$q5.clps)) |> 
+  gt::tab_style(
+    style = gt::cell_text(weight = "bold"),
+    locations = gt::cells_row_groups()
+  ) |> 
+  gt::tab_spanner(
+    columns = 3:4, label = "Q19. Vote count confidence, AZ"
+  ) |> 
+  gt::tab_footnote(footnote = "Table reflects row percentages. NAs omitted") |> 
+  gt::tab_footnote(footnote = "Q19. How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November?",
+                   locations = gt::cells_column_spanners()) |> 
+  gt::tab_footnote(footnote = "Q5. How often do you pay attention to what is going on in government and politics?",
+                   locations = gt::cells_column_labels(columns = "...1")) |> 
+  gt::tab_options(
+    table.font.size = "small",
+    data_row.padding = gt::px(1)
+  )
+
+df |> select(q19:q29) |> sjlabelled::get_label() |> writeClipboard()
+
+
+df |>
+  mutate(group = forcats::fct_rev(group)) |> 
+  gtsummary::tbl_strata(
+    strata = q5.clps,
+    ~ .x |>
+      gtsummary::tbl_cross(
+        row = group,
+        col = q19.clps,
+        statistic = "{p}%",
+        percent = "row",
+        margin = "row",
+        missing = "no"
+      )
+  ) |>
+  gtsummary::bold_labels() |>
+  gtsummary::as_gt() |> 
+  gt::tab_header(
+    title = gt::md("**Confidence all votes will be counted, AZ among politically attentive and inattentive respondents**"))|>
+  gt::tab_footnote("NA omitted. Table reflects row percentages") |> 
+  gt::tab_options(
+    table.font.size = "small",
+    table.width = gt::pct(70),
+    data_row.padding = gt::px(1))
+
+all_of(qs_az)
+df |> 
+  select(group, q5.clps, q19.clps) |> 
+  datawizard::data_group(select = "group") |> 
+  datawizard::data_tabulate(by = "q5.clps", proportions = "col", 
+                            drop_levels = T, select = "q19.clps", remove_na = F,
+                            collapse = T)
+
+
+```{r}
+#| include: false
+
+
+# these are crosstabs contained in one list each saved as .RData
+# each file contains a list of multiple crosstabs where responses from q19 to
+# q46 are crossed by one pre-treatment survey question (e.g., q5) and grouped by
+# experiment condition. That is, the explanatory variable is in the rows,
+# responses from question 19 to question 46 are in the columns, and cross
+# tabulation is further stratified by experimental condition, treatment or
+# control.
+tabyls.q5 <- readRDS("data/tabyls.q5.RData")
+tabyls.q6 <- readRDS("data/tabyls.q6.RData")
+tabyls.q7 <- readRDS("data/tabyls.q7.RData")
+tabyls.q8 <- readRDS("data/tabyls.q8.RData")
+tabyls.partyid <- readRDS("data/tabyls.partyid.RData")
 
 
 
+```
 
-
-
-
-
-# iv = q5, dv = q19, z = group
-kableExtra::kable(q5_crabs[[1]], format = "simple")
-
-
-
-
-kableExtra::kbl(q5_crabs[3], format = "simple")
-kableExtra::kbl(q5_crabs, format = "simple")
-
-
-attr(df$q5.clps, "label")
-attr(df$q5.clps, "labels")
-attr(df$q5.clps, 'names')
-attributes(df$q5.clps)
-
-
-
-
-# iv = q5, dv = q19, z = group
-kableExtra::kbl(q5_crabs[[1]]) |> 
-  kableExtra::kable_styling(bootstrap_options = c("striped",
-                                      "hover",
-                                      "condensed",
-                                      "responsive"))
-
-# iv = q5, dv = q20, z = group
-kableExtra::kbl(q5_crabs[[2]]) |> 
-  kableExtra::kable_styling(bootstrap_options = c("striped",
-                                      "hover",
-                                      "condensed",
-                                      "responsive"))
-
-
-# iv = q5, dv = q21, z = group
-kableExtra::kbl(q5_crabs[3]) |>
-  kableExtra::kable_styling(bootstrap_options = c("striped",
-                                      "hover",
-                                      "condensed",
-                                      "responsive"))
-
-
-# This works a bit
-do.call(rbind, lapply(combined_gt, tibble::as_tibble))
-
-# this seems to do the same thing
-map_df(combined_gt, tibble::as_tibble)
-
-
-combined_gt_df <- map_df(combined_gt, tibble::as_tibble)
-combined_gt_df
-
-
-
-
+  

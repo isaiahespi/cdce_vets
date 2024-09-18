@@ -312,7 +312,10 @@ data <- data_spss |>
   # re-code any empty/blank levels to NA
   mutate(across(where(is.factor), ~ fct_recode(., NULL = ""))) |> 
   # reverse order of identified factor levels for consist direction
-  mutate(across(c(q8, q20, q23, q24, q31, q34, q35, q49, q50), .fns = ~fct_rev(.))) 
+  mutate(across(c(q8, q20, q23, q24, q31, q34, q35, q49, q50), .fns = ~fct_rev(.)))|>
+  # reverse order of group levels so control comes first. Better table display
+  mutate(group = forcats::fct_rev(group))
+
 
 
 

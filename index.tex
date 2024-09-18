@@ -1,0 +1,606 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%
+\documentclass[
+  11pt,
+  a4paper,
+]{article}
+
+\usepackage{amsmath,amssymb}
+\usepackage{setspace}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else  
+    % xetex/luatex font selection
+    \setmainfont[]{Palatino Linotype}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[top=2.4cm,bottom=2.4cm,left=2.5cm,right=2.5cm]{geometry}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+
+
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{longtable}
+\usepackage{colortbl}
+\usepackage{array}
+\usepackage{anyfontsize}
+\usepackage{multirow}
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\AtBeginDocument{%
+\ifdefined\contentsname
+  \renewcommand*\contentsname{Table of contents}
+\else
+  \newcommand\contentsname{Table of contents}
+\fi
+\ifdefined\listfigurename
+  \renewcommand*\listfigurename{List of Figures}
+\else
+  \newcommand\listfigurename{List of Figures}
+\fi
+\ifdefined\listtablename
+  \renewcommand*\listtablename{List of Tables}
+\else
+  \newcommand\listtablename{List of Tables}
+\fi
+\ifdefined\figurename
+  \renewcommand*\figurename{Figure}
+\else
+  \newcommand\figurename{Figure}
+\fi
+\ifdefined\tablename
+  \renewcommand*\tablename{Table}
+\else
+  \newcommand\tablename{Table}
+\fi
+}
+\@ifpackageloaded{float}{}{\usepackage{float}}
+\floatstyle{ruled}
+\@ifundefined{c@chapter}{\newfloat{codelisting}{h}{lop}}{\newfloat{codelisting}{h}{lop}[chapter]}
+\floatname{codelisting}{Listing}
+\newcommand*\listoflistings{\listof{codelisting}{List of Listings}}
+\makeatother
+\makeatletter
+\makeatother
+\makeatletter
+\@ifpackageloaded{caption}{}{\usepackage{caption}}
+\@ifpackageloaded{subcaption}{}{\usepackage{subcaption}}
+\makeatother
+
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\usepackage{bookmark}
+
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  pdftitle={Survey Experiment},
+  pdfauthor={Isaiah},
+  pdfkeywords={Election Workers, Poll workers, Veterans, Public
+opinion, Election administration},
+  colorlinks=true,
+  linkcolor={blue},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={Blue},
+  pdfcreator={LaTeX via pandoc}}
+
+%% CAPTIONS
+\usepackage{caption}
+\DeclareCaptionStyle{italic}[justification=centering]
+ {labelfont={bf},textfont={it},labelsep=colon}
+\captionsetup[figure]{style=italic,format=hang,singlelinecheck=true}
+\captionsetup[table]{style=italic,format=hang,singlelinecheck=true}
+
+%% FONT
+% \usepackage{bera}
+% \usepackage[charter]{mathdesign}
+% \usepackage[scale=0.9]{sourcecodepro}
+% \usepackage[lf,t]{FiraSans}
+\usepackage{fontawesome}
+
+%% HEADERS AND FOOTERS
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\rfoot{\Large\sffamily\raisebox{-0.1cm}{\textbf{\thepage}}}
+\makeatletter
+\lhead{\textsf{\expandafter{\@title}}}
+\makeatother
+\rhead{}
+\cfoot{}
+\setlength{\headheight}{15pt}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+\fancypagestyle{plain}{%
+\fancyhf{} % clear all header and footer fields
+\fancyfoot[C]{\sffamily\thepage} % except the center
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}}
+
+%% MATHS
+\usepackage{bm,amsmath}
+\allowdisplaybreaks
+
+%% GRAPHICS
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setcounter{topnumber}{2}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{4}
+\renewcommand{\topfraction}{0.85}
+\renewcommand{\bottomfraction}{0.85}
+\renewcommand{\textfraction}{0.15}
+\renewcommand{\floatpagefraction}{0.8}
+
+%% SECTION TITLES
+\usepackage[compact,sf,bf]{titlesec}
+\titleformat*{\section}{\Large\sf\bfseries\color[rgb]{0.7,0,0}}
+\titleformat*{\subsection}{\large\sf\bfseries\color[rgb]{0.7,0,0}}
+\titleformat*{\subsubsection}{\sf\bfseries\color[rgb]{0.7,0,0}}
+\titlespacing{\section}{0pt}{2ex}{.5ex}
+\titlespacing{\subsection}{0pt}{1.5ex}{0ex}
+\titlespacing{\subsubsection}{0pt}{.5ex}{0ex}
+
+
+%% BIBLIOGRAPHY.
+
+\makeatletter
+\@ifpackageloaded{biblatex}{
+\ExecuteBibliographyOptions{bibencoding=utf8,minnames=1,maxnames=3, maxbibnames=99,dashed=false,terseinits=true,giveninits=true,uniquename=false,uniquelist=false,doi=false, isbn=false,url=true,sortcites=false}
+\DeclareFieldFormat{url}{\texttt{\url{#1}}}
+\DeclareFieldFormat[article]{pages}{#1}
+\DeclareFieldFormat[inproceedings]{pages}{\lowercase{pp.}#1}
+\DeclareFieldFormat[incollection]{pages}{\lowercase{pp.}#1}
+\DeclareFieldFormat[article]{volume}{\mkbibbold{#1}}
+\DeclareFieldFormat[article]{number}{\mkbibparens{#1}}
+\DeclareFieldFormat[article]{title}{\MakeCapital{#1}}
+\DeclareFieldFormat[article]{url}{}
+\DeclareFieldFormat[inproceedings]{title}{#1}
+\DeclareFieldFormat{shorthandwidth}{#1}
+\usepackage{xpatch}
+\xpatchbibmacro{volume+number+eid}{\setunit*{\adddot}}{}{}{}
+% Remove In: for an article.
+\renewbibmacro{in:}{%
+  \ifentrytype{article}{}{%
+  \printtext{\bibstring{in}\intitlepunct}}}
+\AtEveryBibitem{\clearfield{month}}
+\AtEveryCitekey{\clearfield{month}}
+\DeclareDelimFormat[cbx@textcite]{nameyeardelim}{\addspace}
+\renewcommand*{\finalnamedelim}{\addspace\&\space}
+}{}
+\makeatother
+
+%% PAGE BREAKING to avoid widows and orphans
+\clubpenalty = 2000
+\widowpenalty = 2000
+\usepackage{microtype}
+% Placement of logos
+
+\RequirePackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1cm}
+\setlength{\TPVertModule}{1cm}
+\def\placefig#1#2#3#4{\begin{textblock}{.1}(#1,#2)\rlap{\includegraphics[#3]{#4}}\end{textblock}}
+
+% Title and date
+
+\title{Survey Experiment}
+\date{2024-9-12}
+
+\def\Date{\number\day}
+\def\Month{\ifcase\month\or
+ January\or February\or March\or April\or May\or June\or
+ July\or August\or September\or October\or November\or December\fi}
+\def\Year{\number\year}
+
+%%%% PAGE STYLE FOR FRONT PAGE OF REPORTS
+
+\makeatletter
+\def\organization#1{\gdef\@organization{#1}}
+\def\telephone#1{\gdef\@telephone{#1}}
+\def\email#1{\gdef\@email{#1}}
+\makeatother
+  \organization{}
+
+  \def\name{Center for Democracy and Civic Engagement}
+% 
+  \telephone{(410) 903 6911}
+% 
+  \email{ssnovey@umd.edu}
+
+\def\webaddress{\url{https://cdce.umd.edu/}}
+\def\abn{12 377 614 012}
+\def\extraspace{\vspace*{1.6cm}}
+\makeatletter
+\def\contactdetails{\faicon{phone} & \@telephone \\
+                    \faicon{envelope} & \@email}
+\makeatother
+
+\usepackage[absolute,overlay]{textpos}
+\setlength{\TPHorizModule}{1cm}
+\setlength{\TPVertModule}{1cm}
+
+%%%% FRONT PAGE OF REPORTS
+
+% \def\reporttype{Report}
+
+\long\def\front#1#2#3{
+\newpage
+% \begin{textblock}{7}(12.7,28.2)\hfill
+% \includegraphics[height=4cm]{umd_logo2}~~~
+% \end{textblock}
+\begin{singlespacing}
+\thispagestyle{empty}
+\vspace*{-1.4cm}
+\hspace*{-1.4cm}
+\hbox to 16cm{
+  \hbox to 6.5cm{\vbox to 14cm{\vbox to 25cm{
+    \includegraphics[width=6.6cm]{CDCE}
+    \vfill
+    \includegraphics[width=5cm]{umd_logo2}
+    \vspace{0.4cm}
+    \par
+    \parbox{6.3cm}{\raggedright
+      \sf\color[rgb]{0.70,0.00,0.00}
+      {\large\textbf{\name}}\par
+      \vspace{.7cm}
+      \tabcolsep=0.12cm\sf\small
+      \begin{tabular}{@{}ll@{}}\contactdetails
+      \end{tabular}
+    }
+  }\vss}\hss}
+  \hspace*{0.2cm}
+  \hbox to 1cm{\vbox to 14cm{\rule{1pt}{26.8cm}\vss}\hss\hfill}
+  \hbox to 10cm{\vbox to 14cm{\vbox to 25cm{
+      \vspace*{3cm}\sf\raggedright
+      \parbox{10cm}{\sf\raggedright\baselineskip=1.2cm
+         \fontsize{24.88}{30}\color[rgb]{0.70,0.00,0.00}\sf\textbf{#1}}
+      \par
+      \vfill
+      \large
+      \vbox{\parskip=0.8cm #2}\par
+      \vspace*{2cm}\par
+      % \reporttype\\[0.3cm]
+      % \hbox{#3}%\\[2cm]\
+      % \vspace*{1cm}
+      %{\large\sf\textbf{\Date~\Month~\Year}}
+   }\vss}
+  }}
+\end{singlespacing}
+\newpage
+}
+
+\makeatletter
+\def\maketitle{\front{\expandafter{\@title}}{\@author}{\@organization}}
+\makeatother
+
+% Authors
+
+\author{\sf{\Large\textbf{Isaiah} \\[0.5cm]}}
+%\lfoot{\sf Isaiah: 2024-9-12}
+\begin{document}
+\maketitle
+
+
+\setstretch{1.5}
+\subsection{Overview of demographic variables and
+balance}\label{overview-of-demographic-variables-and-balance}
+
+\begingroup\fontsize{12}{14}\selectfont
+
+\begin{longtable}[l]{lccc}
+
+\caption{\label{tbl-1}}
+
+\tabularnewline
+
+\toprule
+\textbf{Variable} & \makecell[c]{\textbf{Overall}\ \ \\N = 1,388} & \makecell[c]{\textbf{Treatment}\ \ \\N = 695} & \makecell[c]{\textbf{Control}\ \ \\N = 693}\\
+\midrule
+\textbf{What is your age?} & 47 (17) & 47 (17) & 47 (16)\\
+\textbf{What is your current gender?} &  &  & \\
+\hspace{1em}Male & 594 (47\%) & 308 (48\%) & 286 (46\%)\\
+\hspace{1em}Female & 658 (52\%) & 328 (51\%) & 330 (53\%)\\
+\hspace{1em}Non-binary / third gender & 7 (0.6\%) & 4 (0.6\%) & 3 (0.5\%)\\
+\addlinespace
+\hspace{1em}Prefer not to say & 9 (0.7\%) & 2 (0.3\%) & 7 (1.1\%)\\
+\hspace{1em}Unknown & 120 & 53 & \vphantom{4} 67\\
+\textbf{Do you consider yourself primarily White or Caucasian, Black or African American, American Indian, Asian, or something else?} &  &  & \\
+\hspace{1em}White or Caucasian & 973 (77\%) & 496 (77\%) & 477 (76\%)\\
+\hspace{1em}Black or African American & 162 (13\%) & 79 (12\%) & 83 (13\%)\\
+\addlinespace
+\hspace{1em}American Indian & 22 (1.7\%) & 12 (1.9\%) & 10 (1.6\%)\\
+\hspace{1em}Asian & 56 (4.4\%) & 30 (4.7\%) & 26 (4.2\%)\\
+\hspace{1em}Other & 55 (4.3\%) & 25 (3.9\%) & 30 (4.8\%)\\
+\hspace{1em}Unknown & 120 & 53 & \vphantom{3} 67\\
+\textbf{What is the highest level of school you have completed or the highest degree you have received?} &  &  & \\
+\addlinespace
+\hspace{1em}Less than high school degree & 34 (2.7\%) & 14 (2.2\%) & 20 (3.2\%)\\
+\hspace{1em}High school graduate (high school diploma or equivalent including GED) & 328 (26\%) & 174 (27\%) & 154 (25\%)\\
+\hspace{1em}Some college but no degree & 282 (22\%) & 141 (22\%) & 141 (23\%)\\
+\hspace{1em}Associate degree in college (2-year) & 137 (11\%) & 68 (11\%) & 69 (11\%)\\
+\hspace{1em}Bachelor's degree in college (4-year) & 323 (25\%) & 157 (24\%) & 166 (27\%)\\
+\addlinespace
+\hspace{1em}Master's degree & 131 (10\%) & 70 (11\%) & 61 (9.7\%)\\
+\hspace{1em}Doctoral degree & 18 (1.4\%) & 13 (2.0\%) & 5 (0.8\%)\\
+\hspace{1em}Professional degree (JD, MD) & 15 (1.2\%) & 5 (0.8\%) & 10 (1.6\%)\\
+\hspace{1em}Unknown & 120 & 53 & \vphantom{2} 67\\
+\textbf{Have you ever served on active duty in the US Armed Forces?} &  &  & \\
+\addlinespace
+\hspace{1em}Yes & 121 (9.5\%) & 68 (11\%) & 53 (8.5\%)\\
+\hspace{1em}No & 1,147 (90\%) & 574 (89\%) & 573 (92\%)\\
+\hspace{1em}Unknown & 120 & 53 & \vphantom{1} 67\\
+\textbf{Are you now serving in the Armed Forces?} &  &  & \\
+\hspace{1em}Yes & 15 (12\%) & 10 (15\%) & 5 (9.4\%)\\
+\addlinespace
+\hspace{1em}No & 106 (88\%) & 58 (85\%) & 48 (91\%)\\
+\hspace{1em}Unknown & 1,267 & 627 & 640\\
+\textbf{Has a member of your immediate family ever served or is currently serving in the US military, the National Guard, or military reserves?} &  &  & \\
+\hspace{1em}Yes & 438 (35\%) & 223 (35\%) & 215 (34\%)\\
+\hspace{1em}No & 830 (65\%) & 419 (65\%) & 411 (66\%)\\
+\addlinespace
+\hspace{1em}Unknown & 120 & 53 & 67\\
+\bottomrule
+\multicolumn{4}{l}{\rule{0pt}{1em}\textsuperscript{1} Mean (SD); n (\%)}\\
+
+\end{longtable}
+
+\endgroup{}
+
+\section{Crosstabs}\label{crosstabs}
+
+\subsection{Q5. Attention Paid to Political
+Affairs}\label{q5.-attention-paid-to-political-affairs}
+
+\begingroup
+\fontsize{12.0pt}{14.4pt}\selectfont
+
+\begin{longtable}{crr}
+
+\caption{\label{tbl-q5q19}}
+
+\tabularnewline
+
+\toprule
+Q5/Q19 & Not\_confident & Confident \\ 
+\midrule\addlinespace[2.5pt]
+\multicolumn{3}{l}{{\bfseries Treatment}} \\[2.5pt] 
+\midrule\addlinespace[2.5pt]
+Inattentive & 22.46 & 77.54 \\ 
+Attentive & 13.05 & 86.95 \\ 
+\midrule\addlinespace[2.5pt]
+\multicolumn{3}{l}{{\bfseries Control}} \\[2.5pt] 
+\midrule\addlinespace[2.5pt]
+Inattentive & 25.74 & 74.26 \\ 
+Attentive & 18.23 & 81.77 \\ 
+\bottomrule
+
+\end{longtable}
+
+\endgroup
+
+\begingroup
+\fontsize{12.0pt}{14.4pt}\selectfont
+
+\begin{longtable}{crr}
+
+\caption{\label{tbl-q5q20}}
+
+\tabularnewline
+
+\toprule
+Q5/Q20 & Not\_confident & Confident \\ 
+\midrule\addlinespace[2.5pt]
+\multicolumn{3}{l}{{\bfseries Treatment}} \\[2.5pt] 
+\midrule\addlinespace[2.5pt]
+Inattentive & 20.65 & 79.35 \\ 
+Attentive & 14.40 & 85.60 \\ 
+\midrule\addlinespace[2.5pt]
+\multicolumn{3}{l}{{\bfseries Control}} \\[2.5pt] 
+\midrule\addlinespace[2.5pt]
+Inattentive & 23.51 & 76.49 \\ 
+Attentive & 18.57 & 81.43 \\ 
+\bottomrule
+
+\end{longtable}
+
+\endgroup
+
+\begingroup
+\fontsize{12.0pt}{14.4pt}\selectfont
+\begin{longtable*}{crr}
+\toprule
+Q5/Q21 & not\_committed & committed \\ 
+\midrule\addlinespace[2.5pt]
+\multicolumn{3}{l}{{\bfseries Treatment}} \\[2.5pt] 
+\midrule\addlinespace[2.5pt]
+Inattentive & 17.03 & 82.97 \\ 
+Attentive & 14.10 & 85.90 \\ 
+\midrule\addlinespace[2.5pt]
+\multicolumn{3}{l}{{\bfseries Control}} \\[2.5pt] 
+\midrule\addlinespace[2.5pt]
+Inattentive & 19.93 & 80.07 \\ 
+Attentive & 16.00 & 84.00 \\ 
+\bottomrule
+\end{longtable*}
+\endgroup
+
+\begingroup
+\fontsize{12.0pt}{14.4pt}\selectfont
+\begin{longtable*}{crr}
+\toprule
+Q5/Q22 & Not\_confident & Confident \\ 
+\midrule\addlinespace[2.5pt]
+\multicolumn{3}{l}{{\bfseries Treatment}} \\[2.5pt] 
+\midrule\addlinespace[2.5pt]
+Inattentive & 21.09 & 78.91 \\ 
+Attentive & 14.62 & 85.38 \\ 
+\midrule\addlinespace[2.5pt]
+\multicolumn{3}{l}{{\bfseries Control}} \\[2.5pt] 
+\midrule\addlinespace[2.5pt]
+Inattentive & 25.91 & 74.09 \\ 
+Attentive & 22.00 & 78.00 \\ 
+\bottomrule
+\end{longtable*}
+\endgroup
+
+\begingroup
+\fontsize{12.0pt}{14.4pt}\selectfont
+\begin{longtable*}{crr}
+\toprule
+Q5/Q23 & Not\_confident & Confident \\ 
+\midrule\addlinespace[2.5pt]
+\multicolumn{3}{l}{{\bfseries Treatment}} \\[2.5pt] 
+\midrule\addlinespace[2.5pt]
+Inattentive & 24.82 & 75.18 \\ 
+Attentive & 15.40 & 84.60 \\ 
+\midrule\addlinespace[2.5pt]
+\multicolumn{3}{l}{{\bfseries Control}} \\[2.5pt] 
+\midrule\addlinespace[2.5pt]
+Inattentive & 24.00 & 76.00 \\ 
+Attentive & 22.00 & 78.00 \\ 
+\bottomrule
+\end{longtable*}
+\endgroup
+
+\begingroup
+\fontsize{12.0pt}{14.4pt}\selectfont
+\begin{longtable*}{crr}
+\toprule
+Q5/Q24 & Not\_confident & Confident \\ 
+\midrule\addlinespace[2.5pt]
+\multicolumn{3}{l}{{\bfseries Treatment}} \\[2.5pt] 
+\midrule\addlinespace[2.5pt]
+Inattentive & 27.64 & 72.36 \\ 
+Attentive & 21.88 & 78.12 \\ 
+\midrule\addlinespace[2.5pt]
+\multicolumn{3}{l}{{\bfseries Control}} \\[2.5pt] 
+\midrule\addlinespace[2.5pt]
+Inattentive & 29.87 & 70.13 \\ 
+Attentive & 31.52 & 68.48 \\ 
+\bottomrule
+\end{longtable*}
+\endgroup
+
+\begingroup
+\fontsize{12.0pt}{14.4pt}\selectfont
+\begin{longtable*}{crr}
+\toprule
+Q5/Q25 & not\_concerned & concerned \\ 
+\midrule\addlinespace[2.5pt]
+\multicolumn{3}{l}{{\bfseries Treatment}} \\[2.5pt] 
+\midrule\addlinespace[2.5pt]
+Inattentive & 54.18 & 45.82 \\ 
+Attentive & 54.05 & 45.95 \\ 
+\midrule\addlinespace[2.5pt]
+\multicolumn{3}{l}{{\bfseries Control}} \\[2.5pt] 
+\midrule\addlinespace[2.5pt]
+Inattentive & 47.32 & 52.68 \\ 
+Attentive & 45.56 & 54.44 \\ 
+\bottomrule
+\end{longtable*}
+\endgroup
+
+\begingroup
+\fontsize{12.0pt}{14.4pt}\selectfont
+\begin{longtable*}{crr}
+\toprule
+Q5/Q26 & Not\_confident & Confident \\ 
+\midrule\addlinespace[2.5pt]
+\multicolumn{3}{l}{{\bfseries Treatment}} \\[2.5pt] 
+\midrule\addlinespace[2.5pt]
+Inattentive & 17.52 & 82.48 \\ 
+Attentive & 14.88 & 85.12 \\ 
+\midrule\addlinespace[2.5pt]
+\multicolumn{3}{l}{{\bfseries Control}} \\[2.5pt] 
+\midrule\addlinespace[2.5pt]
+Inattentive & 24.58 & 75.42 \\ 
+Attentive & 20.63 & 79.37 \\ 
+\bottomrule
+\end{longtable*}
+\endgroup
+
+\begingroup
+\fontsize{12.0pt}{14.4pt}\selectfont
+\begin{longtable*}{crr}
+\toprule
+Q5/Q27 & disapprove & approve \\ 
+\midrule\addlinespace[2.5pt]
+\multicolumn{3}{l}{{\bfseries Treatment}} \\[2.5pt] 
+\midrule\addlinespace[2.5pt]
+Inattentive & 24.00 & 76.00 \\ 
+Attentive & 20.32 & 79.68 \\ 
+\midrule\addlinespace[2.5pt]
+\multicolumn{3}{l}{{\bfseries Control}} \\[2.5pt] 
+\midrule\addlinespace[2.5pt]
+Inattentive & 27.03 & 72.97 \\ 
+Attentive & 25.29 & 74.71 \\ 
+\bottomrule
+\end{longtable*}
+\endgroup
+
+\subsubsection{Q6}\label{q6}
+
+\subsubsection{Q7}\label{q7}
+
+\subsubsection{Q8}\label{q8}
+
+
+
+
+\end{document}

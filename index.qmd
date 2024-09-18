@@ -58,6 +58,7 @@ execute:
 # load packages
 library(tidyverse)
 library(janitor)
+library(table1)
 library(kableExtra)
 
 
@@ -66,7 +67,7 @@ library(kableExtra)
 
 ```{r}
 #| label: load-df
-#| include: false
+
 
 # load data
 load("data/df-2024-09-11.Rdata") # df set as factor with dummy vars
@@ -85,13 +86,227 @@ df_dict <- read.csv("codebooks/df_dict.csv")
 
 ```
 
+```{r}
+#| label: setup-fun
+#| include: false
+
+# function to compute the p-value for continuous or categorical variables
+pvalue <- function(x, ...) {
+    # Construct vectors of data y, and groups (strata) g
+    y <- unlist(x)
+    g <- factor(rep(1:length(x), times=sapply(x, length)))
+    if (is.numeric(y)) {
+        # For numeric variables, perform a standard 2-sample t-test
+        p <- t.test(y ~ g)$p.value
+    } else {
+        # For categorical variables, perform a chi-squared test of independence
+        p <- chisq.test(table(y, g))$p.value
+    }
+    # Format the p-value, using an HTML entity for the less-than sign.
+    # The initial empty string places the output on the line below the variable label.
+    c("", sub("<", "&lt;", format.pval(p, digits=3, eps=0.001)))
+}
+
+# Pearson's chi-squared test is performed of the null hypothesis that the joint
+# distribution of the cell counts in a 2-dimensional contingency table is the
+# product of the row and column marginals
+
+
+```
+
+
+## Survey Questions by Treatment Condition
+
+### Trust and Confidence in AZ Elections
+
+The following cross-tables break down relative observations and percentages of responses to survey questions across categories of the survey's experimental condition. The survey questions in the table below concerned a respondent's degree of trust and confidence in the electoral process in Maricopa County, AZ.
+
+```{r}
+#| label: tbl-2
+#| results: asis
+
+# q19 to q27 by treatment condition. p-value based on chi^2 test of independence
+t2 <- table1::table1(
+  ~ q19.clps
+  + q20.clps
+  + q21.clps
+  + q22.clps
+  + q23.clps
+  + q24.clps
+  + q25.clps
+  + q26.clps
+  + q27.clps
+  + q29.clps | group,
+  data = df,
+  transpose = F,
+  overall = F,
+  extra.col = list('P-value' = pvalue),
+  caption = "Trust and Confidence in Maricopa County, AZ Elections by Treatment Condition"
+)
+
+
+# convert table1 object to "kableExtra" "kintr_kable"
+t2 <- table1::t1kable(
+  t2,
+  format = "html",
+  booktabs = F,
+  table.attr = "quarto-disable-processing=true"
+  ) |>
+  kableExtra::footnote(
+    general = "Table reflects column percentages. \nP-values based on Pearson's Chi-squared test of independence."
+  ) |> 
+  kableExtra::kable_styling(
+    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
+    latex_options = "basic",
+    font_size = 13,
+    full_width = T,
+    fixed_thead = T
+  )
+# print table
+print(t2)
+
+
+```
+
+The next table reviews a set of questions designed to assess a respondent's expectation of electoral fraud of some sort in Maricopa County, AZ. Again, responses are compared across categories of the survey experiment.
+
+```{r}
+#| label: tbl-3
+#| results: asis
+
+# q28_1 to q29 by treatment condition p-value based on chi^2 test of independence
+t3 <- table1::table1(
+  ~ q28_1.clps
+  + q28_2.clps
+  + q28_3.clps
+  + q28_4.clps
+  + q28_5.clps
+  | group,
+  data = df,
+  transpose = F,
+  overall = F,
+  extra.col = list('P-value' = pvalue),
+  caption = "Expectation of Electoral Fraud in Maricopa County, AZ \nby Treatment Condition"
+)
+
+# convert table1 object to "kableExtra" "kintr_kable"
+t3 <- table1::t1kable(
+  t3,
+  format = "html",
+  booktabs = F ) |>
+  kableExtra::footnote(
+    general = "Table reflects column percentages. \nP-values based on Pearson's Chi-squared test of independence."
+  ) |> 
+  kableExtra::kable_styling(
+    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
+    latex_options = "basic",
+    font_size = 13,
+    full_width = T,
+    fixed_thead = T
+  )
+
+# print table
+print(t3)
 
 
 
 
-# Crosstabs
 
 
+```
+
+
+## Impact on confidence in fairness and accuracy
+
+The following examines survey questions that asked respondents whether particular circumstances or election official actions would have any impact on their confidence in the fairness and accuracy of elections. Of particular importance is question number Q43_4 which asked respondents to consider whether inclusion of military veterans and veteran's family members as election staff and volunteers has any impact on their confidence in the fairness and accuracy of elections in November.  
+
+
+```{r}
+#| label: tbl-4
+#| results: asis
+
+# confidence impact by treatment condition ::::::::::::::
+# q41_1 to q43_6 by treatment condition p-value based on chi^2 test
+t4 <- table1::table1(
+  ~ q41_1.clps
+  + q41_2.clps
+  + q41_3.clps
+  + q41_4.clps
+  + q41_5.clps
+  + q41_6.clps
+  | group,
+  data = df,
+  transpose = F,
+  overall = F,
+  extra.col = list('P-value' = pvalue),
+  caption = "Circumstantial Impact on Confidence in Fairness and Accuracy of Elections \nby Treatment Condition" 
+)
+
+t4 <- table1::t1kable(
+  t4,
+  format = "html",
+  booktabs = F ) |>
+  kableExtra::footnote(
+    general = "Table reflects column percentages. \nP-values based on Pearson's Chi-squared test of independence.\n Each question listed here was prefaced with the following: Regardless of whether any of these are actually the case, how would the following impact your confidence in the fairness and accuracy of elections conducted this November?"
+  ) |> 
+  kableExtra::kable_styling(
+    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
+    latex_options = "basic",
+    font_size = 13,
+    full_width = T,
+    fixed_thead = T
+  )
+
+print(t4)
+
+
+
+```
+
+## Impact on concerns for voter safety
+
+The following table examines a set of survey questions designed to assess the impact of certain conditions or circumstances at election sites on feelings of safety while voting in-person. Again, of particular importance is question number Q43_4 which has a respondent consider whether knowledge that election staff includes veteran service members and their family has any impact on their confidence that voters will be safe from violence, threats, and intimidation while voting in person.   
+
+```{r}
+#| label: tbl-t5
+#| results: asis
+
+t5 <- table1::table1(
+  ~ q43_1.clps
+  + q43_2.clps
+  + q43_3.clps
+  + q43_4.clps
+  + q43_5.clps
+  + q43_6.clps
+  | group,
+  data = df,
+  transpose = F,
+  overall = F,
+  extra.col = list('P-value' = pvalue),
+  caption = "Circumstantial Impact on Confidence of voter safety \nby Treatment Condition",
+  footnote = "Table reflects column percentages. \nP-values based on Pearson's Chi-squared test of independence.\n Each question listed here was prefaced with the following: How would the following impact your confidence that voters are safe from violence, threats of violence, or intimidation while voting in-person during elections this November?" 
+)
+
+t5 <- table1::t1kable(
+  t5,
+  format = "html",
+  booktabs = F ) |>
+  kableExtra::kable_styling(
+    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
+    latex_options = "basic",
+    font_size = 13,
+    full_width = T,
+    fixed_thead = T
+  )
+
+print(t5)
+
+
+
+```
+
+
+## 
 
 ## Q5. Attention Paid to Political Affairs
 
@@ -100,18 +315,20 @@ df_dict <- read.csv("codebooks/df_dict.csv")
 #| results: asis
 
 df |>  
-  janitor::tabyl(q5.clps, q19.clps, group, show_na = F) |> 
+  janitor::tabyl(q5.clps, q19.clps, group, show_na = T) |>
+  janitor::adorn_totals("both") |> 
   janitor::adorn_percentages("row") |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
+  janitor::adorn_ns() |> 
   janitor::adorn_title("top", row_name = "Q5",
                        col_name = "Q19. Vote count confidence, AZ") |>
-  kableExtra::kbl() |>  
+  kableExtra::kbl(booktabs = T) |>  
   kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l") |> 
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "responsive"),
+                            row_label_position = "l", font_size = 12) |> 
   kableExtra::footnote(
     general = "Tables reflect row percentages\nQ19. How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November? \n Q5. How often do you pay attention to what is going on in government and politics?",
-    fixed_small_size = T)
+    fixed_small_size = T, threeparttable = T)
 
 
 ```
@@ -122,7 +339,7 @@ df |>
 #| results: asis
 
 df |>  
-  janitor::tabyl(q5.clps, q20.clps, group, show_na = F) |> 
+  janitor::tabyl(q5.clps, q20.clps, group, show_na = T) |> 
   janitor::adorn_percentages("row") |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
   janitor::adorn_title("top", 
@@ -131,9 +348,10 @@ df |>
   kableExtra::kbl() |>  
   kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
   kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l") |> 
+                            row_label_position = "l", font_size = 12) |> 
   kableExtra::footnote(
-    general = "Tables reflect row percentages\nQ20. How confident are you that election officials...in Maricopa County, AZ will do a good job conducting the elections this November? \n Q5. How often do you pay attention to what is going on in government and politics?")
+    general = "Tables reflect row percentages\nQ20. How confident are you that election officials...in Maricopa County, AZ will do a good job conducting the elections this November? \n Q5. How often do you pay attention to what is going on in government and politics?",
+    fixed_small_size = T, threeparttable = T)
 
 
 ```
@@ -142,7 +360,7 @@ df |>
 #| results: asis
 
 df |> 
-  janitor::tabyl(q5.clps, q21.clps, group, show_na = F) |> 
+  janitor::tabyl(q5.clps, q21.clps, group, show_na = T) |> 
   janitor::adorn_percentages("row") |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
   janitor::adorn_title("top", 
@@ -150,10 +368,11 @@ df |>
                        col_name = "Q21. Commitment of Election Staff, AZ") |>
   kableExtra::kbl() |>  
   kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l") |> 
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "responsive"),
+                            row_label_position = "l", font_size = 12) |> 
   kableExtra::footnote(
-    general = "Tables reflect row percentages\nQ21. How committed do you think [Election staff in Maricopa County, AZ] will be to making sure the elections held this November are fair and accurate? \n Q5. How often do you pay attention to what is going on in government and politics?")
+    general = "Tables reflect row percentages\nQ21. How committed do you think [Election staff in Maricopa County, AZ] will be to making sure the elections held this November are fair and accurate? \n Q5. How often do you pay attention to what is going on in government and politics?",
+    fixed_small_size = T, threeparttable = T)
 
 
 
@@ -163,7 +382,7 @@ df |>
 #| results: asis
 
 df |> 
-  janitor::tabyl(q5.clps, q22.clps, group, show_na = F) |> 
+  janitor::tabyl(q5.clps, q22.clps, group, show_na = T) |> 
   janitor::adorn_percentages("row") |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
   janitor::adorn_title("top", 
@@ -185,7 +404,7 @@ df |>
 #| results: asis
 
 df |> 
-  janitor::tabyl(q5.clps, q23.clps, group, show_na = F) |> 
+  janitor::tabyl(q5.clps, q23.clps, group, show_na = T) |> 
   janitor::adorn_percentages("row") |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
   janitor::adorn_title("top", 
@@ -204,7 +423,7 @@ df |>
 #| results: asis
 
 df |> 
-  janitor::tabyl(q5.clps, q24.clps, group, show_na = F) |> 
+  janitor::tabyl(q5.clps, q24.clps, group, show_na = T) |> 
   janitor::adorn_percentages("row") |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
   janitor::adorn_title("top", 
@@ -224,7 +443,7 @@ df |>
 #| results: asis
 
 df |> 
-  janitor::tabyl(q5.clps, q25.clps, group, show_na = F) |> 
+  janitor::tabyl(q5.clps, q25.clps, group, show_na = T) |> 
   janitor::adorn_percentages("row") |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
   janitor::adorn_title("top", 
@@ -245,7 +464,7 @@ df |>
 #| results: asis
 
 df |> 
-  janitor::tabyl(q5.clps, q26.clps, group, show_na = F) |> 
+  janitor::tabyl(q5.clps, q26.clps, group, show_na = T) |> 
   janitor::adorn_percentages("row") |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
   janitor::adorn_title("top", 
@@ -266,7 +485,7 @@ df |>
 #| results: asis
 
 df |> 
-  janitor::tabyl(q5.clps, q27.clps, group, show_na = F) |> 
+  janitor::tabyl(q5.clps, q27.clps, group, show_na = T) |> 
   janitor::adorn_percentages("row") |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
   janitor::adorn_title("top", 
@@ -290,7 +509,7 @@ df |>
 #| results: asis
 
 df |>  
-  janitor::tabyl(q6.clps, q19.clps, group, show_na = F) |> 
+  janitor::tabyl(q6.clps, q19.clps, group, show_na = T) |> 
   janitor::adorn_percentages("row") |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
   janitor::adorn_title("top", row_name = "Q6",
@@ -311,7 +530,7 @@ df |>
 #| results: asis
 
 df |>  
-  janitor::tabyl(q6.clps, q20.clps, group, show_na = F) |> 
+  janitor::tabyl(q6.clps, q20.clps, group, show_na = T) |> 
   janitor::adorn_percentages("row") |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
   janitor::adorn_title("top", 
@@ -331,7 +550,7 @@ df |>
 #| results: asis
 
 df |> 
-  janitor::tabyl(q6.clps, q21.clps, group, show_na = F) |> 
+  janitor::tabyl(q6.clps, q21.clps, group, show_na = T) |> 
   janitor::adorn_percentages("row") |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
   janitor::adorn_title("top", 
@@ -352,7 +571,7 @@ df |>
 #| results: asis
 
 df |> 
-  janitor::tabyl(q6.clps, q22.clps, group, show_na = F) |> 
+  janitor::tabyl(q6.clps, q22.clps, group, show_na = T) |> 
   janitor::adorn_percentages("row") |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
   janitor::adorn_title("top", 
@@ -374,7 +593,7 @@ df |>
 #| results: asis
 
 df |> 
-  janitor::tabyl(q6.clps, q23.clps, group, show_na = F) |> 
+  janitor::tabyl(q6.clps, q23.clps, group, show_na = T) |> 
   janitor::adorn_percentages("row") |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
   janitor::adorn_title("top", 
@@ -393,7 +612,7 @@ df |>
 #| results: asis
 
 df |> 
-  janitor::tabyl(q6.clps, q24.clps, group, show_na = F) |> 
+  janitor::tabyl(q6.clps, q24.clps, group, show_na = T) |> 
   janitor::adorn_percentages("row") |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
   janitor::adorn_title("top", 
@@ -413,7 +632,7 @@ df |>
 #| results: asis
 
 df |> 
-  janitor::tabyl(q6.clps, q25.clps, group, show_na = F) |> 
+  janitor::tabyl(q6.clps, q25.clps, group, show_na = T) |> 
   janitor::adorn_percentages("row") |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
   janitor::adorn_title("top", 
@@ -434,7 +653,7 @@ df |>
 #| results: asis
 
 df |> 
-  janitor::tabyl(q6.clps, q26.clps, group, show_na = F) |> 
+  janitor::tabyl(q6.clps, q26.clps, group, show_na = T) |> 
   janitor::adorn_percentages("row") |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
   janitor::adorn_title("top", 
@@ -455,7 +674,7 @@ df |>
 #| results: asis
 
 df |> 
-  janitor::tabyl(q6.clps, q27.clps, group, show_na = F) |> 
+  janitor::tabyl(q6.clps, q27.clps, group, show_na = T) |> 
   janitor::adorn_percentages("row") |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
   janitor::adorn_title("top", 
@@ -480,7 +699,7 @@ df |>
 #| results: asis
 
 df |>  
-  janitor::tabyl(q7, q19.clps, group, show_na = F) |> 
+  janitor::tabyl(q7, q19.clps, group, show_na = T) |> 
   janitor::adorn_percentages("row") |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
   janitor::adorn_title("top", row_name = "Q7",
@@ -501,7 +720,7 @@ df |>
 #| results: asis
 
 df |>  
-  janitor::tabyl(q7, q20.clps, group, show_na = F) |> 
+  janitor::tabyl(q7, q20.clps, group, show_na = T) |> 
   janitor::adorn_percentages("row") |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
   janitor::adorn_title("top", 
@@ -521,7 +740,7 @@ df |>
 #| results: asis
 
 df |> 
-  janitor::tabyl(q7, q21.clps, group, show_na = F) |> 
+  janitor::tabyl(q7, q21.clps, group, show_na = T) |> 
   janitor::adorn_percentages("row") |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
   janitor::adorn_title("top", 
@@ -542,7 +761,7 @@ df |>
 #| results: asis
 
 df |> 
-  janitor::tabyl(q7, q22.clps, group, show_na = F) |> 
+  janitor::tabyl(q7, q22.clps, group, show_na = T) |> 
   janitor::adorn_percentages("row") |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
   janitor::adorn_title("top", 
@@ -564,7 +783,7 @@ df |>
 #| results: asis
 
 df |> 
-  janitor::tabyl(q7, q23.clps, group, show_na = F) |> 
+  janitor::tabyl(q7, q23.clps, group, show_na = T) |> 
   janitor::adorn_percentages("row") |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
   janitor::adorn_title("top", 
@@ -583,7 +802,7 @@ df |>
 #| results: asis
 
 df |> 
-  janitor::tabyl(q7, q24.clps, group, show_na = F) |> 
+  janitor::tabyl(q7, q24.clps, group, show_na = T) |> 
   janitor::adorn_percentages("row") |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
   janitor::adorn_title("top", 
@@ -603,7 +822,7 @@ df |>
 #| results: asis
 
 df |> 
-  janitor::tabyl(q7, q25.clps, group, show_na = F) |> 
+  janitor::tabyl(q7, q25.clps, group, show_na = T) |> 
   janitor::adorn_percentages("row") |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
   janitor::adorn_title("top", 
@@ -624,7 +843,7 @@ df |>
 #| results: asis
 
 df |> 
-  janitor::tabyl(q7, q26.clps, group, show_na = F) |> 
+  janitor::tabyl(q7, q26.clps, group, show_na = T) |> 
   janitor::adorn_percentages("row") |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
   janitor::adorn_title("top", 
@@ -645,7 +864,7 @@ df |>
 #| results: asis
 
 df |> 
-  janitor::tabyl(q7, q27.clps, group, show_na = F) |> 
+  janitor::tabyl(q7, q27.clps, group, show_na = T) |> 
   janitor::adorn_percentages("row") |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
   janitor::adorn_title("top", 
@@ -670,7 +889,7 @@ df |>
 #| results: asis
 
 df |>  
-  janitor::tabyl(q8.clps, q19.clps, group, show_na = F) |> 
+  janitor::tabyl(q8.clps, q19.clps, group, show_na = T) |> 
   janitor::adorn_percentages("row") |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
   janitor::adorn_title("top", row_name = "Q8",
@@ -691,7 +910,7 @@ df |>
 #| results: asis
 
 df |>  
-  janitor::tabyl(q8.clps, q20.clps, group, show_na = F) |> 
+  janitor::tabyl(q8.clps, q20.clps, group, show_na = T) |> 
   janitor::adorn_percentages("row") |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
   janitor::adorn_title("top", 
@@ -711,7 +930,7 @@ df |>
 #| results: asis
 
 df |> 
-  janitor::tabyl(q8.clps, q21.clps, group, show_na = F) |> 
+  janitor::tabyl(q8.clps, q21.clps, group, show_na = T) |> 
   janitor::adorn_percentages("row") |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
   janitor::adorn_title("top", 
@@ -732,7 +951,7 @@ df |>
 #| results: asis
 
 df |> 
-  janitor::tabyl(q8.clps, q22.clps, group, show_na = F) |> 
+  janitor::tabyl(q8.clps, q22.clps, group, show_na = T) |> 
   janitor::adorn_percentages("row") |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
   janitor::adorn_title("top", 
@@ -754,7 +973,7 @@ df |>
 #| results: asis
 
 df |> 
-  janitor::tabyl(q8.clps, q23.clps, group, show_na = F) |> 
+  janitor::tabyl(q8.clps, q23.clps, group, show_na = T) |> 
   janitor::adorn_percentages("row") |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
   janitor::adorn_title("top", 
@@ -773,7 +992,7 @@ df |>
 #| results: asis
 
 df |> 
-  janitor::tabyl(q8.clps, q24.clps, group, show_na = F) |> 
+  janitor::tabyl(q8.clps, q24.clps, group, show_na = T) |> 
   janitor::adorn_percentages("row") |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
   janitor::adorn_title("top", 
@@ -793,7 +1012,7 @@ df |>
 #| results: asis
 
 df |> 
-  janitor::tabyl(q8.clps, q25.clps, group, show_na = F) |> 
+  janitor::tabyl(q8.clps, q25.clps, group, show_na = T) |> 
   janitor::adorn_percentages("row") |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
   janitor::adorn_title("top", 
@@ -814,7 +1033,7 @@ df |>
 #| results: asis
 
 df |> 
-  janitor::tabyl(q8.clps, q26.clps, group, show_na = F) |> 
+  janitor::tabyl(q8.clps, q26.clps, group, show_na = T) |> 
   janitor::adorn_percentages("row") |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
   janitor::adorn_title("top", 
@@ -835,7 +1054,7 @@ df |>
 #| results: asis
 
 df |> 
-  janitor::tabyl(q8.clps, q27.clps, group, show_na = F) |> 
+  janitor::tabyl(q8.clps, q27.clps, group, show_na = T) |> 
   janitor::adorn_percentages("row") |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
   janitor::adorn_title("top", 
@@ -854,41 +1073,44 @@ df |>
 
 
 
-## Overview of demographic variables and balance
+## Sample Demographics and Balance
 
 ```{r}
 #| label: tbl-1
+#| results: asis
 
 
-# table of treatment and control groups
-df |>
-  gtsummary::tbl_summary(
-    by = group,
-    include = c(age, gender, race, educ, milserv1, milserv2, milservfam),
-    statistic = list(
-      age ~ "{mean} ({sd})",
-      gtsummary::all_categorical() ~ "{n} ({p}%)"
-    ),
-    type = list(
-      milserv1 ~ "categorical",
-      milserv2 ~ "categorical",
-      milservfam ~ "categorical"
-    ),
-    missing = "ifany"
-  ) |>
-  gtsummary::add_overall() |>
-  gtsummary::modify_header(label = "**Variable**") |>
-  gtsummary::bold_labels() |>
-    gtsummary::as_kable_extra(
-      booktabs = T,
-      longtable = T
-    ) |>  
-    kableExtra::kable_styling(
-      position = "left", 
-      fixed_thead = T,
-      font_size = 12,  
-      bootstrap_options = c("striped", "hover", "responsive")
-    )
+# descriptive stats for df
+t1.demog <- table1::table1(
+  ~age_cat
+  + gender_3cat
+  + race
+  + educ
+  + partyid_3cat
+  + milserv1
+  + milserv2
+  + milservfam
+  + voted2020.clps
+  + choice2020
+  + voteintent
+  | group,
+  data = df,
+  overall = "Overall", caption = "Survey sample characteristics by treatment condition",
+  footnote = "Table reflects column percentages.")
+
+
+t1.demog <- table1::t1kable(
+  t1.demog,
+  format = "html",
+  booktabs = F ) |>
+  kableExtra::kable_styling(
+    bootstrap_options = "basic",
+    latex_options = "basic",
+    fixed_thead = T
+  )
+
+print(t1.demog)
+
 
 
 ```

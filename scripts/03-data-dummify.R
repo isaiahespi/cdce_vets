@@ -780,7 +780,17 @@ df <- df |>
     voted2020.clps = "Q66. Turnout 2020"
   )
 
-
+# set shorter levels for some demographic vars
+df <- df |> labelled::set_variable_labels(
+  gender_3cat = "Q59. What is your current gender?",
+  race = "Q61. Primary race reported by respondent",
+  educ = "Q62. Highest level of education completed",
+  milserv1 = "Q63. Have you ever served in the Armed Forces?",
+  milserv2 = "Q64. Are you now serving in the Armed Forces?",
+  milservfam = "Q65. Member of immediate family served or is currently serving",
+  choice2020 = "Q67. Who did you vote for?",
+  voteintent = "Q68. Do you plan to vote?"
+)
 
 df <- df |>
   labelled::set_variable_labels(
@@ -843,3 +853,79 @@ df <- df |>
     q46_5.clps = "Q46_5. Majority of Election staff are lawyers",
     q46_6.clps = "Q46_6. Majority of Election staff are students",
   )
+
+
+
+# Now do some heavy duty relocating of columns in the dataframe
+
+df <- df |> 
+  dplyr::relocate(
+    c(q5.clps, q6.clps, q8.clps), .before = q19.clps
+  ) |> 
+  dplyr::relocate(
+    gender_3cat, .after = gender
+  ) |> 
+  dplyr::relocate(
+    voted2020.clps, .after = voted2020
+  ) |> 
+  dplyr::relocate(
+  c(
+    q20.clps,
+    q21.clps,
+    q22.clps,
+    q23.clps,
+    q24.clps,
+    q25.clps,
+    q26.clps,
+    q27.clps,
+    q28_1.clps,
+    q28_2.clps,
+    q28_3.clps,
+    q28_4.clps,
+    q28_5.clps,
+    q29.clps,
+    q30.clps,
+    q31.clps,
+    q32.clps,
+    q33.clps,
+    q34.clps,
+    q35.clps,
+    q36.clps,
+    q37.clps,
+    q38.clps,
+    q39.clps,
+    q40_1.clps,
+    q40_2.clps,
+    q40_3.clps,
+    q40_4.clps,
+    q40_5.clps,
+    q41_1.clps,
+    q41_2.clps,
+    q41_3.clps,
+    q41_4.clps,
+    q41_5.clps,
+    q41_6.clps,
+    q43_1.clps,
+    q43_2.clps,
+    q43_3.clps,
+    q43_4.clps,
+    q43_5.clps,
+    q43_6.clps,
+    q44_1.clps,
+    q44_2.clps,
+    q44_3.clps,
+    q44_4.clps,
+    q44_5.clps,
+    q44_6.clps,
+    q46_1.clps,
+    q46_2.clps,
+    q46_3.clps,
+    q46_4.clps,
+    q46_5.clps,
+    q46_6.clps
+  ),
+  .after = q19.clps)
+
+
+
+  
