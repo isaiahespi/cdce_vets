@@ -45,7 +45,7 @@ citation:
   container-title: Center for Democracy and Civic Engagement, University of Maryland
 number-sections: false
 execute: 
-  cache: true
+  cache: false
 ---
 
 
