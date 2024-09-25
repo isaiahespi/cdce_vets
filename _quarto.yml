@@ -17,22 +17,24 @@ date-format: "YYYY-M-D"
 format:
   html:
     toc: true
+    toc-depth: 3
+    toc-expand: true
     toc-location: left
     title-block-style: manuscript
+    appendix-style: none
+    theme:
+      light: default
+      dark: default
     smooth-scroll: true
     embed-resources: true
     link-external-newwindow: true
     footnotes-hover: false
+    reference-location: margin
     page-layout: article
+    grid: 
+      body-width: 900px
     code-tools: true
     code-fold: true
-    code-overflow: wrap
-    code-copy: hover
-    code-links:
-      - text: Data Import and Processing
-        icon: file-code
-        href: 01-data-import-clean-process.qmd
-      - repo
     # Use a CSL to style (https://www.zotero.org/styles/)
     # csl: https://www.zotero.org/styles/american-political-science-review
   # docx: default

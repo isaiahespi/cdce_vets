@@ -1,7 +1,6 @@
 # Dummify all these factors
 
 library(tidyverse)
-library(easystats)
 library(pewmethods)
 library(surveytoolbox)
 
@@ -780,6 +779,8 @@ df <- df |>
     voted2020.clps = "Q66. Turnout 2020"
   )
 
+# ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::####
+
 # set shorter levels for some demographic vars
 df <- df |> labelled::set_variable_labels(
   gender_3cat = "Q59. What is your current gender?",
@@ -828,34 +829,38 @@ df <- df |>
     q40_3.clps = "Q40_3. People will be turned away, Local",
     q40_4.clps = "Q40_4. Foreign interference with votes, Local",
     q40_5.clps = "Q40_5. EO discourage people from voting, Local",
+    
     q41_1.clps = "Q41_1. Election officials test machines",
     q41_2.clps = "Q41_2. Election officials conduct audits",
     q41_3.clps = "Q41_3. Partisan Poll watchers observe the election.",
     q41_4.clps = "Q41_4. Election staff include veterans and family",
     q41_5.clps = "Q41_5. Election staff include lawyers",
     q41_6.clps = "Q41_6. Election staff include college students",
+    
     q43_1.clps = "Q43_1. Law enforcement presence.",
     q43_2.clps = "Q43_2. Partisan Poll watchers observe the election",
     q43_3.clps = "Q43_3. People holding signs or giving out literature",
     q43_4.clps = "Q43_4. Election staff includes veterans",
     q43_5.clps = "Q43_5. Election staff includes lawyers",
     q43_6.clps = "Q43_6. Election staff includes students",
+    
     q44_1.clps = "Q44_1. Election officials test machines",
-    q44_2.clps = "Q44_2. Election officials conduct audits",
-    q44_3.clps = "Q44_3. Partisan Poll watchers observe the election",
-    q44_4.clps = "Q44_4. Majority of Election staff are veterans",
-    q44_5.clps = "Q44_5. Majority of Election staff are lawyers",
+    q44_2.clps = "Q44_2. Majority of Election staff are veterans",
+    q44_3.clps = "Q44_3. Majority of Election staff are lawyers",
+    q44_4.clps = "Q44_4. Election officials conduct audits",
+    q44_5.clps = "Q44_5. Partisan Poll watchers observe the election",
     q44_6.clps = "Q44_6. Majority of Election staff are students",
+    
     q46_1.clps = "Q46_1. Law enforcement presence.",
-    q46_2.clps = "Q46_2. Partisan Poll watchers observe the election",
-    q46_3.clps = "Q46_3. People holding signs or giving out literature",
-    q46_4.clps = "Q46_4. Majority of Election staff are veterans",
-    q46_5.clps = "Q46_5. Majority of Election staff are lawyers",
-    q46_6.clps = "Q46_6. Majority of Election staff are students",
+    q46_2.clps = "Q46_2. Majority of Election staff are veterans",
+    q46_3.clps = "Q46_3. Majority of Election staff are lawyers",
+    q46_4.clps = "Q46_4. Partisan Poll watchers observe the election",
+    q46_5.clps = "Q46_5. Majority of Election staff are students",
+    q46_6.clps = "Q46_6. People holding signs or giving out literature",
   )
 
 
-
+# ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::####
 # Now do some heavy duty relocating of columns in the dataframe
 
 df <- df |> 
@@ -867,6 +872,9 @@ df <- df |>
   ) |> 
   dplyr::relocate(
     voted2020.clps, .after = voted2020
+  ) |> 
+  dplyr::relocate(
+    q36_dum, .after = q35_dum
   ) |> 
   dplyr::relocate(
   c(
@@ -925,6 +933,32 @@ df <- df |>
     q46_6.clps
   ),
   .after = q19.clps)
+
+# merge question sets that show no significant difference ::::::::::::::::::####
+
+# coalesce the qset vars that can be merged. This combines/coalesces some vars
+# from the q44 and q46 set (minus statements regarding lawyers and students)
+# into q41 and q43 since there was no significant difference found between
+# question set A and question set B in proportions of responses categories.
+df <- df |> 
+  group_by(rowID) |> 
+  mutate(q41.1 = dplyr::coalesce(q41_1, q44_1),
+         q41.2 = dplyr::coalesce(q41_2, q44_4),
+         q41.3 = dplyr::coalesce(q41_3, q44_5),
+         q41.4 = dplyr::coalesce(q41_4, q44_2),
+         q43.1 = dplyr::coalesce(q43_1, q46_1),
+         q43.2 = dplyr::coalesce(q43_2, q46_4),
+         q43.3 = dplyr::coalesce(q43_3, q46_6),
+         q43.4 = dplyr::coalesce(q43_4, q46_2),
+         q41.1.clps = dplyr::coalesce(q41_1.clps, q44_1.clps),
+         q41.2.clps = dplyr::coalesce(q41_2.clps, q44_4.clps),
+         q41.3.clps = dplyr::coalesce(q41_3.clps, q44_5.clps),
+         q41.4.clps = dplyr::coalesce(q41_4.clps, q44_2.clps),
+         q43.1.clps = dplyr::coalesce(q43_1.clps, q46_1.clps),
+         q43.2.clps = dplyr::coalesce(q43_2.clps, q46_4.clps),
+         q43.3.clps = dplyr::coalesce(q43_3.clps, q46_6.clps),
+         q43.4.clps = dplyr::coalesce(q43_4.clps, q46_2.clps),) |>
+  ungroup() 
 
 
 

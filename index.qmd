@@ -40,7 +40,6 @@ date: 2024-09-12
 # csl: american-political-science-association.csl
 link-citations: true
 tbl-cap-location: top
-reference-location: document
 citation:
   container-title: Center for Democracy and Civic Engagement, University of Maryland
 number-sections: false
@@ -51,8 +50,8 @@ execute:
 
 
 ```{r}
-#| label: packages
-#| echo: false
+#| label: setup
+#| echo: true
 #| output: false
 
 # load packages
@@ -61,34 +60,13 @@ library(janitor)
 library(table1)
 library(kableExtra)
 
-
-```
-
-
-```{r}
-#| label: load-df
-
-
 # load data
 load("data/df-2024-09-11.Rdata") # df set as factor with dummy vars
 load("data/data_numeric_vets_survey-exp-2024-09-11.Rdata") # numeric only
 
-
-```
-
-
-```{r}
-#| label: df-dict
-#| include: false
-
 # load data dictionary/codebook
 df_dict <- read.csv("codebooks/df_dict.csv")
 
-```
-
-```{r}
-#| label: setup-fun
-#| include: false
 
 # function to compute the p-value for continuous or categorical variables
 pvalue <- function(x, ...) {
@@ -122,11 +100,13 @@ pvalue <- function(x, ...) {
 The following cross-tables break down relative observations and percentages of responses to survey questions across categories of the survey's experimental condition. The survey questions in the table below concerned a respondent's degree of trust and confidence in the electoral process in Maricopa County, AZ.
 
 ```{r}
-#| label: tbl-2
+#| label: tbl-1
+#| tbl-cap: "Trust and Confidence in Maricopa County, AZ Elections by Treatment Condition"
+#| column: page
 #| results: asis
 
 # q19 to q27 by treatment condition. p-value based on chi^2 test of independence
-t2 <- table1::table1(
+tab1 <- table1::table1(
   ~ q19.clps
   + q20.clps
   + q21.clps
@@ -140,42 +120,40 @@ t2 <- table1::table1(
   data = df,
   transpose = F,
   overall = F,
-  extra.col = list('P-value' = pvalue),
-  caption = "Trust and Confidence in Maricopa County, AZ Elections by Treatment Condition"
+  extra.col = list('P-value' = pvalue)
 )
 
 
 # convert table1 object to "kableExtra" "kintr_kable"
-t2 <- table1::t1kable(
-  t2,
-  format = "html",
-  booktabs = F,
-  table.attr = "quarto-disable-processing=true"
+tab1 <- table1::t1kable(
+  tab1, booktabs = T
   ) |>
   kableExtra::footnote(
     general = "Table reflects column percentages. \nP-values based on Pearson's Chi-squared test of independence."
   ) |> 
   kableExtra::kable_styling(
     bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
-    latex_options = "basic",
     font_size = 13,
-    full_width = T,
     fixed_thead = T
   )
 # print table
-print(t2)
+print(tab1)
 
 
 ```
 
+### Expectation of Electoral Fraud
+
 The next table reviews a set of questions designed to assess a respondent's expectation of electoral fraud of some sort in Maricopa County, AZ. Again, responses are compared across categories of the survey experiment.
 
 ```{r}
-#| label: tbl-3
+#| label: tbl-2
+#| tbl-cap: "Expectation of Electoral Fraud in Maricopa County, AZ by Treatment Condition"
+#| column: page
 #| results: asis
 
 # q28_1 to q29 by treatment condition p-value based on chi^2 test of independence
-t3 <- table1::table1(
+tab2 <- table1::table1(
   ~ q28_1.clps
   + q28_2.clps
   + q28_3.clps
@@ -185,15 +163,14 @@ t3 <- table1::table1(
   data = df,
   transpose = F,
   overall = F,
-  extra.col = list('P-value' = pvalue),
-  caption = "Expectation of Electoral Fraud in Maricopa County, AZ \nby Treatment Condition"
+  extra.col = list('P-value' = pvalue)
 )
 
 # convert table1 object to "kableExtra" "kintr_kable"
-t3 <- table1::t1kable(
-  t3,
+tab2 <- table1::t1kable(
+  tab2,
   format = "html",
-  booktabs = F ) |>
+  booktabs = T ) |>
   kableExtra::footnote(
     general = "Table reflects column percentages. \nP-values based on Pearson's Chi-squared test of independence."
   ) |> 
@@ -206,7 +183,7 @@ t3 <- table1::t1kable(
   )
 
 # print table
-print(t3)
+print(tab2)
 
 
 
@@ -215,40 +192,300 @@ print(t3)
 
 ```
 
+## T-test Means comparison
 
-## Impact on confidence in fairness and accuracy
+```{r}
+#| label: tbl-3
+#| tbl-cap: "Two-sample T-test results by Experiment Condition"
+#| column: body-outset-right
+#| warning: false
 
-The following examines survey questions that asked respondents whether particular circumstances or election official actions would have any impact on their confidence in the fairness and accuracy of elections. Of particular importance is question number Q43_4 which asked respondents to consider whether inclusion of military veterans and veteran's family members as election staff and volunteers has any impact on their confidence in the fairness and accuracy of elections in November.  
 
+## 2-sample t-tests for each dummified question by group condition
+dums <- df |> select(group, contains("_dum"))
+
+# makes df long
+melted <- reshape2::melt(dums, id.vars = "group")
+
+# conduct t-tests, assign to dum_ttests
+dum_ttests <- melted |> group_by(variable) |> 
+  rstatix::t_test(value ~ group, detailed = T) |> 
+  rstatix::add_significance()
+
+# relocate p.signif column
+dum_ttests <- dum_ttests |> dplyr::relocate(c(p, p.signif), .after = conf.high)
+
+# show only variables with stat.sig differences between experiment condition
+dum_ttests <- dum_ttests |> 
+  select(-5, -df, -alternative) |> 
+  filter(p.signif != "ns") |> 
+  arrange(variable)
+
+
+kableExtra::kbl(
+  dum_ttests,
+  booktabs = T
+  ) |>
+  kableExtra::kable_styling(
+    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
+    latex_options = "basic",
+    font_size = 13,
+    full_width = T,
+    fixed_thead = T
+  )
+
+
+
+
+
+```
+
+
+## Impacts on Confidence
+
+### Impact on confidence in fairness and accuracy of elections
+
+The following examines survey questions that asked respondents whether particular circumstances or election official actions would have any impact on their confidence in the fairness and accuracy of elections. Survey participants responded to six statements, all prefaced with the following,
+
+> "Regardless of whether any of these are actually the case, how would the following impact your confidence in the fairness and accuracy of elections conducted this November?"
+
+1.    Election officials test every machine used in the election to ensure they are secure.
+2.    Election officials conduct audits of ballots after every election to confirm the results were accurate.
+3.    Poll watchers affiliated with the political parties or candidates observe the election.
+4.    Election staff and volunteers include military veterans and their family members from the community[^1].
+5.    Election staff and volunteers include lawyers from the community.
+6.    Election staff and volunteers include college students from the community.
+
+For each statement, survey participants responded by selecting one of five response options:
+
+1.    Decrease confidence a lot
+2.    Decrease confidence somewhat
+3.    No impact on confidence
+4.    Increase confidence somewhat
+5.    Increase confidence a lot
+
+
+In the following table, responses were collapsed into three categories. Any increase in confidence (e.g., increase confidence a lot, increase confidence somewhat) were collapsed into one column, and likewise for any response indicating a decrease in confidence.
 
 ```{r}
 #| label: tbl-4
+#| tbl-cap: "Confidence Impact on Election Fairness and Accuracy"
+#| column: body-outset-right
 #| results: asis
+
+# Simple Crosstab to show response breakdown by experiment condition
+# 6 NAs omitted. 
+df |>
+  mutate(
+    confimpct_vets = dplyr::case_when(
+      q41.4.clps == "increase" ~ 'Increase Confidence',
+      q41.4.clps == "no_impact" ~ 'No Impact',
+      q41.4.clps == 'decrease' ~ 'Decrease Confidence'
+      )) |> 
+  janitor::tabyl(group, confimpct_vets,  show_na = F) |> 
+  janitor::adorn_totals('both') |> 
+  janitor::adorn_percentages('row') |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = T) |> 
+  janitor::adorn_ns("rear") |> 
+  janitor::adorn_title(
+    'combined',
+    row_name = "Condition", 
+    col_name = 'Election staff include veterans and family'
+    ) |> 
+  dplyr::relocate(
+    "No Impact", .before = "Increase Confidence"
+  ) |> 
+  kableExtra::kbl() |> 
+  kableExtra::footnote(
+    general = "NA omitted. % (n)"
+    ) |> 
+  kableExtra::kable_styling(
+    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
+    latex_options = "basic",
+    font_size = 13,
+    full_width = T,
+    fixed_thead = T
+  )
+  
+
+```
+
+
+Of particular importance are responses to the statement which asked respondents to consider whether inclusion of military veterans and veteran's family members as election staff and volunteers has any impact on their confidence in the fairness and accuracy of elections in November. In this case, significant differences were observed between treatment and control groups. 
+
+A -0.11 percentage point difference of proportion was observed between treatment and control groups among those who reported that their confidence in the fairness and accuracy of elections would "increase a lot" or "increase somewhat" when election staff and volunteers include (or consist of a majority of) military service veterans and their family members in the community. This difference of proportion is estimated with 95% confidence to be statistically significant (p < 0.01, CI [-0.169, -0.057]).  Conversely, no difference was observed between treatment and control groups among those who reported that their confidence would "decrease a lot" or "decrease somewhat".
+
+
+[^1]: Two different versions of this statement was presented to survey participants. Half of the sample read the statement as, "Election staff and volunteers *include* military veterans and their family members from the community", whereas the other half of the sample read, "The *majority* of election staff and volunteers consist of military veterans and their family members from the community." No significant differences in responses were observed between those who read one version of the statement over the other. However, the same was done for statements number 5 and 6 which concern "lawyers from the community" and "college students from the community". Significant differences were found when comparing responses between the different versions of these statements. See the appendix for further discussion on these results.  
+
+
+```{r}
+#| label: tbl-5
+#| tbl-cap: "Confidence Impact on Election Fairness and Accuracy"
+#| results: asis
+
 
 # confidence impact by treatment condition ::::::::::::::
-# q41_1 to q43_6 by treatment condition p-value based on chi^2 test
-t4 <- table1::table1(
-  ~ q41_1.clps
-  + q41_2.clps
-  + q41_3.clps
-  + q41_4.clps
-  + q41_5.clps
-  + q41_6.clps
-  | group,
-  data = df,
-  transpose = F,
-  overall = F,
-  extra.col = list('P-value' = pvalue),
-  caption = "Circumstantial Impact on Confidence in Fairness and Accuracy of Elections \nby Treatment Condition" 
-)
+tbl5 <- df |>
+  mutate(
+    confimpct_vets = dplyr::case_when(
+      q41.4.clps == "increase" ~ 'Increase Confidence',
+      q41.4.clps == "no_impact" ~ 'No increase',
+      q41.4.clps == 'decrease' ~ 'No increase'
+      )
+    ) |>
+  janitor::tabyl(group, confimpct_vets,  show_na = F) |> 
+  janitor::adorn_totals('both') |> 
+  janitor::adorn_percentages('row') |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |> 
+  janitor::adorn_ns("rear") |> 
+  janitor::adorn_title(
+    'combined', 
+    row_name = "Condition",
+    col_name = 'Election staff include veterans and family')
 
-t4 <- table1::t1kable(
-  t4,
-  format = "html",
-  booktabs = F ) |>
+
+kableExtra::kbl(tbl5) |> 
   kableExtra::footnote(
-    general = "Table reflects column percentages. \nP-values based on Pearson's Chi-squared test of independence.\n Each question listed here was prefaced with the following: Regardless of whether any of these are actually the case, how would the following impact your confidence in the fairness and accuracy of elections conducted this November?"
+    general = "NA omitted. % (n)"
+    ) |> 
+  kableExtra::kable_styling(
+    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
+    latex_options = "basic",
+    font_size = 13,
+    full_width = T,
+    fixed_thead = T
+  )
+
+
+```
+
+
+```{r}
+#| label: tbl-6
+#| tbl-cap: "Difference of Proportions between Control and Treatment"
+#| column: body-outset-right
+#| results: asis
+
+# conduct diff of proportions test by group condition
+pt1 <- df |>
+  mutate(
+    confimpct_vets = dplyr::case_when(
+      q41.4.clps == "increase" ~ 'increase',
+      q41.4.clps == "no_impact" ~ 'no_increase',
+      q41.4.clps == 'decrease' ~ 'no_increase'
+      ),
+    group = dplyr::case_when(
+      group == "Treatment" ~ 1,
+      group == "Control" ~ 0
+    )
+    ) |>
+  janitor::tabyl(group, confimpct_vets,  show_na = F) |> 
+  select(increase, no_increase) |> 
+  rstatix::prop_test(detailed = T) 
+
+# print results as table
+pt1 |> 
+  kableExtra::kbl(
+    format.args = list(scientific = F),
+    digits = 5) |> 
+  kableExtra::footnote(general = "Two-sample z-test of equal proportions") |> 
+  kableExtra::kable_styling(
+    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
+    latex_options = "basic",
+    font_size = 13,
+    full_width = T,
+    fixed_thead = T
+  )
+
+
+```
+
+These results suggest that reading a vignette about county efforts to recruit veterans as election staff and volunteers does more to increase one's confidence in the fairness and accuracy of elections, especially under the prospect that election staff and volunteers would include veterans and their family members.
+
+### Impact on Confidence in Voter Safety at polling sites
+
+
+The same analysis was conducted for questions that assessed the reported impact on confidence of safety while voting in-person. Survey participants provided responses to the same six statements as before, which were all prefaced with the following question,
+
+> "How would the following impact your confidence that voters are safe from violence, threats of violence, or intimidation while voting in-person during elections this November?"
+
+```{r}
+#| label: tbl-7
+#| tbl-cap: "Confidence Impact on In-person Voter Safety"
+#| results: asis
+
+
+# Simple Crosstab to show response breakdown by experiment condition
+# 6 NAs omitted. 
+df |>
+  mutate(
+    confimpct_vets = dplyr::case_when(
+      q43.4.clps == "increase" ~ 'Increase Confidence',
+      q43.4.clps == "no_impact" ~ 'No Impact',
+      q43.4.clps == 'decrease' ~ 'Decrease Confidence'
+      )) |> 
+  janitor::tabyl(group, confimpct_vets,  show_na = F) |> 
+  janitor::adorn_totals('both') |> 
+  janitor::adorn_percentages('row') |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = T) |> 
+  janitor::adorn_ns("rear") |> 
+  janitor::adorn_title(
+    'combined',
+    row_name = 'Condition',
+    col_name = 'Election staff include veterans and family') |>
+  dplyr::relocate(
+    "No Impact", .before = "Increase Confidence"
   ) |> 
+  kableExtra::kbl() |> 
+  kableExtra::footnote(
+    general = "NA omitted. % (n)"
+    ) |> 
+  kableExtra::kable_styling(
+    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
+    latex_options = "basic",
+    font_size = 13,
+    full_width = T,
+    fixed_thead = T
+  )
+  
+
+
+
+```
+
+Significant differences were observed between the treatment and control group among those who reported that their confidence in voter safety would increase when election staff and volunteers include (or consist of a majority of) military service veterans and their family members in the community. Here too, a negative difference of -0.082 percentage points when comparing responses of the treatment group to the control group are statistically significant with 95% confidence (p < 0.01, CI [-0.137, -0.082]).
+
+```{r}
+#| label: tbl-8
+#| tbl-cap: "Confidence Impact on In-person Voter Safety"
+#| results: asis
+
+tbl8 <- df |>
+  mutate(
+    confimpct_vets = dplyr::case_when(
+      q41.4.clps == "increase" ~ 'Increase Confidence',
+      q41.4.clps == "no_impact" ~ 'No increase',
+      q41.4.clps == 'decrease' ~ 'No increase'
+      )
+    ) |>
+  janitor::tabyl(group, confimpct_vets,  show_na = F) |> 
+  janitor::adorn_totals('both') |> 
+  janitor::adorn_percentages('row') |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |> 
+  janitor::adorn_ns("rear") |> 
+  janitor::adorn_title(
+    'combined', 
+    row_name = "Condition",
+    col_name = 'Election staff include veterans and family')
+
+
+kableExtra::kbl(
+  tbl8
+  ) |> 
+  kableExtra::footnote(
+    general = "NA omitted. % (n)"
+    ) |> 
   kableExtra::kable_styling(
     bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
     latex_options = "basic",
@@ -257,40 +494,40 @@ t4 <- table1::t1kable(
     fixed_thead = T
   )
 
-print(t4)
-
-
-
 ```
 
-## Impact on concerns for voter safety
-
-The following table examines a set of survey questions designed to assess the impact of certain conditions or circumstances at election sites on feelings of safety while voting in-person. Again, of particular importance is question number Q43_4 which has a respondent consider whether knowledge that election staff includes veteran service members and their family has any impact on their confidence that voters will be safe from violence, threats, and intimidation while voting in person.   
 
 ```{r}
-#| label: tbl-t5
+#| label: tbl-9
+#| tbl-cap: "Difference of Proportions between Control and Treatment"
+#| column: body-outset-right
 #| results: asis
 
-t5 <- table1::table1(
-  ~ q43_1.clps
-  + q43_2.clps
-  + q43_3.clps
-  + q43_4.clps
-  + q43_5.clps
-  + q43_6.clps
-  | group,
-  data = df,
-  transpose = F,
-  overall = F,
-  extra.col = list('P-value' = pvalue),
-  caption = "Circumstantial Impact on Confidence of voter safety \nby Treatment Condition",
-  footnote = "Table reflects column percentages. \nP-values based on Pearson's Chi-squared test of independence.\n Each question listed here was prefaced with the following: How would the following impact your confidence that voters are safe from violence, threats of violence, or intimidation while voting in-person during elections this November?" 
-)
 
-t5 <- table1::t1kable(
-  t5,
-  format = "html",
-  booktabs = F ) |>
+# prop.test. assign to pt2
+pt2 <- df |>
+  mutate(
+    votersafety_vets = dplyr::case_when(
+      q43.4.clps == "increase" ~ 'increase',
+      q43.4.clps == "no_impact" ~ 'no_increase',
+      q43.4.clps == 'decrease' ~ 'no_increase'
+      ),
+    group = dplyr::case_when(
+      group == "Treatment" ~ 1,
+      group == "Control" ~ 0
+    )
+    ) |>
+  janitor::tabyl(group, votersafety_vets,  show_na = F) |> 
+  select(increase, no_increase) |> 
+  rstatix::prop_test(detailed = T)
+
+# print results as table
+pt2 |> 
+  kableExtra::kbl(
+    format.args = list(scientific = F),
+    digits = 5
+    ) |> 
+  kableExtra::footnote(general = "Two-sample z-test of equal proportions") |> 
   kableExtra::kable_styling(
     bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
     latex_options = "basic",
@@ -299,786 +536,92 @@ t5 <- table1::t1kable(
     fixed_thead = T
   )
 
-print(t5)
-
-
-
-```
-
-
-## 
-
-## Q5. Attention Paid to Political Affairs
-
-```{r}
-#| label: tbl-q5q19
-#| results: asis
-
-df |>  
-  janitor::tabyl(q5.clps, q19.clps, group, show_na = T) |>
-  janitor::adorn_totals("both") |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_ns() |> 
-  janitor::adorn_title("top", row_name = "Q5",
-                       col_name = "Q19. Vote count confidence, AZ") |>
-  kableExtra::kbl(booktabs = T) |>  
-  kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "responsive"),
-                            row_label_position = "l", font_size = 12) |> 
-  kableExtra::footnote(
-    general = "Tables reflect row percentages\nQ19. How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November? \n Q5. How often do you pay attention to what is going on in government and politics?",
-    fixed_small_size = T, threeparttable = T)
 
 
 ```
 
+## T-tests Means comparison for Impact on Confidence
 
 ```{r}
-#| label: tbl-q5q20
+#| label: tbl-10
+#| tbl-cap: "Comparison of Means between Treatment and Control Condition"
+#| column: body-outset-right
 #| results: asis
 
-df |>  
-  janitor::tabyl(q5.clps, q20.clps, group, show_na = T) |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_title("top", 
-                       row_name = "Q5",
-                       col_name = "Q20. Competence of Election Staff, AZ") |>
-  kableExtra::kbl() |>  
-  kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l", font_size = 12) |> 
-  kableExtra::footnote(
-    general = "Tables reflect row percentages\nQ20. How confident are you that election officials...in Maricopa County, AZ will do a good job conducting the elections this November? \n Q5. How often do you pay attention to what is going on in government and politics?",
-    fixed_small_size = T, threeparttable = T)
+ttq41 <- df |> 
+  mutate(
+    confimpct_vets_fair = dplyr::case_when(
+      q41.4.clps == "increase" ~ 1,
+      q41.4.clps == "no_impact" ~ 0,
+      q41.4.clps == 'decrease' ~ 0
+      ),
+    group = dplyr::case_when(
+      group == "Treatment" ~ 1,
+      group == "Control" ~ 0
+    )) |> 
+  rstatix::t_test(
+    formula = confimpct_vets_fair ~ group,
+    paired = F, 
+    conf.level = 0.95,
+    detailed = T) |> 
+  rstatix::add_significance()
 
+ttq43 <- df |> 
+  mutate(
+    confimpct_vets_safe = dplyr::case_when(
+      q43.4.clps == "increase" ~ 1,
+      q43.4.clps == "no_impact" ~ 0,
+      q43.4.clps == 'decrease' ~ 0
+      ),
+    group = dplyr::case_when(
+      group == "Treatment" ~ 1,
+      group == "Control" ~ 0
+    )) |>
+  rstatix::t_test(
+    formula = confimpct_vets_safe ~ group,
+    paired = F,
+    conf.level = 0.95,
+    detailed = T) |> 
+  rstatix::add_significance()
 
-```
-
-```{r}
-#| results: asis
-
-df |> 
-  janitor::tabyl(q5.clps, q21.clps, group, show_na = T) |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_title("top", 
-                       row_name = "Q5", 
-                       col_name = "Q21. Commitment of Election Staff, AZ") |>
-  kableExtra::kbl() |>  
-  kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "responsive"),
-                            row_label_position = "l", font_size = 12) |> 
-  kableExtra::footnote(
-    general = "Tables reflect row percentages\nQ21. How committed do you think [Election staff in Maricopa County, AZ] will be to making sure the elections held this November are fair and accurate? \n Q5. How often do you pay attention to what is going on in government and politics?",
-    fixed_small_size = T, threeparttable = T)
-
-
-
-```
-
-```{r}
-#| results: asis
-
-df |> 
-  janitor::tabyl(q5.clps, q22.clps, group, show_na = T) |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_title("top", 
-                       row_name = "Q5", 
-                       col_name = "Q22. Fair Process, AZ") |>
-  kableExtra::kbl() |>  
-  kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l") |> 
-  kableExtra::footnote(
-    general = "Tables reflect row percentages\n Q22. How confident are you that the voting process will be fair in Maricopa County, AZ?\n Q5. How often do you pay attention to what is going on in government and politics?")
-
-
+ttq41 |>
+  dplyr::add_row(ttq43) |>
+  select(-df, -alternative) |> 
+  dplyr::relocate(c(.y., group1, group2, n1, n2), .before = estimate) |>
+  dplyr::relocate(p.signif, .after = p) |>
+  kableExtra::kbl() |> 
+  kableExtra::kable_styling(
+    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
+    latex_options = "basic",
+    font_size = 13,
+    full_width = T,
+    fixed_thead = T
+  )
 
 ```
 
 
-```{r}
-#| results: asis
+# 3-way Crosstables 
 
-df |> 
-  janitor::tabyl(q5.clps, q23.clps, group, show_na = T) |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_title("top", 
-                       row_name = "Q5", 
-                       col_name = "Q23. Fair Outcomes, AZ") |>
-  kableExtra::kbl() |>  
-  kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l") |> 
-  kableExtra::footnote(
-    general = "Tables reflect row percentages\n Q23. How confident are you that the voting outcomes will be fair in Maricopa County, AZ?\n Q5. How often do you pay attention to what is going on in government and politics?")
-
-```
-
-```{r}
-#| results: asis
-
-df |> 
-  janitor::tabyl(q5.clps, q24.clps, group, show_na = T) |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_title("top", 
-                       row_name = "Q5", 
-                       col_name = "Q24. Secure Voting Tech, AZ") |>
-  kableExtra::kbl() |>  
-  kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l") |> 
-  kableExtra::footnote(
-    general = "Tables reflect row percentages\n Q24. How confident are you that election systems in Maricopa County, AZ will be secure from hacking and other technological threats?\n Q5. How often do you pay attention to what is going on in government and politics?")
-
-
-```
-
-```{r}
-#| results: asis
-
-df |> 
-  janitor::tabyl(q5.clps, q25.clps, group, show_na = T) |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_title("top", 
-                       row_name = "Q5", 
-                       col_name = "Q25. Voter Intimidation/Violence, AZ") |>
-  kableExtra::kbl() |>  
-  kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l") |> 
-  kableExtra::footnote(
-    general = "Tables reflect row percentages\n Q25. Thinking about Maricopa County, AZ, how concerned should voters feel about potential violence, threats of violence, or intimidation while voting in person at their local polling place?\n Q5. How often do you pay attention to what is going on in government and politics?")
+::: {.callout-note}
+This section is under construction. A select number of 3-way cross tables will be presented here.
+:::
 
 
 
-```
-
-```{r}
-#| results: asis
-
-df |> 
-  janitor::tabyl(q5.clps, q26.clps, group, show_na = T) |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_title("top", 
-                       row_name = "Q5", 
-                       col_name = "Q26. Safe In-person Voting, AZ") |>
-  kableExtra::kbl() |>  
-  kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l") |> 
-  kableExtra::footnote(
-    general = "Tables reflect row percentages\n Q26. How confident...are you that in person polling places in Maricopa County, AZ will be safe places for voters...in November?\n Q5. How often do you pay attention to what is going on in government and politics?")
+# Sample Demographics and Balance
 
 
+Note that there are a total of 125 respondents who started but didn't finish the survey. Of those 125, 105 quit before reaching `Q40_1`, which explains why they weren't assigned an embedded `Qset` code (e.g., 'A' or 'B'). An additional 20 of those 125 quit the survey after `Q40_1`, which means they were assigned a `Qset` code.
 
-```
-
-```{r}
-#| results: asis
-
-df |> 
-  janitor::tabyl(q5.clps, q27.clps, group, show_na = T) |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_title("top", 
-                       row_name = "Q5", 
-                       col_name = "Q27. Election Official Approval, AZ") |>
-  kableExtra::kbl() |>  
-  kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l") |> 
-  kableExtra::footnote(
-    general = "Tables reflect row percentages\n Q27. Do you approve or disapprove of the way election officials in Maricopa County, AZ are handling their jobs?\n Q5. How often do you pay attention to what is going on in government and politics?")
-
-
-
-```
-
-## Q6
-
-```{r}
-#| label: tbl-q6q19
-#| results: asis
-
-df |>  
-  janitor::tabyl(q6.clps, q19.clps, group, show_na = T) |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_title("top", row_name = "Q6",
-                       col_name = "Q19. Vote count confidence, AZ") |>
-  kableExtra::kbl() |>  
-  kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l") |> 
-  kableExtra::footnote(
-    general = "Tables reflect row percentages\nQ19. How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November? \n Q6. In general, how favorable or unfavorable is your impression of local election officials?")
-
-
-```
+Removing all blank `NA` missing values from the `Qset` variable removes those 105 partial survey responses, i.e., respondents who quit prior to reaching `Q40`.
 
 
 ```{r}
-#| label: tbl-q6q20
+#| label: tbl-demog
+#| tbl-cap: "Survey sample characteristics by treatment condition"
+#| column: page
 #| results: asis
-
-df |>  
-  janitor::tabyl(q6.clps, q20.clps, group, show_na = T) |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_title("top", 
-                       row_name = "Q6",
-                       col_name = "Q20. Competence of Election Staff, AZ") |>
-  kableExtra::kbl() |>  
-  kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l") |> 
-  kableExtra::footnote(
-    general = "Tables reflect row percentages\nQ20. How confident are you that election officials...in Maricopa County, AZ will do a good job conducting the elections this November? \n Q6. In general, how favorable or unfavorable is your impression of local election officials?")
-
-
-```
-
-```{r}
-#| results: asis
-
-df |> 
-  janitor::tabyl(q6.clps, q21.clps, group, show_na = T) |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_title("top", 
-                       row_name = "Q6", 
-                       col_name = "Q21. Commitment of Election Staff, AZ") |>
-  kableExtra::kbl() |>  
-  kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l") |> 
-  kableExtra::footnote(
-    general = "Tables reflect row percentages\nQ21. How committed do you think [Election staff in Maricopa County, AZ] will be to making sure the elections held this November are fair and accurate? \n Q6. In general, how favorable or unfavorable is your impression of local election officials?")
-
-
-
-```
-
-```{r}
-#| results: asis
-
-df |> 
-  janitor::tabyl(q6.clps, q22.clps, group, show_na = T) |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_title("top", 
-                       row_name = "Q6", 
-                       col_name = "Q22. Fair Process, AZ") |>
-  kableExtra::kbl() |>  
-  kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l") |> 
-  kableExtra::footnote(
-    general = "Tables reflect row percentages\n Q22. How confident are you that the voting process will be fair in Maricopa County, AZ?\n Q6. In general, how favorable or unfavorable is your impression of local election officials?")
-
-
-
-```
-
-
-```{r}
-#| results: asis
-
-df |> 
-  janitor::tabyl(q6.clps, q23.clps, group, show_na = T) |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_title("top", 
-                       row_name = "Q6", 
-                       col_name = "Q23. Fair Outcomes, AZ") |>
-  kableExtra::kbl() |>  
-  kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l") |> 
-  kableExtra::footnote(
-    general = "Tables reflect row percentages\n Q23. How confident are you that the voting outcomes will be fair in Maricopa County, AZ?\n Q6. In general, how favorable or unfavorable is your impression of local election officials?")
-
-```
-
-```{r}
-#| results: asis
-
-df |> 
-  janitor::tabyl(q6.clps, q24.clps, group, show_na = T) |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_title("top", 
-                       row_name = "Q6", 
-                       col_name = "Q24. Secure Voting Tech, AZ") |>
-  kableExtra::kbl() |>  
-  kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l") |> 
-  kableExtra::footnote(
-    general = "Tables reflect row percentages\n Q24. How confident are you that election systems in Maricopa County, AZ will be secure from hacking and other technological threats?\n Q6. In general, how favorable or unfavorable is your impression of local election officials?")
-
-
-```
-
-```{r}
-#| results: asis
-
-df |> 
-  janitor::tabyl(q6.clps, q25.clps, group, show_na = T) |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_title("top", 
-                       row_name = "Q6", 
-                       col_name = "Q25. Voter Intimidation/Violence, AZ") |>
-  kableExtra::kbl() |>  
-  kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l") |> 
-  kableExtra::footnote(
-    general = "Tables reflect row percentages\n Q25. Thinking about Maricopa County, AZ, how concerned should voters feel about potential violence, threats of violence, or intimidation while voting in person at their local polling place?\n Q6. In general, how favorable or unfavorable is your impression of local election officials?")
-
-
-
-```
-
-```{r}
-#| results: asis
-
-df |> 
-  janitor::tabyl(q6.clps, q26.clps, group, show_na = T) |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_title("top", 
-                       row_name = "Q6", 
-                       col_name = "Q26. Safe In-person Voting, AZ") |>
-  kableExtra::kbl() |>  
-  kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l") |> 
-  kableExtra::footnote(
-    general = "Tables reflect row percentages\n Q26. How confident...are you that in person polling places in Maricopa County, AZ will be safe places for voters...in November?\n Q6. In general, how favorable or unfavorable is your impression of local election officials?")
-
-
-
-```
-
-```{r}
-#| results: asis
-
-df |> 
-  janitor::tabyl(q6.clps, q27.clps, group, show_na = T) |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_title("top", 
-                       row_name = "Q6", 
-                       col_name = "Q27. Election Official Approval, AZ") |>
-  kableExtra::kbl() |>  
-  kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l") |> 
-  kableExtra::footnote(
-    general = "Tables reflect row percentages\n Q27. Do you approve or disapprove of the way election officials in Maricopa County, AZ are handling their jobs?\n Q6. In general, how favorable or unfavorable is your impression of local election officials?")
-
-
-
-```
-
-
-## Q7
-
-```{r}
-#| label: tbl-q7q19
-#| results: asis
-
-df |>  
-  janitor::tabyl(q7, q19.clps, group, show_na = T) |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_title("top", row_name = "Q7",
-                       col_name = "Q19. Vote count confidence, AZ") |>
-  kableExtra::kbl() |>  
-  kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l") |> 
-  kableExtra::footnote(
-    general = "Tables reflect row percentages\nQ19. How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November? \n Q7. Regardless of whom you supported in the 2020 election, do you think Joe Biden's election as president was legitimate, or was he not legitimately elected?")
-
-
-```
-
-
-```{r}
-#| label: tbl-q7q20
-#| results: asis
-
-df |>  
-  janitor::tabyl(q7, q20.clps, group, show_na = T) |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_title("top", 
-                       row_name = "Q7",
-                       col_name = "Q20. Competence of Election Staff, AZ") |>
-  kableExtra::kbl() |>  
-  kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l") |> 
-  kableExtra::footnote(
-    general = "Tables reflect row percentages\nQ20. How confident are you that election officials...in Maricopa County, AZ will do a good job conducting the elections this November? \n Q7. Regardless of whom you supported in the 2020 election, do you think Joe Biden's election as president was legitimate, or was he not legitimately elected?")
-
-
-```
-
-```{r}
-#| results: asis
-
-df |> 
-  janitor::tabyl(q7, q21.clps, group, show_na = T) |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_title("top", 
-                       row_name = "Q7", 
-                       col_name = "Q21. Commitment of Election Staff, AZ") |>
-  kableExtra::kbl() |>  
-  kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l") |> 
-  kableExtra::footnote(
-    general = "Tables reflect row percentages\nQ21. How committed do you think [Election staff in Maricopa County, AZ] will be to making sure the elections held this November are fair and accurate? \n Q7. Regardless of whom you supported in the 2020 election, do you think Joe Biden's election as president was legitimate, or was he not legitimately elected?")
-
-
-
-```
-
-```{r}
-#| results: asis
-
-df |> 
-  janitor::tabyl(q7, q22.clps, group, show_na = T) |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_title("top", 
-                       row_name = "Q7", 
-                       col_name = "Q22. Fair Process, AZ") |>
-  kableExtra::kbl() |>  
-  kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l") |> 
-  kableExtra::footnote(
-    general = "Tables reflect row percentages\n Q22. How confident are you that the voting process will be fair in Maricopa County, AZ?\n Q7. Regardless of whom you supported in the 2020 election, do you think Joe Biden's election as president was legitimate, or was he not legitimately elected?")
-
-
-
-```
-
-
-```{r}
-#| results: asis
-
-df |> 
-  janitor::tabyl(q7, q23.clps, group, show_na = T) |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_title("top", 
-                       row_name = "Q7", 
-                       col_name = "Q23. Fair Outcomes, AZ") |>
-  kableExtra::kbl() |>  
-  kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l") |> 
-  kableExtra::footnote(
-    general = "Tables reflect row percentages\n Q23. How confident are you that the voting outcomes will be fair in Maricopa County, AZ?\n Q7. Regardless of whom you supported in the 2020 election, do you think Joe Biden's election as president was legitimate, or was he not legitimately elected?")
-
-```
-
-```{r}
-#| results: asis
-
-df |> 
-  janitor::tabyl(q7, q24.clps, group, show_na = T) |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_title("top", 
-                       row_name = "Q7", 
-                       col_name = "Q24. Secure Voting Tech, AZ") |>
-  kableExtra::kbl() |>  
-  kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l") |> 
-  kableExtra::footnote(
-    general = "Tables reflect row percentages\n Q24. How confident are you that election systems in Maricopa County, AZ will be secure from hacking and other technological threats?\n Q7. Regardless of whom you supported in the 2020 election, do you think Joe Biden's election as president was legitimate, or was he not legitimately elected?")
-
-
-```
-
-```{r}
-#| results: asis
-
-df |> 
-  janitor::tabyl(q7, q25.clps, group, show_na = T) |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_title("top", 
-                       row_name = "Q7", 
-                       col_name = "Q25. Voter Intimidation/Violence, AZ") |>
-  kableExtra::kbl() |>  
-  kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l") |> 
-  kableExtra::footnote(
-    general = "Tables reflect row percentages\n Q25. Thinking about Maricopa County, AZ, how concerned should voters feel about potential violence, threats of violence, or intimidation while voting in person at their local polling place?\n Q7. Regardless of whom you supported in the 2020 election, do you think Joe Biden's election as president was legitimate, or was he not legitimately elected?")
-
-
-
-```
-
-```{r}
-#| results: asis
-
-df |> 
-  janitor::tabyl(q7, q26.clps, group, show_na = T) |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_title("top", 
-                       row_name = "Q7", 
-                       col_name = "Q26. Safe In-person Voting, AZ") |>
-  kableExtra::kbl() |>  
-  kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l") |> 
-  kableExtra::footnote(
-    general = "Tables reflect row percentages\n Q26. How confident...are you that in person polling places in Maricopa County, AZ will be safe places for voters...in November?\n Q7. Regardless of whom you supported in the 2020 election, do you think Joe Biden's election as president was legitimate, or was he not legitimately elected?")
-
-
-
-```
-
-```{r}
-#| results: asis
-
-df |> 
-  janitor::tabyl(q7, q27.clps, group, show_na = T) |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_title("top", 
-                       row_name = "Q7", 
-                       col_name = "Q27. Election Official Approval, AZ") |>
-  kableExtra::kbl() |>  
-  kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l") |> 
-  kableExtra::footnote(
-    general = "Tables reflect row percentages\n Q27. Do you approve or disapprove of the way election officials in Maricopa County, AZ are handling their jobs?\n Q7. Regardless of whom you supported in the 2020 election, do you think Joe Biden's election as president was legitimate, or was he not legitimately elected?")
-
-
-
-```
-
-
-## Q8
-
-```{r}
-#| label: tbl-q8q19
-#| results: asis
-
-df |>  
-  janitor::tabyl(q8.clps, q19.clps, group, show_na = T) |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_title("top", row_name = "Q8",
-                       col_name = "Q19. Vote count confidence, AZ") |>
-  kableExtra::kbl() |>  
-  kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l") |> 
-  kableExtra::footnote(
-    general = "Tables reflect row percentages\nQ19. How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November? \n Q8. Generally speaking, how often can you trust other people?")
-
-
-```
-
-
-```{r}
-#| label: tbl-q8q20
-#| results: asis
-
-df |>  
-  janitor::tabyl(q8.clps, q20.clps, group, show_na = T) |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_title("top", 
-                       row_name = "Q8",
-                       col_name = "Q20. Competence of Election Staff, AZ") |>
-  kableExtra::kbl() |>  
-  kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l") |> 
-  kableExtra::footnote(
-    general = "Tables reflect row percentages\nQ20. How confident are you that election officials...in Maricopa County, AZ will do a good job conducting the elections this November? \n Q8. Generally speaking, how often can you trust other people?")
-
-
-```
-
-```{r}
-#| results: asis
-
-df |> 
-  janitor::tabyl(q8.clps, q21.clps, group, show_na = T) |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_title("top", 
-                       row_name = "Q8", 
-                       col_name = "Q21. Commitment of Election Staff, AZ") |>
-  kableExtra::kbl() |>  
-  kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l") |> 
-  kableExtra::footnote(
-    general = "Tables reflect row percentages\nQ21. How committed do you think [Election staff in Maricopa County, AZ] will be to making sure the elections held this November are fair and accurate? \n Q8. Generally speaking, how often can you trust other people?")
-
-
-
-```
-
-```{r}
-#| results: asis
-
-df |> 
-  janitor::tabyl(q8.clps, q22.clps, group, show_na = T) |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_title("top", 
-                       row_name = "Q8", 
-                       col_name = "Q22. Fair Process, AZ") |>
-  kableExtra::kbl() |>  
-  kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l") |> 
-  kableExtra::footnote(
-    general = "Tables reflect row percentages\n Q22. How confident are you that the voting process will be fair in Maricopa County, AZ?\n Q8. Generally speaking, how often can you trust other people?")
-
-
-
-```
-
-
-```{r}
-#| results: asis
-
-df |> 
-  janitor::tabyl(q8.clps, q23.clps, group, show_na = T) |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_title("top", 
-                       row_name = "Q8", 
-                       col_name = "Q23. Fair Outcomes, AZ") |>
-  kableExtra::kbl() |>  
-  kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l") |> 
-  kableExtra::footnote(
-    general = "Tables reflect row percentages\n Q23. How confident are you that the voting outcomes will be fair in Maricopa County, AZ?\n Q8. Generally speaking, how often can you trust other people?")
-
-```
-
-```{r}
-#| results: asis
-
-df |> 
-  janitor::tabyl(q8.clps, q24.clps, group, show_na = T) |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_title("top", 
-                       row_name = "Q8", 
-                       col_name = "Q24. Secure Voting Tech, AZ") |>
-  kableExtra::kbl() |>  
-  kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l") |> 
-  kableExtra::footnote(
-    general = "Tables reflect row percentages\n Q24. How confident are you that election systems in Maricopa County, AZ will be secure from hacking and other technological threats?\n Q8. Generally speaking, how often can you trust other people?")
-
-
-```
-
-```{r}
-#| results: asis
-
-df |> 
-  janitor::tabyl(q8.clps, q25.clps, group, show_na = T) |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_title("top", 
-                       row_name = "Q8", 
-                       col_name = "Q25. Voter Intimidation/Violence, AZ") |>
-  kableExtra::kbl() |>  
-  kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l") |> 
-  kableExtra::footnote(
-    general = "Tables reflect row percentages\n Q25. Thinking about Maricopa County, AZ, how concerned should voters feel about potential violence, threats of violence, or intimidation while voting in person at their local polling place?\n Q8. Generally speaking, how often can you trust other people?")
-
-
-
-```
-
-```{r}
-#| results: asis
-
-df |> 
-  janitor::tabyl(q8.clps, q26.clps, group, show_na = T) |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_title("top", 
-                       row_name = "Q8", 
-                       col_name = "Q26. Safe In-person Voting, AZ") |>
-  kableExtra::kbl() |>  
-  kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l") |> 
-  kableExtra::footnote(
-    general = "Tables reflect row percentages\n Q26. How confident...are you that in person polling places in Maricopa County, AZ will be safe places for voters...in November?\n Q8. Generally speaking, how often can you trust other people?")
-
-
-
-```
-
-```{r}
-#| results: asis
-
-df |> 
-  janitor::tabyl(q8.clps, q27.clps, group, show_na = T) |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_title("top", 
-                       row_name = "Q8", 
-                       col_name = "Q27. Election Official Approval, AZ") |>
-  kableExtra::kbl() |>  
-  kableExtra::add_header_above(c("Treatment" =1, "Control" = 1), align = "l") |>
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                            row_label_position = "l") |> 
-  kableExtra::footnote(
-    general = "Tables reflect row percentages\n Q27. Do you approve or disapprove of the way election officials in Maricopa County, AZ are handling their jobs?\n Q8. Generally speaking, how often can you trust other people?")
-
-
-
-```
-
-
-
-## Sample Demographics and Balance
-
-```{r}
-#| label: tbl-1
-#| results: asis
-
 
 # descriptive stats for df
 t1.demog <- table1::table1(
@@ -1095,22 +638,156 @@ t1.demog <- table1::table1(
   + voteintent
   | group,
   data = df,
-  overall = "Overall", caption = "Survey sample characteristics by treatment condition",
+  overall = "Overall",
   footnote = "Table reflects column percentages.")
 
 
-t1.demog <- table1::t1kable(
-  t1.demog,
-  format = "html",
-  booktabs = F ) |>
+t1.demog <- table1::t1kable(t1.demog) |> 
   kableExtra::kable_styling(
-    bootstrap_options = "basic",
+    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
     latex_options = "basic",
+    font_size = 13,
+    full_width = T,
     fixed_thead = T
   )
 
 print(t1.demog)
 
+```
 
+
+# Appendix {.appendix}
+
+
+## Differences from Question Wording  {.appendix}
+
+::: {.callout-note}
+This section is under construction. Resolution of various formatting issues are in progress.
+:::
+
+
+As mentioned previously, certain questions were included in the survey to assess whether certain actions taken by election officials or circumstances at polling sites would impact 1) one's confidence in the fairness and accuracy of upcoming elections, and 2) confidence in voter safety while voting in-person. These questions were presented to survey participants in a matrix-style format where they would select a response to different statements describing some electoral circumstance. 
+
+In addition, it was hypothesized that different statement wording would have some effect on response choice to certain question item statements. In order to test this hypothesis, another set of the same questions were constructed and half of the sample was presented with one version of item statements, while the other half was presented with a different version in which a few statements were slightly modified. Specifically, three of the six statements in question set 'B' [`Q44`, `Q46`] differed from three statements in question 'A' [`Q41`, `Q43`]. See the table below for the full breakdown.  
+
+```{r}
+#| label: qset-setup
+#| include: false
+
+
+# create a table containing the differing statements for question sets A and B
+
+qsetA <- df |> 
+  select(q41_1:q46_6) |> 
+  labelled::set_variable_labels(
+    q41_1 = "Election officials test every machine used in the election to ensure they are secure.",
+    q41_2 = "Election officials conduct audits of ballots after every election to confirm the results were accurate.",
+    q41_3 = "Poll watchers affiliated with the political parties or candidates observe the election.",
+    q41_4 = "Election staff and volunteers include military veterans and their family members from the community.",
+    q41_5 = "Election staff and volunteers include lawyers from the community.",
+    q41_6 = "Election staff and volunteers include college students from the community.",
+    q43_1 = "Election officials ensure that law enforcement officers are present at polling sites.",
+    q43_2 = "Poll watchers affiliated with the political parties or candidates observe the election.",
+    q43_3 = "People holding signs or giving out literature in support of a candidate or ballot question.",
+    q43_4 = "Election staff and volunteers include military veterans and their family members from the community.",
+    q43_5 = "Election staff and volunteers include lawyers from the community.",
+    q43_6 = "Election staff and volunteers include college students from the community."
+    ) |> 
+  surveytoolbox::varl_tb() |> 
+  select(var, var_label) |> 
+  dplyr::slice(1:12) |> 
+  dplyr::rename('Qset A' = var,
+                'A statements' = var_label)
+
+qsetB <- df |> 
+  select(q41_1:q46_6) |> 
+  labelled::set_variable_labels(
+    q44_1 = "Election officials test machines",
+    q44_2 = "Majority of Election staff are veterans",
+    q44_3 = "Majority of Election staff are lawyers",
+    q44_4 = "Election officials conduct audits",
+    q44_5 = "Partisan Poll watchers observe the election",
+    q44_6 = "Majority of Election staff are students",
+    q46_1 = "Law enforcement presence.",
+    q46_2 = "Majority of Election staff are veterans",
+    q46_3 = "Majority of Election staff are lawyers",
+    q46_4 = "Partisan Poll watchers observe the election",
+    q46_5 = "Majority of Election staff are students",
+    q46_6 = "People holding signs or giving out literature"
+    ) |> 
+  surveytoolbox::varl_tb() |> 
+  select(var, var_label) |> 
+  dplyr::slice(13:24) |> 
+  dplyr::rename('Qset B' = var,
+                'B statements' = var_label)
+
+# bind the dataframes together as one with two columns
+qsetAB <- dplyr::bind_cols(qsetA, qsetB)
+rm(qsetA, qsetB)
 
 ```
+
+
+```{r}
+#| label: tbl-qset
+#| tbl-cap: "Question Numbers and Statements "
+#| results: asis
+
+# create a table containing the differing statements for question sets A and B
+kableExtra::kbl(qsetAB) |> 
+  kableExtra::pack_rows("Regardless of whether any of these are actually the case, how would the following impact your confidence in the fairness and accuracy of elections conducted this November?", 1, 6) |> 
+  kableExtra::pack_rows("How would the following impact your confidence that voters are safe from violence, threats of violence, or intimidation while voting in-person during elections this November?", 7, 12) |> 
+  kableExtra::footnote(
+    general ="Response options ranged from 'Decrease confidence a lot', 'Decrease confidence somewhat', 'No impact on confidence', 'Increase confidence somewhat', and 'Increase confidence a lot'."
+  ) |> 
+  kableExtra::kable_styling(
+    bootstrap_options = c('striped',
+                          'bordered',
+                          'hover',
+                          'condensed',
+                          'responsive'))
+
+```
+
+
+Survey participants were randomly grouped according to the set of questions presented to them, `Qset A` or `Qset B` respectively, and responses were analyzed to test for significant differences between the different item statements. If significant differences were observed for each modified item statement in comparison to the unmodified versions, then response effects could be attributed to the change in statement wording. However, if differences were significant for one or two of the statements but not all three, then response effects could not be attributed to statement wording alone. If no differences were found, then the responses from the two question sets would be considered equivalent and coalesced into one variable per question for subsequent analysis.
+
+
+In order to test the statement-wording hypothesis, the five-point Likert item response options were re-coded as dichotomous 'dummy' variables. For instance, "Increase confidence a lot" and "Increase confidence somewhat" were collapsed and recoded such that "Increase" = 1, whereas all other responses were collapsed and re-coded such that "No increase" = 0. The same process was done for any "Decrease" responses. Proportions of responses were compared for both the 'Increase' and 'Decrease' dummy categories. 
+
+Significant differences were found between the following items; 
+
+-   Q41_5 and Q44_3
+-   Q41_6 and Q44_6 
+-   Q43_5 and Q46_3
+-   Q43_6 and Q46_5
+
+
+|Qset A |A statements                                  |Qset B |B statements                                  |
+|:------|:---------------------------------------------|:------|:---------------------------------------------|
+|q41_5  |Election staff include lawyers                |q44_3  |Majority of Election staff are lawyers        |
+|q41_6  |Election staff include college students       |q44_6  |Majority of Election staff are students       |
+|q43_5  |Election staff includes lawyers               |q46_3  |Majority of Election staff are lawyers        |
+|q43_6  |Election staff includes students              |q46_5  |Majority of Election staff are students       |
+
+
+Comparison of responses between `Qset A` and `Qset B` revealed differences in response to item statements concerning lawyers and students. The difference in proportions were initially attributed to the different statement wording between question sets A and B, but also appear to be conditional on the group identified in the statement. That is, significant differences were observed when a statement read, "The majority of election staff and volunteers consist of lawyers/college students in the community" (qset B) compared to when a statement read, "Election staff and volunteers includes lawyers/college students in the community" (qset A). 
+
+Moreover, the direction of the difference remained consistent. Confidence in fairness and accuracy of elections, as well as confidence in voter safety at the polls, was reported to increase less and decrease more under the prospect of having the majority of election staff consist of lawyers/college students compared to when election staff is said to merely *include* lawyers/college students. 
+
+To put in other words, there was a higher proportion of those who reported that their confidence in fairness and voter safety would decrease among those who read that the majority of election staff consists of either lawyers or college students compared to those who read that election staff merely included lawyers or college students. Conversely, no significant differences were observed between question/statement wording when the group was identified as military veterans and their family members in the community. 
+
+These results suggest that the differences in proportion initially attributed to question/statement wording are likely an artifact of a rival cause, potentially related to general impressions of the groups involved.  
+
+
+Where proportions between the two independent samples were equivalent (i.e., no significant differences in proportion were found), responses were coalesced (i.e., merged) into one variable.
+
+-   Q44_1 coalesced into Q41_1
+-   Q44_4 coalesced into Q41_2
+-   Q44_5 coalesced into Q41_3
+-   Q44_2 coalesced into Q41_4
+-   Q46_1 coalesced into Q43_1
+-   Q46_4 coalesced into Q43_2
+-   Q46_6 coalesced into Q43_3
+-   Q46_2 coalesced into Q43_4
+
