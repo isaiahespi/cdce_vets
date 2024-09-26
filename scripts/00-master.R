@@ -502,8 +502,7 @@ qs_az <- df |>
     q24,
     q25,
     q26,
-    q27,
-    q29
+    q27
   ) |>
   colnames()
 
@@ -518,8 +517,7 @@ qs_az.clps <- df |>
     q24.clps,
     q25.clps,
     q26.clps,
-    q27.clps,
-    q29.clps
+    q27.clps
   ) |>
   colnames()
 
@@ -762,7 +760,7 @@ az_crabs.clps <- map(qs_az.clps, tabyl.crabs)
 # run the following to get the list into one dataframe
 # warning: questions are no longer apparent
 purrr::reduce(az_crabs, dplyr::full_join)
-
+purrr::reduce(az_crabs.clps, dplyr::full_join)
 
 # print the plot
 az_crabs[[1]] |> 
@@ -799,8 +797,182 @@ az_crabs[[1]] |>
     font_size = 13
   )
 
-# q19, collapsed
+# prop plot of q19, collapsed
 az_crabs.clps[[1]] |> 
+  tidyr::pivot_longer(
+    cols = -group,
+    names_to = 'response',
+    values_to = 'n'
+  ) |> 
+  dplyr::mutate(prop = round(n/sum(n), 2)) |> 
+  ggplot(aes(y = prop, fill = group, x = response))+
+  geom_col(position = 'dodge')+
+  # stat_count(geom = 'text', aes(label = ..count..), vjust = -0.5)+
+  geom_text(aes(label = prop), position = position_dodge(1.0), vjust = -0.5)+
+  scale_fill_grey(start = 0.5, end = 0.1)+
+  # \n in a string tells R to break the line there
+  labs(y = "Proportion",
+       x = "Q19. How confident are you that votes in Maricopa County, AZ \nwill be counted as voters intend in the elections this November?",
+       fill = "Group\nExperiment\nCondition")+
+  theme_bw()
+
+# print the collapsed q19 crab
+az_crabs.clps[[1]] |> 
+  janitor::adorn_totals('both') |> 
+  janitor::adorn_percentages(denominator = 'row') |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |> 
+  janitor::adorn_ns() |> 
+  janitor::adorn_title(
+    'combined',
+    row_name = "Group",
+    col_name = 'Q19') |> 
+  kableExtra::kbl() |> 
+  kableExtra::kable_styling(
+    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
+    latex_options = "basic",
+    font_size = 13
+  )
+
+# crab of Q22 by treatment group
+az_crabs[[4]] |> 
+  janitor::adorn_totals('both') |> 
+  janitor::adorn_percentages(denominator = 'row') |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |> 
+  janitor::adorn_ns() |> 
+  janitor::adorn_title(
+    'combined',
+    row_name = "Group") |> 
+  kableExtra::kbl() |> 
+  kableExtra::kable_styling(
+    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
+    latex_options = "basic",
+    font_size = 13
+  )
+
+# collapsed crab of Q22 by treatment group
+az_crabs.clps[[4]] |> 
+  janitor::adorn_totals('both') |> 
+  janitor::adorn_percentages(denominator = 'row') |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |> 
+  janitor::adorn_ns() |> 
+  janitor::adorn_title(
+    'combined',
+    row_name = "Group") |> 
+  kableExtra::kbl() |> 
+  kableExtra::kable_styling(
+    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
+    latex_options = "basic",
+    font_size = 13
+  )
+
+
+
+
+az_crabs[[4]] |> 
+  tidyr::pivot_longer(
+    cols = -group,
+    names_to = 'response',
+    values_to = 'n'
+  ) |> 
+  dplyr::mutate(prop = round(n/sum(n), 2)) |> 
+  ggplot(aes(y = prop, fill = group, x = response))+
+  geom_col(position = 'dodge')+
+  # stat_count(geom = 'text', aes(label = ..count..), vjust = -0.5)+
+  geom_text(aes(label = prop), position = position_dodge(1.0), vjust = -0.5)+
+  scale_fill_grey(start = 0.5, end = 0.1)+
+  # \n in a string tells R to break the line there
+  labs(y = "Proportion",
+       x = "Q22.",
+       fill = "Group\nExperiment\nCondition")+
+  theme_bw()
+
+## conducting prop.tests across multiple variables to get a better sense of treatment effects
+# Next plan is to produce dot-and-whisker plots to demonstrate effect of treatment
+
+# function to run prop_tests over a list of crosstabs 
+tabyl.prop.tests <- function(x){
+  crab_df <- df |> select(group, all_of(x)) |> 
+    janitor::tabyl(group, !!sym(x), show_na = F) |> 
+    select(-1) |> 
+    rstatix::prop_test(detailed = T)
+}
+
+df |> 
+  select(group, q26.clps) |> 
+  mutate(q25.clps = fct_rev(q25.clps)) |>
+  janitor::tabyl(group, q25.clps, show_na = F) |> 
+  select(-1) |> 
+  rstatix::prop_test(detailed = T, correct = F, conf.level = 0.95) |> 
+  mutate(prop.diff = estimate1 - estimate2, .before = statistic)
+
+df |> 
+  select(group, q26) |> 
+  # mutate(q26.clps = fct_rev(q26.clps)) |>
+  janitor::tabyl(group, q26, show_na = F) |> 
+  janitor::adorn_percentages('row') |> 
+  janitor::adorn_pct_formatting(digits = 3) |> 
+  janitor::adorn_ns()
+
+df |> 
+  select(group, q26.clps) |> 
+  # mutate(q26.clps = fct_rev(q26.clps)) |>
+  janitor::tabyl(group, q26.clps, show_na = F) |> 
+  janitor::adorn_percentages('row') |> 
+  janitor::adorn_pct_formatting(digits = 3) |> 
+  janitor::adorn_ns()
+
+df |> select(group, q26) |> 
+  group_by(group) |> 
+  sjmisc::frq(q26, show.na = F)
+
+RCPA3::testpropsC(dv = q26.clps, iv = group, data = df, response = "Not_confident", xlim = c(-0.2, 0.2))
+
+# this maps the function tabyl.prop.tests to each character string in 'x'
+# the results are put into a list of tibbles, in this case, a list of 4 tibbles
+# Note that prop.tests can only be conducted for collapsed dichotomous variables
+az_crabs.clps.prop.tests <- map(qs_az.clps, tabyl.fun)
+
+# I combine the 4 tibbles within the list into a single tibble
+az_crabs.clps.prop.tests <- purrr::reduce(law_skool_prop_tests, dplyr::full_join)
+
+# add column that identifies rows of different prop_tests
+az_crabs.clps.prop.tests$items <- qs_az.clps
+
+
+# relocate columns to better positions, rename columns, remove df column
+az_crabs.clps.prop.tests <- az_crabs.clps.prop.tests |>
+  dplyr::relocate(c(items, response), .before = n) |>
+  dplyr::relocate(p.signif, .after = p) |>
+  dplyr::mutate(prop.diff = estimate1 - estimate2,
+                .before = statistic) |> 
+  select(-df)
+
+
+az_crabs[[5]] # q23
+az_crabs[[7]] # q25
+az_crabs[[8]] # q26
+
+
+df |> 
+  select(group, q26) |> 
+  # mutate(q26.clps = fct_rev(q26.clps)) |>
+  janitor::tabyl(group, q26, show_na = F) |> 
+  janitor::adorn_percentages('row') |> 
+  janitor::adorn_pct_formatting(digits = 1) |> 
+  janitor::adorn_ns() |> 
+  janitor::adorn_title(
+    'combined',
+    row_name = "Group",
+    col_name = 'Q26') 
+  kableExtra::kbl() |> 
+  kableExtra::kable_styling(
+    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
+    latex_options = "basic",
+    font_size = 13
+  )
+
+
+az_crabs[[8]] |> 
   tidyr::pivot_longer(
     cols = -group,
     names_to = 'response',
@@ -813,23 +985,44 @@ az_crabs.clps[[1]] |>
   scale_fill_grey(start = 0.5, end = 0.1)+
   # \n in a string tells R to break the line there
   labs(y = "Count",
-       x = "Q19. How confident are you that votes in Maricopa County, AZ \nwill be counted as voters intend in the elections this November?",
+       x = "Q26. How confident, if at all, are you that in person polling places in Maricopa County, AZ \nwill be safe places for voters to cast their ballots during the upcoming elections in November?",
        fill = "Group\nExperiment\nCondition")+
   theme_bw()
 
 
-az_crabs[[2]] |> 
-  janitor::adorn_totals('both') |> 
-  janitor::adorn_percentages(denominator = 'row') |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |> 
-  janitor::adorn_ns() |> 
+df |> 
+  select(group, q26.clps) |> 
+  # mutate(q25.clps = fct_rev(q25.clps)) |>
+  janitor::tabyl(group, q26.clps, show_na = F) |> 
+  janitor::adorn_percentages('row') |> 
+  janitor::adorn_pct_formatting(digits = 2) |> 
+  janitor::adorn_ns() |>  
   janitor::adorn_title(
-    'combined'
-    row_name = "Group",
-    col_name = 'Q20') |> 
+    'combined',
+    row_name = "Group") 
   kableExtra::kbl() |> 
   kableExtra::kable_styling(
     bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
     latex_options = "basic",
     font_size = 13
   )
+
+az_crabs.clps[[8]] |>
+  tidyr::pivot_longer(
+    cols = -group,
+    names_to = 'response',
+    values_to = 'n'
+  ) |> 
+  dplyr::mutate(prop = round(n/sum(n), 2)) |> 
+  ggplot(aes(y = prop, fill = group, x = forcats::fct_rev(response)))+
+  geom_col(position = 'dodge')+
+  # stat_count(geom = 'text', aes(label = ..count..), vjust = -0.5)+
+  geom_text(aes(label = prop), position = position_dodge(1.0), vjust = -0.5)+
+  scale_fill_grey(start = 0.5, end = 0.1)+
+  # \n in a string tells R to break the line there
+  labs(y = "Proportion",
+       fill = "Group\nExperiment\nCondition")+
+  theme_bw()
+
+
+

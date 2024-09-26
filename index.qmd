@@ -75,30 +75,6 @@ df_dict <- read.csv("codebooks/df_dict.csv")
 #| echo: false
 #| output: false
 
-# function to compute the p-value for continuous or categorical variables
-pvalue <- function(x, ...) {
-    # Construct vectors of data y, and groups (strata) g
-    y <- unlist(x)
-    g <- factor(rep(1:length(x), times=sapply(x, length)))
-    if (is.numeric(y)) {
-        # For numeric variables, perform a standard 2-sample t-test
-        p <- t.test(y ~ g)$p.value
-    } else {
-        # For categorical variables, perform a chi-squared test of independence
-        p <- chisq.test(table(y, g))$p.value
-    }
-    # Format the p-value, using an HTML entity for the less-than sign.
-    # The initial empty string places the output on the line below the variable label.
-    c("", sub("<", "&lt;", format.pval(p, digits=3, eps=0.001)))
-}
-
-# Pearson's chi-squared test is performed of the null hypothesis that the joint
-# distribution of the cell counts in a 2-dimensional contingency table is the
-# product of the row and column marginals
-
-
-
-
 # save variables of interest as character vectors (or objects or whatever)
 # this is only so I can iterate the creation of tables and plots for each
 # variable without the need to manually create a table or plot for each one
@@ -144,16 +120,26 @@ fraud_exp_az.clps <- df |>
   select(q28_1.clps, q28_2.clps, q28_3.clps, q28_4.clps, q28_5.clps) |>
   colnames()
 
+# function to compute the p-value for continuous or categorical variables
+pvalue <- function(x, ...) {
+    # Construct vectors of data y, and groups (strata) g
+    y <- unlist(x)
+    g <- factor(rep(1:length(x), times=sapply(x, length)))
+    if (is.numeric(y)) {
+        # For numeric variables, perform a standard 2-sample t-test
+        p <- t.test(y ~ g)$p.value
+    } else {
+        # For categorical variables, perform a chi-squared test of independence
+        p <- chisq.test(table(y, g))$p.value
+    }
+    # Format the p-value, using an HTML entity for the less-than sign.
+    # The initial empty string places the output on the line below the variable label.
+    c("", sub("<", "&lt;", format.pval(p, digits=3, eps=0.001)))
+}
 
-```
-
-## Key Questions
-
-
-
-```{r}
-#| label: fig-q19
-#| fig-cap: "Confidence in Accurate Vote Count by Experiment Condition"
+# Pearson's chi-squared test is performed of the null hypothesis that the joint
+# distribution of the cell counts in a 2-dimensional contingency table is the
+# product of the row and column marginals
 
 
 # function to create crosstabs using janitor::tabyl()
@@ -162,7 +148,23 @@ tabyl.crabs <- function(x){
     janitor::tabyl(group, !!sym(x), show_na = F)
 }
 
+# purrr::map() applies a function to each element of a list or atomic vector
+# here I assign the output to 'az_crabs' which is a list of lists of dataframes
 az_crabs <- map(qs_az, tabyl.crabs)
+
+
+
+```
+
+## Key Questions
+
+::: {.panel-tabset}
+
+## Q19 Barplot
+
+```{r}
+#| label: fig-q19
+#| fig-cap: "Confidence in Accurate Vote Count by Experiment Condition"
 
 az_crabs[[1]] |> 
   tidyr::pivot_longer(
@@ -182,6 +184,7 @@ az_crabs[[1]] |>
   theme_bw()
 ```
 
+## Q19 Crosstab
 
 ```{r}
 #| label: tbl-q19
@@ -208,7 +211,234 @@ az_crabs[[1]] |>
 
 ```
 
+:::
 
+
+::: {.panel-tabset}
+
+## Q22 Barplot
+
+```{r}
+#| label: fig-q22
+#| fig-cap: "Confidence in Fair Voting Process by Experiment Condition"
+
+az_crabs[[4]] |> 
+  tidyr::pivot_longer(
+    cols = -group,
+    names_to = 'response',
+    values_to = 'n'
+  ) |> 
+  ggplot(aes(y = n, fill = group, x = response))+
+  geom_col(position = 'dodge')+
+  # stat_count(geom = 'text', aes(label = ..count..), vjust = -0.5)+
+  geom_text(aes(label = n), position = position_dodge(1.0), vjust = -0.5)+
+  scale_fill_grey(start = 0.5, end = 0.1)+
+  # \n in a string tells R to break the line there
+  labs(y = "Count",
+       x = "Q22.How confident are you that the voting process will be fair in Maricopa County, AZ?",
+       fill = "Group\nExperiment\nCondition")+
+  theme_bw()
+```
+
+## Q22 Crosstab
+
+```{r}
+#| label: tbl-q22
+#| tbl-cap: "Q22.Confidence in Fair Voting Process by Experiment Condition in Maricopa County, AZ by Experiment Condition"
+
+# Crosstab of Q19 by treatment group
+az_crabs[[4]] |> 
+  janitor::adorn_totals('both') |> 
+  janitor::adorn_percentages(denominator = 'row') |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |> 
+  janitor::adorn_ns() |> 
+  janitor::adorn_title(
+    'combined',
+    row_name = "Group",
+    col_name = 'Q22') |> 
+  kableExtra::kbl() |> 
+  kableExtra::kable_styling(
+    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
+    latex_options = "basic",
+    font_size = 13
+  )
+
+
+
+```
+
+:::
+
+::: {.panel-tabset}
+
+## Q25 Barplot
+
+```{r}
+#| label: fig-q25
+#| fig-cap: "Concern for violence, threats, or voter intimidation in Maricopa County, AZ by Experiment Condition"
+
+az_crabs[[7]] |> 
+  tidyr::pivot_longer(
+    cols = -group,
+    names_to = 'response',
+    values_to = 'n'
+  ) |> 
+  ggplot(aes(y = n, fill = group, x = response))+
+  geom_col(position = 'dodge')+
+  # stat_count(geom = 'text', aes(label = ..count..), vjust = -0.5)+
+  geom_text(aes(label = n), position = position_dodge(1.0), vjust = -0.5)+
+  scale_fill_grey(start = 0.5, end = 0.1)+
+  # \n in a string tells R to break the line there
+  labs(y = "Count",
+       x = "Q25. Thinking about Maricopa County, AZ, how concerned should voters feel about \npotential violence, threats of violence, or intimidation while voting in person at their local polling place?",
+       fill = "Group\nExperiment\nCondition")+
+  theme_bw()
+```
+
+
+## Q25 Crosstab
+
+```{r}
+#| label: tbl-q25
+#| tbl-cap: "Q25. Concern for violence, threats, or voter intimidation in Maricopa County, AZ by Experiment Condition"
+
+# Crosstab of Q19 by treatment group
+az_crabs[[7]] |> 
+  janitor::adorn_totals('both') |> 
+  janitor::adorn_percentages(denominator = 'row') |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |> 
+  janitor::adorn_ns() |> 
+  janitor::adorn_title(
+    'combined',
+    row_name = "Group",
+    col_name = 'Q25') |> 
+  kableExtra::kbl() |> 
+  kableExtra::kable_styling(
+    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
+    latex_options = "basic",
+    font_size = 13
+  )
+
+
+
+```
+
+:::
+
+::: {.panel-tabset}
+
+## Q26 Barplot
+
+```{r}
+#| label: fig-q26
+#| fig-cap: "In-person voter safety in Maricopa County, AZ by Experiment Condition"
+
+az_crabs[[8]] |> 
+  tidyr::pivot_longer(
+    cols = -group,
+    names_to = 'response',
+    values_to = 'n'
+  ) |> 
+  ggplot(aes(y = n, fill = group, x = response))+
+  geom_col(position = 'dodge')+
+  # stat_count(geom = 'text', aes(label = ..count..), vjust = -0.5)+
+  geom_text(aes(label = n), position = position_dodge(1.0), vjust = -0.5)+
+  scale_fill_grey(start = 0.5, end = 0.1)+
+  # \n in a string tells R to break the line there
+  labs(y = "Count",
+       x = "Q26. How confident, if at all, are you that in person polling places in Maricopa County, AZ \nwill be safe places for voters to cast their ballots during the upcoming elections in November?",
+       fill = "Group\nExperiment\nCondition")+
+  theme_bw()
+
+```
+
+
+## Q26 Crosstab
+
+```{r}
+#| label: tbl-q26
+#| tbl-cap: "Q26. In-person voter safety in Maricopa County, AZ by Experiment Condition"
+
+# Crosstab of Q19 by treatment group
+az_crabs[[8]] |> 
+  janitor::adorn_totals('both') |> 
+  janitor::adorn_percentages(denominator = 'row') |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |> 
+  janitor::adorn_ns() |> 
+  janitor::adorn_title(
+    'combined',
+    row_name = "Group",
+    col_name = 'Q26') |> 
+  kableExtra::kbl() |> 
+  kableExtra::kable_styling(
+    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
+    latex_options = "basic",
+    font_size = 13
+  )
+
+
+
+```
+
+:::
+
+
+::: {.panel-tabset}
+
+## Q27 Barplot
+
+```{r}
+#| label: fig-q27
+#| fig-cap: "Approval of Election Officials in Maricopa County, AZ by Experiment Condition"
+
+az_crabs[[9]] |> 
+  tidyr::pivot_longer(
+    cols = -group,
+    names_to = 'response',
+    values_to = 'n'
+  ) |> 
+  ggplot(aes(y = n, fill = group, x = forcats::fct_inorder(response)))+
+  geom_col(position = 'dodge')+
+  # stat_count(geom = 'text', aes(label = ..count..), vjust = -0.5)+
+  geom_text(aes(label = n), position = position_dodge(1.0), vjust = -0.5)+
+  scale_fill_grey(start = 0.5, end = 0.1)+
+  # \n in a string tells R to break the line there
+  labs(y = "Count",
+       x = "Q27. Do you approve or disapprove of the way \nelection officials in Maricopa County, AZ are handling their jobs?",
+       fill = "Group\nExperiment\nCondition")+
+  theme_bw()
+
+```
+
+
+## Q27 Crosstab
+
+```{r}
+#| label: tbl-q27
+#| tbl-cap: "Q27. Approval of Election Officials in Maricopa County, AZ by Experiment Condition"
+
+# Crosstab of Q19 by treatment group
+az_crabs[[9]] |> 
+  janitor::adorn_totals('both') |> 
+  janitor::adorn_percentages(denominator = 'row') |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |> 
+  janitor::adorn_ns() |> 
+  janitor::adorn_title(
+    'combined',
+    row_name = "Group",
+    col_name = 'Q27') |> 
+  kableExtra::kbl() |> 
+  kableExtra::kable_styling(
+    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
+    latex_options = "basic",
+    font_size = 13
+  )
+
+
+
+```
+
+:::
 
 
 ## Survey Questions by Treatment Condition
