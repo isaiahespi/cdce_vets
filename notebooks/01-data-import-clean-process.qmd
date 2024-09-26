@@ -11,20 +11,27 @@ This document describes and executes the cleaning and processing of the survey d
 ```{r}
 #| label: load-data
 
+
 # load raw SPSS export that includes display order vars
-raw_spss <- haven::read_sav(file = "vets_spss.sav") 
+# downloaded 2024-09-11 at 11:38 AM
+raw_spss <- haven::read_sav(file = "data-raw/vets_spss_do_2024-09-11_11.38.sav") 
 
 ```
 
 ## Create data dictionary/codebook
 
-A data dictionary contains metadata about the data. The `labelled::generate_dictionary` function is used to create a data dictionary. A dataframe is loaded into the R environment with the number of observations equal to number of variables in the original data set.
+A data dictionary contains metadata about the data. The `labelled::generate_dictionary` function is used to create a data dictionary. A dataframe is loaded into the R environment with the number of observations equal to number of variables in the original data set. One problem that I encountered was that I was unable to quickly save the data dictionary generated using the `labelled` R package. As an alternative, I utilized the `data_dict()` function from the R package `surveytoolbox` in order to save the dictionary as a `.csv` file. 
 
 ```{r}
 #| label: raw-data-dict
-#| eval: false
 
+# data dictionary from labelled package. Won't save as .csv file
 raw_spss_dict <- raw_spss |> labelled::generate_dictionary()
+
+# data dictionary from labelled package. Will save as .csv file
+raw_spss_dict <- raw_spss |> surveytoolbox::data_dict()
+
+# write.csv(raw_spss_dict, file = "codebooks/raw_spss_dict.csv")
 
 ```
 

@@ -787,10 +787,10 @@ dplyr::add_row(ttq43)
 # for statements concerning lawyers and college students.
 
 df |> 
-sjmisc::frq(q41_5.clps)
+sjmisc::frq(q41_5.clps, show.na = F)
 
 df |> 
-sjmisc::frq(q44_5.clps)
+sjmisc::frq(q44_5.clps, show.na = F)
 
 # I coalesce these vars so I can put them in a cross tab by qset
 law_skool <- df |> 
@@ -860,19 +860,38 @@ law_skool |>
   janitor::tabyl(qset, fair_lawyers, show_na = F) |> 
   janitor::adorn_totals('both') |> 
   janitor::adorn_percentages(denominator = 'row') |> 
-  janitor::adorn_pct_formatting(digits = 3, affix_sign = F) |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |> 
   janitor::adorn_ns() |> 
-  janitor::adorn_title('top')
+  janitor::adorn_title(
+    'combined',
+    row_name = "Wording") |> 
+  kableExtra::kbl() |> 
+  kableExtra::footnote(
+    general = "Proportion of those who report an 'Increase' in confidence in fairness of elections when election staff either 'Includes' or is a 'majority' of lawyers"
+  ) |> 
+  kableExtra::kable_styling(
+    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
+    latex_options = "basic",
+    font_size = 13
+  )
 
 # crabs
 law_skool |> 
   janitor::tabyl(qset, fair_students, show_na = F) |> 
   janitor::adorn_totals('both') |> 
   janitor::adorn_percentages(denominator = 'row') |> 
-  janitor::adorn_pct_formatting(digits = 3, affix_sign = F) |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |> 
   janitor::adorn_ns() |> 
-  janitor::adorn_title('top')
-
+  janitor::adorn_title('combined') |> 
+  kableExtra::kbl() |> 
+  kableExtra::footnote(
+    general = "Proportion of those who report an 'Increase' in confidence in fairness of elections when election staff either 'Includes' or is a 'majority' of college students"
+  ) |> 
+  kableExtra::kable_styling(
+    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
+    latex_options = "basic",
+    font_size = 13
+  )
 
 # crabs
 law_skool |> 
@@ -937,7 +956,6 @@ kableExtra::kbl(pt_lawyers_students) |>
     bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
     latex_options = "basic",
     font_size = 13,
-    full_width = T,
     fixed_thead = T
   )
 
@@ -1092,3 +1110,16 @@ RCPA3::testpropsC(
   data = df, 
   response = "decrease",
   xlim = c(-.2, .2))
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -39,7 +39,8 @@ date: 2024-09-12
 # bibliography: references.bib
 # csl: american-political-science-association.csl
 link-citations: true
-tbl-cap-location: top
+tbl-cap-location: margin
+fig-cap-location: margin
 citation:
   container-title: Center for Democracy and Civic Engagement, University of Maryland
 number-sections: false
@@ -66,7 +67,13 @@ load("data/data_numeric_vets_survey-exp-2024-09-11.Rdata") # numeric only
 
 # load data dictionary/codebook
 df_dict <- read.csv("codebooks/df_dict.csv")
+```
 
+
+```{r}
+#| label: setup2
+#| echo: false
+#| output: false
 
 # function to compute the p-value for continuous or categorical variables
 pvalue <- function(x, ...) {
@@ -90,7 +97,118 @@ pvalue <- function(x, ...) {
 # product of the row and column marginals
 
 
+
+
+# save variables of interest as character vectors (or objects or whatever)
+# this is only so I can iterate the creation of tables and plots for each
+# variable without the need to manually create a table or plot for each one
+# questions related to Maricopa County, AZ 
+qs_az <- df |>
+  select(
+    q19,
+    q20,
+    q21,
+    q22,
+    q23,
+    q24,
+    q25,
+    q26,
+    q27,
+    q29
+  ) |>
+  colnames()
+
+# same for collapsed versions
+qs_az.clps <- df |>
+  select(
+    q19.clps,
+    q20.clps,
+    q21.clps,
+    q22.clps,
+    q23.clps,
+    q24.clps,
+    q25.clps,
+    q26.clps,
+    q27.clps,
+    q29.clps
+  ) |>
+  colnames()
+
+# expectations of fraud
+fraud_exp_az <- df |>
+  select(q28_1, q28_2, q28_3, q28_4, q28_5) |>
+  colnames()
+
+# expectations of fraud, collapsed versions
+fraud_exp_az.clps <- df |>
+  select(q28_1.clps, q28_2.clps, q28_3.clps, q28_4.clps, q28_5.clps) |>
+  colnames()
+
+
 ```
+
+## Key Questions
+
+
+
+```{r}
+#| label: fig-q19
+#| fig-cap: "Confidence in Accurate Vote Count by Experiment Condition"
+
+
+# function to create crosstabs using janitor::tabyl()
+tabyl.crabs <- function(x){
+  crab_df <- df |> select(group, all_of(x)) |> 
+    janitor::tabyl(group, !!sym(x), show_na = F)
+}
+
+az_crabs <- map(qs_az, tabyl.crabs)
+
+az_crabs[[1]] |> 
+  tidyr::pivot_longer(
+    cols = -group,
+    names_to = 'response',
+    values_to = 'n'
+  ) |> 
+  ggplot(aes(y = n, fill = group, x = response))+
+  geom_col(position = 'dodge')+
+  # stat_count(geom = 'text', aes(label = ..count..), vjust = -0.5)+
+  geom_text(aes(label = n), position = position_dodge(1.0), vjust = -0.5)+
+  scale_fill_grey(start = 0.5, end = 0.1)+
+  # \n in a string tells R to break the line there
+  labs(y = "Count",
+       x = "Q19. How confident are you that votes in Maricopa County, AZ \nwill be counted as voters intend in the elections this November?",
+       fill = "Group\nExperiment\nCondition")+
+  theme_bw()
+```
+
+
+```{r}
+#| label: tbl-q19
+#| tbl-cap: "Q19. Confidence vote counts will be accurate in Maricopa County, AZ by Experiment Condition"
+
+# Crosstab of Q19 by treatment group
+az_crabs[[1]] |> 
+  janitor::adorn_totals('both') |> 
+  janitor::adorn_percentages(denominator = 'row') |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |> 
+  janitor::adorn_ns() |> 
+  janitor::adorn_title(
+    'combined',
+    row_name = "Group",
+    col_name = 'Q19') |> 
+  kableExtra::kbl() |> 
+  kableExtra::kable_styling(
+    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
+    latex_options = "basic",
+    font_size = 13
+  )
+
+
+
+```
+
+
 
 
 ## Survey Questions by Treatment Condition
@@ -104,6 +222,7 @@ The following cross-tables break down relative observations and percentages of r
 #| tbl-cap: "Trust and Confidence in Maricopa County, AZ Elections by Treatment Condition"
 #| column: page
 #| results: asis
+
 
 # q19 to q27 by treatment condition. p-value based on chi^2 test of independence
 tab1 <- table1::table1(
@@ -120,6 +239,7 @@ tab1 <- table1::table1(
   data = df,
   transpose = F,
   overall = F,
+  render.missing = NULL,
   extra.col = list('P-value' = pvalue)
 )
 
@@ -163,6 +283,7 @@ tab2 <- table1::table1(
   data = df,
   transpose = F,
   overall = F,
+  render.missing = NULL,
   extra.col = list('P-value' = pvalue)
 )
 
@@ -371,9 +492,9 @@ kableExtra::kbl(tbl5) |>
 pt1 <- df |>
   mutate(
     confimpct_vets = dplyr::case_when(
-      q41.4.clps == "increase" ~ 'increase',
-      q41.4.clps == "no_impact" ~ 'no_increase',
-      q41.4.clps == 'decrease' ~ 'no_increase'
+      q41.4.clps == "increase" ~ 'Increase',
+      q41.4.clps == "no_impact" ~ 'No increase',
+      q41.4.clps == 'decrease' ~ 'No increase'
       ),
     group = dplyr::case_when(
       group == "Treatment" ~ 1,
@@ -381,7 +502,7 @@ pt1 <- df |>
     )
     ) |>
   janitor::tabyl(group, confimpct_vets,  show_na = F) |> 
-  select(increase, no_increase) |> 
+  select(-1) |> 
   rstatix::prop_test(detailed = T) 
 
 # print results as table
@@ -508,9 +629,9 @@ kableExtra::kbl(
 pt2 <- df |>
   mutate(
     votersafety_vets = dplyr::case_when(
-      q43.4.clps == "increase" ~ 'increase',
-      q43.4.clps == "no_impact" ~ 'no_increase',
-      q43.4.clps == 'decrease' ~ 'no_increase'
+      q43.4.clps == "increase" ~ 'Increase',
+      q43.4.clps == "no_impact" ~ 'No increase',
+      q43.4.clps == 'decrease' ~ 'No increase'
       ),
     group = dplyr::case_when(
       group == "Treatment" ~ 1,
@@ -518,7 +639,7 @@ pt2 <- df |>
     )
     ) |>
   janitor::tabyl(group, votersafety_vets,  show_na = F) |> 
-  select(increase, no_increase) |> 
+  select(-1) |> 
   rstatix::prop_test(detailed = T)
 
 # print results as table
@@ -779,30 +900,30 @@ law_skool <- law_skool |>
   select(qset, q41.5.clps, q41.6.clps, q43.5.clps, q43.6.clps) |> 
   mutate(
     fair_lawyers = dplyr::case_when(
-      q41.5.clps == 'increase'  ~ 'increase',
-      q41.5.clps == 'no_impact'  ~ 'no_increase',
-      q41.5.clps == 'decrease'  ~ 'no_increase',
+      q41.5.clps == 'increase'  ~ 'Increase',
+      q41.5.clps == 'no_impact'  ~ 'No increase',
+      q41.5.clps == 'decrease'  ~ 'No increase',
       TRUE ~ NA
     )) |> 
   mutate(
     fair_students = dplyr::case_when(
-      q41.6.clps == 'increase'  ~ 'increase',
-      q41.6.clps == 'no_impact'  ~ 'no_increase',
-      q41.6.clps == 'decrease'  ~ 'no_increase',
+      q41.6.clps == 'increase'  ~ 'Increase',
+      q41.6.clps == 'no_impact'  ~ 'No increase',
+      q41.6.clps == 'decrease'  ~ 'No increase',
       TRUE ~ NA
     )) |> 
   mutate(
     safe_lawyers = dplyr::case_when(
-      q43.5.clps == 'increase'  ~ 'increase',
-      q43.5.clps == 'no_impact'  ~ 'no_increase',
-      q43.5.clps == 'decrease'  ~ 'no_increase',
+      q43.5.clps == 'increase'  ~ 'Increase',
+      q43.5.clps == 'no_impact'  ~ 'No increase',
+      q43.5.clps == 'decrease'  ~ 'No increase',
       TRUE ~ NA
     )) |> 
   mutate(
     safe_students = dplyr::case_when(
-      q43.6.clps == 'increase'  ~ 'increase',
-      q43.6.clps == 'no_impact'  ~ 'no_increase',
-      q43.6.clps == 'decrease'  ~ 'no_increase',
+      q43.6.clps == 'increase'  ~ 'Increase',
+      q43.6.clps == 'no_impact'  ~ 'No increase',
+      q43.6.clps == 'decrease'  ~ 'No increase',
       TRUE ~ NA
     )) |> 
   select(qset, fair_lawyers, fair_students, safe_lawyers, safe_students) 
@@ -857,8 +978,8 @@ pt_lawyers_students <- pt_lawyers_students |>
 
 ```{r}
 #| label: tbl-fair-lawyers
-#| tbl-cap: "'Increase' confidence in election fairness by Question Set"
-#| fig-cap: "'Increase' confidence in election fairness by Question Set"
+#| tbl-cap: "'Increase' confidence in election fairness by question wording: Lawyers"
+#| fig-cap: "Proportion of those who report an 'Increase' in confidence in fairness of elections when election staff either 'Includes' or is a 'majority' of lawyers"
 
 
 # crabs
@@ -872,9 +993,6 @@ law_skool |>
     'combined',
     row_name = "Wording") |> 
   kableExtra::kbl() |> 
-  kableExtra::footnote(
-    general = "Proportion of those who report an 'Increase' in confidence in fairness of elections when election staff either 'Includes' or is a 'majority' of lawyers"
-  ) |> 
   kableExtra::kable_styling(
     bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
     latex_options = "basic",
@@ -885,8 +1003,8 @@ law_skool |>
 
 ```{r}
 #| label: tbl-fair-students
-#| tbl-cap: "'Increase' confidence in election fairness by Question Set"
-#| fig-cap: "'Increase' confidence in election fairness by Question Set"
+#| tbl-cap: "'Increase' confidence in election fairness by question wording: College Students"
+#| fig-cap: "Proportion of those who report an 'Increase' in confidence in fairness of elections when election staff either 'Includes' or is a 'majority' of college students"
 
 # crabs
 law_skool |> 
@@ -895,11 +1013,10 @@ law_skool |>
   janitor::adorn_percentages(denominator = 'row') |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |> 
   janitor::adorn_ns() |> 
-  janitor::adorn_title('combined') |> 
+  janitor::adorn_title(
+    'combined',
+    row_name = "Wording") |>  
   kableExtra::kbl() |> 
-  kableExtra::footnote(
-    general = "Proportion of those who report an 'Increase' in confidence in fairness of elections when election staff either 'Includes' or is a 'majority' of college students"
-  ) |> 
   kableExtra::kable_styling(
     bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
     latex_options = "basic",
@@ -909,6 +1026,9 @@ law_skool |>
 
 
 ```{r}
+#| label: tbl-safe-lawyers
+#| tbl-cap: "'Increase' confidence in voter safety by question wording: Lawyers"
+#| fig-cap: "Proportion of those who report an 'Increase' in confidence in voter safety when election staff either 'Includes' or is a 'majority' of college students"
 
 
 # crabs
@@ -918,7 +1038,9 @@ law_skool |>
   janitor::adorn_percentages(denominator = 'row') |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |> 
   janitor::adorn_ns() |>  
-  janitor::adorn_title('combined') |> 
+  janitor::adorn_title(
+    'combined',
+    row_name = "Wording") |> 
   kableExtra::kbl() |> 
   kableExtra::kable_styling(
     bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
@@ -929,6 +1051,9 @@ law_skool |>
 
 
 ```{r}
+#| label: tbl-safe-students
+#| tbl-cap: "'Increase' confidence in voter safety by question wording: College Students"
+#| fig-cap: "'Increase' confidence in voter safety by question wording: College Students"
 
 
 # crabs
@@ -938,7 +1063,9 @@ law_skool |>
   janitor::adorn_percentages(denominator = 'row') |> 
   janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |> 
   janitor::adorn_ns() |>  
-  janitor::adorn_title('combined') |> 
+  janitor::adorn_title(
+    'combined',
+    row_name = "Wording") |> 
   kableExtra::kbl() |> 
   kableExtra::kable_styling(
     bootstrap_options = c("striped", "bordered", "condensed", "responsive"),

@@ -2,10 +2,11 @@
 
 # load packages
 library(tidyverse)
-library(haven)
-library(surveytoolbox)
-library(labelled)
-library(sjlabelled)
+
+# library(haven)
+# library(surveytoolbox)
+# library(labelled)
+# library(sjlabelled)
 
 # load raw SPSS export that includes display order vars
 # downloaded 2024-09-11 at 11:38 AM
@@ -34,6 +35,8 @@ write.csv(raw_spss_dict, file = "codebooks/raw_spss_dict.csv")
 # clean and process (wrangle) data set
 data_spss <- raw_spss |>
   janitor::clean_names() |>
+  # decision was made to include only those who fully completed the survey
+  filter(finished==1) |> 
   # get rid of superfluous Qualtrics columns
   # Keep Qualtrics `response_id`
   select(!1:8 & !10:17 & !265) |>
@@ -89,7 +92,7 @@ data_spss <- raw_spss |>
     q28_2 = "Q28_2. Many votes will not actually be counted",
     q28_3 = "Q28_3. Many people will show up to vote and be told they are not eligible",
     q28_4 = "Q28_4. A foreign country will tamper with the votes cast in Maricopa County, Arizona...",
-    q28_5 = "Q28_5. Election officials in Maricopa County, Arizoa will try to discourage some people from voting",
+    q28_5 = "Q28_5. Election officials in Maricopa County, Arizona will try to discourage some people from voting",
     q40_1 = "Q40_1. There will be voter fraud...",
     q40_2 = "Q40_2. Many votes will not actually be counted",
     q40_3 = "Q40_3. Many people will show up to vote and be told they are not eligible",
@@ -130,7 +133,7 @@ data_spss <- raw_spss |>
   #exclude those who failed 1st and 2nd attn check
   filter(q1 == 1,
          q3 != 3,
-         q9 == 1 | q9 == 0 & q10 == 1) |>  
+         q9 == 1 | q9 == 0 & q10 == 1) |>
   # add a column of ascending sequential row ids starting at 1 at start of df
   tibble::rowid_to_column("rowID")
 
@@ -319,9 +322,6 @@ data <- data_spss |>
   # reverse order of group levels so control comes first. Better table display
   mutate(group = forcats::fct_rev(group))
 
-
-
-
 # save html output of codebook :::::::::::::::::::::::::::::::::::::::::::: ####
 # This codebook has the ID, name (variable code), variable label (Label), values
 # (e.g., 1, 2), value labels (e.g., Male, Female), frequency, and proportion.
@@ -390,7 +390,7 @@ data <- data |>
              "55-64" = c(55:64),
              "65-74" = c(65:74),
              "75-84" = c(75:82, 84),
-             "85-92" = c(85:88, 92)
+             "85-92" = c(85:86,88, 92)
              ),
          .after = age) |> 
   labelled::set_variable_labels(
@@ -429,7 +429,6 @@ write.csv(data2_dict_num, file = "codebooks/data2_dict_num.csv")
 
 # call the dummify script sourced from the 'scripts/' directory
 source(here::here('scripts', '03-data-dummify.R'))
-
 
 # save dataframe and data dictionary :::::::::::::::::::::::::::::::::::::::####
 
