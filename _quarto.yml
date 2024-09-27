@@ -33,6 +33,7 @@ format:
     page-layout: article
     grid: 
       body-width: 900px
+      margin-width: 200px
     code-tools: true
     code-fold: true
     # Use a CSL to style (https://www.zotero.org/styles/)

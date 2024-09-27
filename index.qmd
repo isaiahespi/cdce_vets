@@ -39,8 +39,9 @@ date: 2024-09-12
 # bibliography: references.bib
 # csl: american-political-science-association.csl
 link-citations: true
-tbl-cap-location: margin
-fig-cap-location: margin
+tbl-cap-location: top
+fig-cap-location: top
+lightbox: true
 citation:
   container-title: Center for Democracy and Civic Engagement, University of Maryland
 number-sections: false
@@ -75,51 +76,6 @@ df_dict <- read.csv("codebooks/df_dict.csv")
 #| echo: false
 #| output: false
 
-# save variables of interest as character vectors (or objects or whatever)
-# this is only so I can iterate the creation of tables and plots for each
-# variable without the need to manually create a table or plot for each one
-# questions related to Maricopa County, AZ 
-qs_az <- df |>
-  select(
-    q19,
-    q20,
-    q21,
-    q22,
-    q23,
-    q24,
-    q25,
-    q26,
-    q27,
-    q29
-  ) |>
-  colnames()
-
-# same for collapsed versions
-qs_az.clps <- df |>
-  select(
-    q19.clps,
-    q20.clps,
-    q21.clps,
-    q22.clps,
-    q23.clps,
-    q24.clps,
-    q25.clps,
-    q26.clps,
-    q27.clps,
-    q29.clps
-  ) |>
-  colnames()
-
-# expectations of fraud
-fraud_exp_az <- df |>
-  select(q28_1, q28_2, q28_3, q28_4, q28_5) |>
-  colnames()
-
-# expectations of fraud, collapsed versions
-fraud_exp_az.clps <- df |>
-  select(q28_1.clps, q28_2.clps, q28_3.clps, q28_4.clps, q28_5.clps) |>
-  colnames()
-
 # function to compute the p-value for continuous or categorical variables
 pvalue <- function(x, ...) {
     # Construct vectors of data y, and groups (strata) g
@@ -142,15 +98,6 @@ pvalue <- function(x, ...) {
 # product of the row and column marginals
 
 
-# function to create crosstabs using janitor::tabyl()
-tabyl.crabs <- function(x){
-  crab_df <- df |> select(group, all_of(x)) |> 
-    janitor::tabyl(group, !!sym(x), show_na = F)
-}
-
-# purrr::map() applies a function to each element of a list or atomic vector
-# here I assign the output to 'az_crabs' which is a list of lists of dataframes
-az_crabs <- map(qs_az, tabyl.crabs)
 
 
 
@@ -165,23 +112,31 @@ az_crabs <- map(qs_az, tabyl.crabs)
 ```{r}
 #| label: fig-q19
 #| fig-cap: "Confidence in Accurate Vote Count by Experiment Condition"
+#| fig-column: body-outset-right
 
-az_crabs[[1]] |> 
-  tidyr::pivot_longer(
-    cols = -group,
-    names_to = 'response',
-    values_to = 'n'
-  ) |> 
-  ggplot(aes(y = n, fill = group, x = response))+
-  geom_col(position = 'dodge')+
-  # stat_count(geom = 'text', aes(label = ..count..), vjust = -0.5)+
-  geom_text(aes(label = n), position = position_dodge(1.0), vjust = -0.5)+
+
+
+df |> 
+  # compute frequency within each combination
+  group_by(group, q19) |> 
+  count() |>  
+  # compute proportion within group
+  # n is the default variable created by count()
+  group_by(group) |> 
+  mutate(prop = round(n/sum(n), digits = 3),
+         pct = prop*100,
+         res = str_c(pct,'% (', n, ')', sep = "")) |> 
+  ggplot(aes(x = q19, y = pct, fill = group))+
+  geom_bar(position = 'dodge', stat = 'identity')+
+  geom_text(aes(label = res), position = position_dodge(1.0), size = 2.5, vjust = -0.5)+
   scale_fill_grey(start = 0.5, end = 0.1)+
   # \n in a string tells R to break the line there
-  labs(y = "Count",
+  labs(y = "Percentage",
        x = "Q19. How confident are you that votes in Maricopa County, AZ \nwill be counted as voters intend in the elections this November?",
-       fill = "Group\nExperiment\nCondition")+
+       fill = "Group\nExperiment\nCondition",
+       caption = 'Treatment n = 639, Control n = 624')+
   theme_bw()
+
 ```
 
 ## Q19 Crosstab
@@ -189,12 +144,14 @@ az_crabs[[1]] |>
 ```{r}
 #| label: tbl-q19
 #| tbl-cap: "Q19. Confidence vote counts will be accurate in Maricopa County, AZ by Experiment Condition"
+#| tbl-column: body-outset-right
 
 # Crosstab of Q19 by treatment group
-az_crabs[[1]] |> 
-  janitor::adorn_totals('both') |> 
-  janitor::adorn_percentages(denominator = 'row') |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |> 
+df |> 
+  janitor::tabyl(group, q19, show_na = F) |>  
+  janitor::adorn_totals('both', na.rm = T) |> 
+  janitor::adorn_percentages(denominator = 'row') |>
+  janitor::adorn_pct_formatting(digits = 1, affix_sign = F) |>
   janitor::adorn_ns() |> 
   janitor::adorn_title(
     'combined',
@@ -221,22 +178,27 @@ az_crabs[[1]] |>
 ```{r}
 #| label: fig-q22
 #| fig-cap: "Confidence in Fair Voting Process by Experiment Condition"
+#| fig-column: body-outset-right
 
-az_crabs[[4]] |> 
-  tidyr::pivot_longer(
-    cols = -group,
-    names_to = 'response',
-    values_to = 'n'
-  ) |> 
-  ggplot(aes(y = n, fill = group, x = response))+
-  geom_col(position = 'dodge')+
-  # stat_count(geom = 'text', aes(label = ..count..), vjust = -0.5)+
-  geom_text(aes(label = n), position = position_dodge(1.0), vjust = -0.5)+
+df |> 
+  # compute frequency within each combination
+  group_by(group, q22) |> 
+  count() |>  
+  # compute proportion within group
+  # n is the default variable created by count()
+  group_by(group) |> 
+  mutate(prop = round(n/sum(n), digits = 3),
+         pct = prop*100,
+         res = str_c(pct,'% (', n, ')', sep = "")) |> 
+  ggplot(aes(x = q22, y = pct, fill = group))+
+  geom_bar(position = 'dodge', stat = 'identity')+
+  geom_text(aes(label = res), position = position_dodge(1.0), size = 2.5 , vjust = -0.5)+
   scale_fill_grey(start = 0.5, end = 0.1)+
   # \n in a string tells R to break the line there
-  labs(y = "Count",
+  labs(y = "Percentage",
        x = "Q22.How confident are you that the voting process will be fair in Maricopa County, AZ?",
-       fill = "Group\nExperiment\nCondition")+
+       fill = "Group\nExperiment\nCondition",
+       caption = 'Treatment n = 639, Control n = 624')+
   theme_bw()
 ```
 
@@ -245,12 +207,15 @@ az_crabs[[4]] |>
 ```{r}
 #| label: tbl-q22
 #| tbl-cap: "Q22.Confidence in Fair Voting Process by Experiment Condition in Maricopa County, AZ by Experiment Condition"
+#| tbl-column: body-outset-right
 
-# Crosstab of Q19 by treatment group
-az_crabs[[4]] |> 
-  janitor::adorn_totals('both') |> 
-  janitor::adorn_percentages(denominator = 'row') |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |> 
+
+# Crosstab of Q22 by treatment group
+df |> 
+  janitor::tabyl(group, q22, show_na = F) |>  
+  janitor::adorn_totals('both', na.rm = T) |> 
+  janitor::adorn_percentages(denominator = 'row') |>
+  janitor::adorn_pct_formatting(digits = 1, affix_sign = F) |>
   janitor::adorn_ns() |> 
   janitor::adorn_title(
     'combined',
@@ -264,7 +229,6 @@ az_crabs[[4]] |>
   )
 
 
-
 ```
 
 :::
@@ -276,22 +240,27 @@ az_crabs[[4]] |>
 ```{r}
 #| label: fig-q25
 #| fig-cap: "Concern for violence, threats, or voter intimidation in Maricopa County, AZ by Experiment Condition"
+#| fig-column: body-outset-right
 
-az_crabs[[7]] |> 
-  tidyr::pivot_longer(
-    cols = -group,
-    names_to = 'response',
-    values_to = 'n'
-  ) |> 
-  ggplot(aes(y = n, fill = group, x = response))+
+df |> 
+  # compute frequency within each combination
+  group_by(group, q25) |> 
+  count() |>  
+  # compute proportion within group
+  # n is the default variable created by count()
+  group_by(group) |> 
+  mutate(prop = round(n/sum(n), digits = 3),
+         pct = prop*100,
+         res = str_c(pct,'% (', n, ')', sep = "")) |> 
+  ggplot(aes(x = q25, y = pct, fill = group))+
   geom_col(position = 'dodge')+
-  # stat_count(geom = 'text', aes(label = ..count..), vjust = -0.5)+
-  geom_text(aes(label = n), position = position_dodge(1.0), vjust = -0.5)+
+  geom_text(aes(label = res), position = position_dodge(1.0), size = 2.5 , vjust = -0.5)+
   scale_fill_grey(start = 0.5, end = 0.1)+
   # \n in a string tells R to break the line there
-  labs(y = "Count",
-       x = "Q25. Thinking about Maricopa County, AZ, how concerned should voters feel about \npotential violence, threats of violence, or intimidation while voting in person at their local polling place?",
-       fill = "Group\nExperiment\nCondition")+
+  labs(y = "Percentage",
+       x = "Q25. Thinking about Maricopa County, AZ, how concerned \nshould voters feel about potential violence, \nthreats of violence, or intimidation while voting in person at their local polling place?",
+       fill = "Group\nExperiment\nCondition",
+       caption = 'Treatment n = 639, Control n = 624')+
   theme_bw()
 ```
 
@@ -301,12 +270,14 @@ az_crabs[[7]] |>
 ```{r}
 #| label: tbl-q25
 #| tbl-cap: "Q25. Concern for violence, threats, or voter intimidation in Maricopa County, AZ by Experiment Condition"
+#| tbl-column: body-outset-right
 
-# Crosstab of Q19 by treatment group
-az_crabs[[7]] |> 
-  janitor::adorn_totals('both') |> 
-  janitor::adorn_percentages(denominator = 'row') |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |> 
+# Crosstab of Q25 by treatment group
+df |> 
+  janitor::tabyl(group, q25, show_na = F) |>  
+  janitor::adorn_totals('both', na.rm = T) |> 
+  janitor::adorn_percentages(denominator = 'row') |>
+  janitor::adorn_pct_formatting(digits = 1, affix_sign = F) |>
   janitor::adorn_ns() |> 
   janitor::adorn_title(
     'combined',
@@ -321,6 +292,7 @@ az_crabs[[7]] |>
 
 
 
+
 ```
 
 :::
@@ -332,22 +304,28 @@ az_crabs[[7]] |>
 ```{r}
 #| label: fig-q26
 #| fig-cap: "In-person voter safety in Maricopa County, AZ by Experiment Condition"
+#| fig-column: body-outset-right
 
-az_crabs[[8]] |> 
-  tidyr::pivot_longer(
-    cols = -group,
-    names_to = 'response',
-    values_to = 'n'
-  ) |> 
-  ggplot(aes(y = n, fill = group, x = response))+
+df |> 
+  drop_na(q26) |> 
+  # compute frequency within each combination
+  group_by(group, q26) |> 
+  count() |>  
+  # compute proportion within group
+  # n is the default variable created by count()
+  group_by(group) |> 
+  mutate(prop = round(n/sum(n), digits = 3),
+         pct = prop*100,
+         res = str_c(pct,'% (', n, ')', sep = "")) |> 
+  ggplot(aes(x = q26, y = pct, fill = group))+
   geom_col(position = 'dodge')+
-  # stat_count(geom = 'text', aes(label = ..count..), vjust = -0.5)+
-  geom_text(aes(label = n), position = position_dodge(1.0), vjust = -0.5)+
+  geom_text(aes(label = res), position = position_dodge(1.0), size = 2.5 , vjust = -0.5)+
   scale_fill_grey(start = 0.5, end = 0.1)+
   # \n in a string tells R to break the line there
-  labs(y = "Count",
+  labs(y = "Percentage",
        x = "Q26. How confident, if at all, are you that in person polling places in Maricopa County, AZ \nwill be safe places for voters to cast their ballots during the upcoming elections in November?",
-       fill = "Group\nExperiment\nCondition")+
+       fill = "Group\nExperiment\nCondition",
+       caption = 'Treatment n = 638, Control n = 624')+
   theme_bw()
 
 ```
@@ -358,12 +336,14 @@ az_crabs[[8]] |>
 ```{r}
 #| label: tbl-q26
 #| tbl-cap: "Q26. In-person voter safety in Maricopa County, AZ by Experiment Condition"
+#| tbl-column: body-outset-right
 
-# Crosstab of Q19 by treatment group
-az_crabs[[8]] |> 
-  janitor::adorn_totals('both') |> 
-  janitor::adorn_percentages(denominator = 'row') |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |> 
+# Crosstab of Q26 by treatment group
+df |> 
+  janitor::tabyl(group, q26, show_na = F) |>  
+  janitor::adorn_totals('both', na.rm = T) |> 
+  janitor::adorn_percentages(denominator = 'row') |>
+  janitor::adorn_pct_formatting(digits = 1, affix_sign = F) |>
   janitor::adorn_ns() |> 
   janitor::adorn_title(
     'combined',
@@ -375,7 +355,6 @@ az_crabs[[8]] |>
     latex_options = "basic",
     font_size = 13
   )
-
 
 
 ```
@@ -390,22 +369,28 @@ az_crabs[[8]] |>
 ```{r}
 #| label: fig-q27
 #| fig-cap: "Approval of Election Officials in Maricopa County, AZ by Experiment Condition"
+#| fig-column: body-outset-right
 
-az_crabs[[9]] |> 
-  tidyr::pivot_longer(
-    cols = -group,
-    names_to = 'response',
-    values_to = 'n'
-  ) |> 
-  ggplot(aes(y = n, fill = group, x = forcats::fct_inorder(response)))+
+df |> 
+  drop_na(q27) |> 
+  # compute frequency within each combination
+  group_by(group, q27) |> 
+  count() |>  
+  # compute proportion within group
+  # n is the default variable created by count()
+  group_by(group) |> 
+  mutate(prop = round(n/sum(n), digits = 3),
+         pct = prop*100,
+         res = str_c(pct,'% (', n, ')', sep = "")) |> 
+  ggplot(aes(x = q27, y = pct, fill = group))+
   geom_col(position = 'dodge')+
-  # stat_count(geom = 'text', aes(label = ..count..), vjust = -0.5)+
-  geom_text(aes(label = n), position = position_dodge(1.0), vjust = -0.5)+
+  geom_text(aes(label = res), position = position_dodge(1.0), size = 2.5 , vjust = -0.5)+
   scale_fill_grey(start = 0.5, end = 0.1)+
   # \n in a string tells R to break the line there
-  labs(y = "Count",
+  labs(y = "Percentage",
        x = "Q27. Do you approve or disapprove of the way \nelection officials in Maricopa County, AZ are handling their jobs?",
-       fill = "Group\nExperiment\nCondition")+
+       fill = "Group\nExperiment\nCondition",
+       caption = 'Treatment n = 636, Control n = 623')+
   theme_bw()
 
 ```
@@ -416,12 +401,14 @@ az_crabs[[9]] |>
 ```{r}
 #| label: tbl-q27
 #| tbl-cap: "Q27. Approval of Election Officials in Maricopa County, AZ by Experiment Condition"
+#| tbl-column: body-outset-right
 
 # Crosstab of Q19 by treatment group
-az_crabs[[9]] |> 
-  janitor::adorn_totals('both') |> 
-  janitor::adorn_percentages(denominator = 'row') |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |> 
+df |> 
+  janitor::tabyl(group, q27, show_na = F) |>  
+  janitor::adorn_totals('both', na.rm = T) |> 
+  janitor::adorn_percentages(denominator = 'row') |>
+  janitor::adorn_pct_formatting(digits = 1, affix_sign = F) |>
   janitor::adorn_ns() |> 
   janitor::adorn_title(
     'combined',
