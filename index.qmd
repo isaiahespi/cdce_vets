@@ -41,6 +41,7 @@ date: 2024-09-12
 link-citations: true
 tbl-cap-location: top
 fig-cap-location: top
+fig-responsive: true
 lightbox: true
 citation:
   container-title: Center for Democracy and Civic Engagement, University of Maryland
@@ -481,7 +482,41 @@ print(tab1)
 
 ### Expectation of Electoral Fraud
 
-The next table reviews a set of questions designed to assess a respondent's expectation of electoral fraud of some sort in Maricopa County, AZ. Again, responses are compared across categories of the survey experiment.
+The next figure and table reviews a set of questions designed to assess a respondent's expectation of electoral fraud of some sort in Maricopa County, AZ. Again, responses are compared across categories of the survey experiment.
+
+For each of the following five statements, survey participants responded with their expectations of the likelihood that each would occur in Maricopa County, Arizona this election cycle on a scale of "Not likely at all" to "Very likely". The five statements were prefaced with the question, "How likely do you think any or all of the following will happen during this year´s elections in Maricopa County, AZ?"
+
+1.    There will be voter fraud, that is, people who are not eligible to vote will vote, or vote more than once;
+2.    Many votes will not actually be counted
+3.    Many people will show up to vote and be told they are not eligible
+4.    A foreign country will tamper with the votes cast in this area to change the results
+5.    Election officials in Maricopa County, Arizona will try to discourage some people from voting
+
+```{r}
+#| label: fig-q28
+#| fig-cap: "Expectation of Electoral Fraud in Maricopa County, AZ by Experiment Condition"
+
+df |> 
+  mutate(across(c(q28_1:q28_5), ~ forcats::fct_rev(.))) |> 
+  labelled::set_variable_labels(
+    q28_1 = "Voter fraud",
+    q28_2 = "Vote Miscount",
+    q28_3 = "Rejected",
+    q28_4 = "Interference",
+    q28_5 = "Discouraged"
+  ) |> 
+  ggstats::gglikert(include = q28_1:q28_5, y = 'group', facet_rows = vars(.question))+
+  labs(
+    subtitle = "How likely do you think any or all of the following will \nhappen during this year´s elections in Maricopa County, AZ?")+
+  theme_bw()
+  
+
+
+
+
+```
+
+
 
 ```{r}
 #| label: tbl-2
@@ -529,6 +564,74 @@ print(tab2)
 
 
 ```
+
+# 3-way Crosstables 
+
+::: {.callout-note}
+This section is under construction. A select number of 3-way cross tables will be presented here.
+:::
+
+
+```{r}
+#| label: tbl-q19q7
+#| tbl-cap: "Confidence in Accurate Vote Counts among those who do and do not believe the 2020 election was legitimate by Treatment Condition"
+
+df |> 
+  janitor::tabyl(q7, q19, group, show_na = F) |> 
+  # janitor::adorn_totals("both") |> 
+  janitor::adorn_percentages("row") |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
+  janitor::adorn_ns("rear") |> 
+  janitor::adorn_title("combined", 
+                       row_name = "Q7. Legitimacy of 2020 Election",
+                       col_name = "Q19") |>
+  bind_rows(.id = "group_var") |>   
+  gt::gt(
+    rowname_col = "row_var",
+    groupname_col = "group_var") |>  
+  gt::row_group_order(groups = c("Control", "Treatment")) |> 
+  gt::cols_label(
+    c('Q7. Legitimacy of 2020 Election/Q19') ~ "Q7. Legitimacy of 2020 Election") |>
+  # gt::cols_label_with(columns = '...1', fn = ~sjlabelled::get_label(df$q5.clps)) |> 
+  gt::tab_style(
+    style = gt::cell_text(weight = "bold"),
+    locations = gt::cells_row_groups()
+  ) |> 
+  gt::tab_style(
+    style = gt::cell_text(weight = 'bold'),
+    locations = gt::cells_column_labels()
+  ) |> 
+  gt::tab_spanner(
+    columns = 3:6,
+    label = "Q19. Vote Count Confidence for Maricopa County, AZ"
+  ) |> 
+  gt::tab_style(
+    style = gt::cell_text(weight = 'bold'),
+    locations = gt::cells_column_spanners()
+    ) |> 
+  gt::tab_footnote(
+    footnote = "Table reflects row percentages. NAs omitted") |> 
+  gt::tab_footnote(
+    footnote = "Q19. How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November?",
+    locations = gt::cells_column_spanners()) |> 
+  gt::tab_footnote(
+    footnote = "Q7.Regardless of whom you supported in the 2020 election, \ndo you think Joe Biden's election as president was legitimate, or was he not legitimately elected?",
+    locations = gt::cells_column_labels('Q7. Legitimacy of 2020 Election/Q19')
+    ) |> 
+  gt::cols_align(align = 'left', columns = everything()) |> 
+  gt::tab_options(
+    table.font.size = "small",
+    data_row.padding = gt::px(1)
+  )
+
+
+
+
+
+```
+
+
+
 
 ## T-test Means comparison
 
@@ -938,12 +1041,6 @@ ttq41 |>
 
 ```
 
-
-# 3-way Crosstables 
-
-::: {.callout-note}
-This section is under construction. A select number of 3-way cross tables will be presented here.
-:::
 
 
 
