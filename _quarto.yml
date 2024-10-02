@@ -29,7 +29,7 @@ format:
     embed-resources: true
     link-external-newwindow: true
     footnotes-hover: false
-    reference-location: margin
+    reference-location: document
     page-layout: article
     grid: 
       body-width: 900px

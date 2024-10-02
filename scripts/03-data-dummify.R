@@ -783,80 +783,80 @@ df <- df |>
 
 # set shorter levels for some demographic vars
 df <- df |> labelled::set_variable_labels(
-  gender_3cat = "Q59. What is your current gender?",
-  race = "Q61. Primary race reported by respondent",
-  educ = "Q62. Highest level of education completed",
-  milserv1 = "Q63. Have you ever served in the Armed Forces?",
-  milserv2 = "Q64. Are you now serving in the Armed Forces?",
-  milservfam = "Q65. Member of immediate family served or is currently serving",
-  choice2020 = "Q67. Who did you vote for?",
-  voteintent = "Q68. Do you plan to vote?"
+  gender_3cat = "What is your current gender?",
+  race = "Primary race reported by respondent",
+  educ = "Highest level of education completed",
+  milserv1 = "Have you ever served in the Armed Forces?",
+  milserv2 = "Are you now serving in the Armed Forces?",
+  milservfam = "Member of immediate family served or is currently serving",
+  choice2020 = "Who did you vote for?",
+  voteintent = "Do you plan to vote?"
 )
 
 df <- df |>
   labelled::set_variable_labels(
-    q5.clps    = "Q5. Attention to Political Affairs",
-    q6.clps    = "Q6. EO Favorability",
-    q7         = "Q7. Legitimacy of 2020 election",
-    q8.clps    = "Q8. General Trust in others",
-    q19.clps   = "Q19. Confidence vote counts will be accurate, AZ",
-    q20.clps   = "Q20. Competence of Election Staff, AZ",
-    q21.clps   = "Q21. Commitment of Election Staff, AZ",
-    q22.clps   = "Q22. Fair Process, AZ",
-    q23.clps   = "Q23. Fair Outcomes, AZ",
-    q24.clps   = "Q24. Security of Voting Tech, AZ",
-    q25.clps   = "Q25. Voters Will Be Free From Intimidation/Violence, AZ",
-    q26.clps   = "Q26. Safe In-person Voting, AZ",
-    q27.clps   = "Q27. Election Official Approval, AZ",
-    q28_1.clps = "Q28_1. Voter fraud, AZ",
-    q28_2.clps = "Q28_2. Votes won't be counted, AZ",
-    q28_3.clps = "Q28_3. People will turned away, AZ",
-    q28_4.clps = "Q28_4. Foreign interference with votes, AZ",
-    q28_5.clps = "Q28_5. EOs discourage people from voting, AZ",
-    q29.clps   = "Q29. Adopt AZ Program",
-    q30.clps   = "Q30. Accurate counts, Local",
-    q31.clps   = "Q31. Competence of Election Staff, Local" ,
-    q32.clps   = "Q32. Commitment of Election Staff, Local",
-    q33.clps   = "Q33. Fair Process, Local",
-    q34.clps   = "Q34. Fair Outcomes, Local",
-    q35.clps   = "Q35. Secure Voting Tech, Local",
-    q36.clps   = "Q36. Voter Intimidation/Violence, Local",
-    q37.clps   = "Q37. Safe in-person voting, Local",
-    q38.clps   = "Q38. Safe to vote in-person, Local",
-    q39.clps   = "Q39. EO Approval, Local",
-    q40_1.clps = "Q40_1. Voter fraud, Local",
-    q40_2.clps = "Q40_2. Votes won't be counted, Local",
-    q40_3.clps = "Q40_3. People will be turned away, Local",
-    q40_4.clps = "Q40_4. Foreign interference with votes, Local",
-    q40_5.clps = "Q40_5. EO discourage people from voting, Local",
+    q5.clps    = "Attention to Political Affairs",
+    q6.clps    = "EO Favorability",
+    q7         = "Legitimacy of 2020 election",
+    q8.clps    = "General Trust in others",
+    q19.clps   = "Confidence vote counts will be accurate, AZ",
+    q20.clps   = "Competence of Election Staff, AZ",
+    q21.clps   = "Commitment of Election Staff, AZ",
+    q22.clps   = "Fair Process, AZ",
+    q23.clps   = "Fair Outcomes, AZ",
+    q24.clps   = "Security of Voting Tech, AZ",
+    q25.clps   = "Voters Will Be Free From Intimidation/Violence, AZ",
+    q26.clps   = "Safe In-person Voting, AZ",
+    q27.clps   = "Election Official Approval, AZ",
+    q28_1.clps = "Voter fraud, AZ",
+    q28_2.clps = "Votes won't be counted, AZ",
+    q28_3.clps = "People will turned away, AZ",
+    q28_4.clps = "Foreign interference with votes, AZ",
+    q28_5.clps = "EOs discourage people from voting, AZ",
+    q29.clps   = "Adopt AZ Program",
+    q30.clps   = "Accurate counts, Local",
+    q31.clps   = "Competence of Election Staff, Local" ,
+    q32.clps   = "Commitment of Election Staff, Local",
+    q33.clps   = "Fair Process, Local",
+    q34.clps   = "Fair Outcomes, Local",
+    q35.clps   = "Secure Voting Tech, Local",
+    q36.clps   = "Voter Intimidation/Violence, Local",
+    q37.clps   = "Safe in-person voting, Local",
+    q38.clps   = "Safe to vote in-person, Local",
+    q39.clps   = "EO Approval, Local",
+    q40_1.clps = "Voter fraud, Local",
+    q40_2.clps = "Votes won't be counted, Local",
+    q40_3.clps = "People will be turned away, Local",
+    q40_4.clps = "Foreign interference with votes, Local",
+    q40_5.clps = "EO discourage people from voting, Local",
     
-    q41_1.clps = "Q41_1. Election officials test machines",
-    q41_2.clps = "Q41_2. Election officials conduct audits",
-    q41_3.clps = "Q41_3. Partisan Poll watchers observe the election.",
-    q41_4.clps = "Q41_4. Election staff include veterans and family",
-    q41_5.clps = "Q41_5. Election staff include lawyers",
-    q41_6.clps = "Q41_6. Election staff include college students",
+    q41_1.clps = "Election officials test machines",
+    q41_2.clps = "Election officials conduct audits",
+    q41_3.clps = "Partisan Poll watchers observe the election.",
+    q41_4.clps = "Election staff include veterans and family",
+    q41_5.clps = "Election staff include lawyers",
+    q41_6.clps = "Election staff include college students",
     
-    q43_1.clps = "Q43_1. Law enforcement presence.",
-    q43_2.clps = "Q43_2. Partisan Poll watchers observe the election",
-    q43_3.clps = "Q43_3. People holding signs or giving out literature",
-    q43_4.clps = "Q43_4. Election staff includes veterans",
-    q43_5.clps = "Q43_5. Election staff includes lawyers",
-    q43_6.clps = "Q43_6. Election staff includes students",
+    q43_1.clps = "Law enforcement presence.",
+    q43_2.clps = "Partisan Poll watchers observe the election",
+    q43_3.clps = "People holding signs or giving out literature",
+    q43_4.clps = "Election staff includes veterans",
+    q43_5.clps = "Election staff includes lawyers",
+    q43_6.clps = "Election staff includes students",
     
-    q44_1.clps = "Q44_1. Election officials test machines",
-    q44_2.clps = "Q44_2. Majority of Election staff are veterans",
-    q44_3.clps = "Q44_3. Majority of Election staff are lawyers",
-    q44_4.clps = "Q44_4. Election officials conduct audits",
-    q44_5.clps = "Q44_5. Partisan Poll watchers observe the election",
-    q44_6.clps = "Q44_6. Majority of Election staff are students",
+    q44_1.clps = "Election officials test machines",
+    q44_2.clps = "Majority of Election staff are veterans",
+    q44_3.clps = "Majority of Election staff are lawyers",
+    q44_4.clps = "Election officials conduct audits",
+    q44_5.clps = "Partisan Poll watchers observe the election",
+    q44_6.clps = "Majority of Election staff are students",
     
-    q46_1.clps = "Q46_1. Law enforcement presence.",
-    q46_2.clps = "Q46_2. Majority of Election staff are veterans",
-    q46_3.clps = "Q46_3. Majority of Election staff are lawyers",
-    q46_4.clps = "Q46_4. Partisan Poll watchers observe the election",
-    q46_5.clps = "Q46_5. Majority of Election staff are students",
-    q46_6.clps = "Q46_6. People holding signs or giving out literature",
+    q46_1.clps = "Law enforcement presence.",
+    q46_2.clps = "Majority of Election staff are veterans",
+    q46_3.clps = "Majority of Election staff are lawyers",
+    q46_4.clps = "Partisan Poll watchers observe the election",
+    q46_5.clps = "Majority of Election staff are students",
+    q46_6.clps = "People holding signs or giving out literature",
   )
 
 
@@ -936,30 +936,81 @@ df <- df |>
 
 # merge question sets that show no significant difference ::::::::::::::::::####
 
-# coalesce the qset vars that can be merged. This combines/coalesces some vars
-# from the q44 and q46 set (minus statements regarding lawyers and students)
-# into q41 and q43 since there was no significant difference found between
-# question set A and question set B in proportions of responses categories.
+# merge (or coalesce) the qset vars that can be merged this merges some vars
+# from the q44 and q46 set into q41 and q43 there was no sig diff found for all
+# but the qset B questions regarding lawyers and students. However these are
+# being coalesced into single question vars anyway since I am able to to still
+# distinguish responses by the grouping var `qset`
 df <- df |> 
   group_by(rowID) |> 
   mutate(q41.1 = dplyr::coalesce(q41_1, q44_1),
          q41.2 = dplyr::coalesce(q41_2, q44_4),
          q41.3 = dplyr::coalesce(q41_3, q44_5),
          q41.4 = dplyr::coalesce(q41_4, q44_2),
+         q41.5 = dplyr::coalesce(q41_5, q44_3),
+         q41.6 = dplyr::coalesce(q41_6, q44_6),
+         
          q43.1 = dplyr::coalesce(q43_1, q46_1),
          q43.2 = dplyr::coalesce(q43_2, q46_4),
          q43.3 = dplyr::coalesce(q43_3, q46_6),
          q43.4 = dplyr::coalesce(q43_4, q46_2),
+         q43.5 = dplyr::coalesce(q43_5, q46_3),
+         q43.6 = dplyr::coalesce(q43_6, q46_5),
+         
          q41.1.clps = dplyr::coalesce(q41_1.clps, q44_1.clps),
          q41.2.clps = dplyr::coalesce(q41_2.clps, q44_4.clps),
          q41.3.clps = dplyr::coalesce(q41_3.clps, q44_5.clps),
          q41.4.clps = dplyr::coalesce(q41_4.clps, q44_2.clps),
+         q41.5.clps = dplyr::coalesce(q41_5.clps, q44_3.clps),
+         q41.6.clps = dplyr::coalesce(q41_6.clps, q44_6.clps),
+         
          q43.1.clps = dplyr::coalesce(q43_1.clps, q46_1.clps),
          q43.2.clps = dplyr::coalesce(q43_2.clps, q46_4.clps),
          q43.3.clps = dplyr::coalesce(q43_3.clps, q46_6.clps),
-         q43.4.clps = dplyr::coalesce(q43_4.clps, q46_2.clps),) |>
-  ungroup() 
-
-
-
+         q43.4.clps = dplyr::coalesce(q43_4.clps, q46_2.clps),
+         q43.5.clps = dplyr::coalesce(q43_5.clps, q46_3.clps),
+         q43.6.clps = dplyr::coalesce(q43_6.clps, q46_5.clps)
+         ) |>
+  ungroup() |> 
   
+  sjlabelled::var_labels(
+    q41.1 = "Election officials test machines",
+    q41.2 = "Election officials conduct audits",
+    q41.3 = "Partisan Poll watchers observe the election.",
+    q41.4 = "Election staff includes veterans and family",
+    q41.5 = "Election staff includes lawyers",
+    q41.6 = "Election staff includes college students",
+    
+    q43.1 = "Election officials test machines",
+    q43.2 = "Election officials conduct audits",
+    q43.3 = "Partisan Poll watchers observe the election.",
+    q43.4 = "Election staff includes veterans and family",
+    q43.5 = "Election staff includes lawyers",
+    q43.6 = "Election staff includes college students",
+    
+    q41.1.clps = "Election officials test machines",
+    q41.2.clps = "Election officials conduct audits",
+    q41.3.clps = "Partisan Poll watchers observe the election.",
+    q41.4.clps = "Election staff includes veterans and family",
+    q41.5.clps = "Election staff includes lawyers",
+    q41.6.clps = "Election staff includes college students",
+    
+    q43.1.clps = "Election officials test machines",
+    q43.2.clps = "Election officials conduct audits",
+    q43.3.clps = "Partisan Poll watchers observe the election.",
+    q43.4.clps = "Election staff includes veterans and family",
+    q43.5.clps = "Election staff includes lawyers",
+    q43.6.clps = "Election staff includes college students"
+  )
+
+
+# create dummy variables where 1 = 'Increase in confidence' and 0 = "No increase
+# in confidence".
+# add dummy variables to dataframe
+df <- df |> 
+  mutate(across(c(q41.1.clps:q43.6.clps), 
+                ~ dplyr::case_when(
+                . == "increase" ~ 1, 
+                . == "no_impact" ~ 0,
+                . == 'decrease' ~ 0
+                ), .names = "{.col}.dum")) 
