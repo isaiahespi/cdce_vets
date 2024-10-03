@@ -39,22 +39,28 @@ date: 2024-09-12
 # bibliography: references.bib
 # csl: american-political-science-association.csl
 link-citations: true
-tbl-cap-location: top
-fig-cap-location: top
+code-tools: 
+    source: https://github.com/isaiahespi/cdce_vets/blob/4953d971910f5040e0fe591e65e807adf5a198f5/index.qmd
 fig-responsive: true
+smooth-scroll: true
+embed-resources: true
+link-external-newwindow: true
+footnotes-hover: false
+reference-location: document
+page-layout: article
 lightbox: true
 citation:
   container-title: Center for Democracy and Civic Engagement, University of Maryland
 number-sections: false
 execute: 
   cache: false
+  echo: false 
 ---
 
 
 
 ```{r}
 #| label: setup
-#| echo: true
 #| output: false
 
 # load packages
@@ -106,17 +112,79 @@ pvalue <- function(x, ...) {
 
 ## Key Questions
 
-::: {.panel-tabset}
+The following presents some key results from the survey experiment.
 
-## Q19 Barplot
+### Q19
 
 ```{r}
-#| label: fig-q19
+#| tbl-cap: "Confidence vote counts will be accurate in Maricopa County, AZ by Experiment Condition"
 #| fig-cap: "Confidence in Accurate Vote Count by Experiment Condition"
-#| fig-column: body-outset-right
+#| fig-cap-location: top
+#| tbl-column: margin
+
+# Crosstab of Q19 by treatment group
+df |> 
+  janitor::tabyl(group, q19, show_na = F) |>
+  janitor::adorn_percentages(denominator = 'row') |>
+  janitor::adorn_pct_formatting(digits = 1, affix_sign = F) |>
+  janitor::adorn_ns() |> 
+  janitor::adorn_title(
+    'combined',
+    row_name = "Group",
+    col_name = 'Q19') |>
+  gt::gt(
+    rowname_col = 'Q19',
+    groupname_col = 'Group' 
+  ) |>  
+  gt::cols_label(
+    c('Group/Q19') ~ "Group") |> 
+  gt::tab_style(
+    style = gt::cell_text(weight = "bold"),
+    locations = gt::cells_row_groups()
+  ) |> 
+  gt::tab_style(
+    style = gt::cell_text(weight = 'bold'),
+    locations = gt::cells_column_labels()
+  ) |> 
+  gt::tab_spanner(
+    columns = 2:5,
+    label = "Q19. Vote Count Confidence for Maricopa County, AZ"
+  ) |>  
+  gt::tab_style(
+    style = gt::cell_text(weight = 'bold'),
+    locations = gt::cells_column_spanners()
+    ) |> 
+  gt::tab_footnote(
+    footnote = "Table reflects row percentages. NAs omitted") |> 
+  gt::tab_footnote(
+    footnote = "Q19. How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November?",
+    locations = gt::cells_column_spanners()) |> 
+  gt::cols_align(align = 'left', columns = everything()) |> 
+  gt::tab_options(
+    table.font.size = "small",
+    data_row.padding = gt::px(1)
+  )
+
+# df |> 
+#   janitor::tabyl(group, q19, show_na = F) |>  
+#   janitor::adorn_totals('both', na.rm = T) |> 
+#   janitor::adorn_percentages(denominator = 'row') |>
+#   janitor::adorn_pct_formatting(digits = 1, affix_sign = F) |>
+#   janitor::adorn_ns() |> 
+#   janitor::adorn_title(
+#     'combined',
+#     row_name = "Group",
+#     col_name = 'Q19') |> 
+#   kableExtra::kbl() |> 
+#   kableExtra::kable_styling(
+#     bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
+#     latex_options = "basic",
+#     font_size = 13
+#   )
 
 
 
+# Q19 by experiment condition, barplot
 df |> 
   # compute frequency within each combination
   group_by(group, q19) |> 
@@ -140,46 +208,79 @@ df |>
 
 ```
 
-## Q19 Crosstab
+
+### Q22 
 
 ```{r}
-#| label: tbl-q19
-#| tbl-cap: "Q19. Confidence vote counts will be accurate in Maricopa County, AZ by Experiment Condition"
-#| tbl-column: body-outset-right
+#| fig-cap: "Confidence in Fair Voting Process by Experiment Condition"
+#| fig-cap-location: top
+#| tbl-cap: "Q22. Confidence in Fair Voting Process by Experiment Condition in Maricopa County, AZ by Experiment Condition"
+#| tbl-column: margin
 
-# Crosstab of Q19 by treatment group
+
+# Crosstab of Q22 by treatment group
 df |> 
-  janitor::tabyl(group, q19, show_na = F) |>  
-  janitor::adorn_totals('both', na.rm = T) |> 
+  janitor::tabyl(group, q22, show_na = F) |>
   janitor::adorn_percentages(denominator = 'row') |>
   janitor::adorn_pct_formatting(digits = 1, affix_sign = F) |>
   janitor::adorn_ns() |> 
   janitor::adorn_title(
     'combined',
     row_name = "Group",
-    col_name = 'Q19') |> 
-  kableExtra::kbl() |> 
-  kableExtra::kable_styling(
-    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
-    latex_options = "basic",
-    font_size = 13
+    col_name = 'Q22') |>
+  gt::gt(
+    rowname_col = 'Q22',
+    groupname_col = 'Group' 
+  ) |>  
+  gt::cols_label(
+    c('Group/Q22') ~ "Group") |> 
+  gt::tab_style(
+    style = gt::cell_text(weight = "bold"),
+    locations = gt::cells_row_groups()
+  ) |> 
+  gt::tab_style(
+    style = gt::cell_text(weight = 'bold'),
+    locations = gt::cells_column_labels()
+  ) |> 
+  gt::tab_spanner(
+    columns = 2:5,
+    label = "Q22. Confidence in Fair Voting Process for Maricopa County, AZ"
+  ) |>  
+  gt::tab_style(
+    style = gt::cell_text(weight = 'bold'),
+    locations = gt::cells_column_spanners()
+    ) |> 
+  gt::tab_footnote(
+    footnote = "Table reflects row percentages. NAs omitted") |> 
+  gt::tab_footnote(
+    footnote = "Q22.How confident are you that the voting process will be fair in Maricopa County, AZ?",
+    locations = gt::cells_column_spanners()) |> 
+  gt::cols_align(align = 'left', columns = everything()) |> 
+  gt::tab_options(
+    table.font.size = "small",
+    data_row.padding = gt::px(1)
   )
 
 
 
-```
+# df |> 
+#   janitor::tabyl(group, q22, show_na = F) |>  
+#   janitor::adorn_totals('both', na.rm = T) |> 
+#   janitor::adorn_percentages(denominator = 'row') |>
+#   janitor::adorn_pct_formatting(digits = 1, affix_sign = F) |>
+#   janitor::adorn_ns() |> 
+#   janitor::adorn_title(
+#     'combined',
+#     row_name = "Group",
+#     col_name = 'Q22') |> 
+#   kableExtra::kbl() |> 
+#   kableExtra::kable_styling(
+#     bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
+#     latex_options = "basic",
+#     font_size = 13
+#   )
 
-:::
 
-
-::: {.panel-tabset}
-
-## Q22 Barplot
-
-```{r}
-#| label: fig-q22
-#| fig-cap: "Confidence in Fair Voting Process by Experiment Condition"
-#| fig-column: body-outset-right
 
 df |> 
   # compute frequency within each combination
@@ -201,79 +302,87 @@ df |>
        fill = "Group\nExperiment\nCondition",
        caption = 'Treatment n = 639, Control n = 624')+
   theme_bw()
+
+
+
+
 ```
 
-## Q22 Crosstab
+
+### Q25
 
 ```{r}
-#| label: tbl-q22
-#| tbl-cap: "Q22.Confidence in Fair Voting Process by Experiment Condition in Maricopa County, AZ by Experiment Condition"
-#| tbl-column: body-outset-right
+#| fig-cap: "Concern for violence, threats, or voter intimidation in Maricopa County, AZ by Experiment Condition"
+#| fig-cap-location: top
+#| tbl-cap: "Concern for violence, threats, or voter intimidation in Maricopa County, AZ by Experiment Condition"
+#| tbl-column: margin
 
 
-# Crosstab of Q22 by treatment group
+# Crosstab of Q25 by treatment group
 df |> 
-  janitor::tabyl(group, q22, show_na = F) |>  
-  janitor::adorn_totals('both', na.rm = T) |> 
+  janitor::tabyl(group, q25, show_na = F) |>
   janitor::adorn_percentages(denominator = 'row') |>
   janitor::adorn_pct_formatting(digits = 1, affix_sign = F) |>
   janitor::adorn_ns() |> 
   janitor::adorn_title(
     'combined',
     row_name = "Group",
-    col_name = 'Q22') |> 
-  kableExtra::kbl() |> 
-  kableExtra::kable_styling(
-    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
-    latex_options = "basic",
-    font_size = 13
+    col_name = 'Q25') |>
+  gt::gt(
+    rowname_col = 'Q25',
+    groupname_col = 'Group' 
+  ) |>  
+  gt::cols_label(
+    c('Group/Q25') ~ "Group") |> 
+  gt::tab_style(
+    style = gt::cell_text(weight = "bold"),
+    locations = gt::cells_row_groups()
+  ) |> 
+  gt::tab_style(
+    style = gt::cell_text(weight = 'bold'),
+    locations = gt::cells_column_labels()
+  ) |> 
+  gt::tab_spanner(
+    columns = 2:5,
+    label = "Concern for violence, threats, or voter intimidation in Maricopa County, AZ"
+  ) |>  
+  gt::tab_style(
+    style = gt::cell_text(weight = 'bold'),
+    locations = gt::cells_column_spanners()
+    ) |> 
+  gt::tab_footnote(
+    footnote = "Table reflects row percentages. NAs omitted") |> 
+  gt::tab_footnote(
+    footnote = "Q25. Thinking about Maricopa County, AZ, how concerned should voters feel \nabout potential violence, \nthreats of violence, or intimidation while voting in person at their local polling place?",
+    locations = gt::cells_column_spanners()) |> 
+  gt::cols_align(align = 'left', columns = everything()) |> 
+  gt::tab_options(
+    table.font.size = "small",
+    data_row.padding = gt::px(1)
   )
 
 
-```
 
-:::
-
-::: {.panel-tabset}
-
-## Q25 Barplot
-
-```{r}
-#| label: fig-q25
-#| fig-cap: "Concern for violence, threats, or voter intimidation in Maricopa County, AZ by Experiment Condition"
-#| fig-column: body-outset-right
-
-df |> 
-  # compute frequency within each combination
-  group_by(group, q25) |> 
-  count() |>  
-  # compute proportion within group
-  # n is the default variable created by count()
-  group_by(group) |> 
-  mutate(prop = round(n/sum(n), digits = 3),
-         pct = prop*100,
-         res = str_c(pct,'% (', n, ')', sep = "")) |> 
-  ggplot(aes(x = q25, y = pct, fill = group))+
-  geom_col(position = 'dodge')+
-  geom_text(aes(label = res), position = position_dodge(1.0), size = 2.5 , vjust = -0.5)+
-  scale_fill_grey(start = 0.5, end = 0.1)+
-  # \n in a string tells R to break the line there
-  labs(y = "Percentage",
-       x = "Q25. Thinking about Maricopa County, AZ, how concerned \nshould voters feel about potential violence, \nthreats of violence, or intimidation while voting in person at their local polling place?",
-       fill = "Group\nExperiment\nCondition",
-       caption = 'Treatment n = 639, Control n = 624')+
-  theme_bw()
-```
-
-## Q25 facet barplot
+# alternative crosstab
+# df |> 
+#   janitor::tabyl(group, q25, show_na = F) |>  
+#   janitor::adorn_totals('both', na.rm = T) |> 
+#   janitor::adorn_percentages(denominator = 'row') |>
+#   janitor::adorn_pct_formatting(digits = 1, affix_sign = F) |>
+#   janitor::adorn_ns() |> 
+#   janitor::adorn_title(
+#     'combined',
+#     row_name = "Group",
+#     col_name = 'Q25') |> 
+#   kableExtra::kbl() |> 
+#   kableExtra::kable_styling(
+#     bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
+#     latex_options = "basic",
+#     font_size = 13
+#   )
 
 
-```{r}
-#| label: fig-q25-2
-#| fig-cap: "Concern for violence, threats, or voter intimidation in Maricopa County, AZ by Experiment Condition"
-#| fig-column: body-outset-right
-
-
+# plot
 df |> 
   mutate(q25 = forcats::fct_rev(q25)) |> 
   labelled::set_variable_labels(
@@ -283,7 +392,174 @@ df |>
                     y = 'group',
                     facet_rows = vars(.question))+
   labs(
-    title = "Q25. Concern for voter intimidation, threats, or violence")+
+    title = "Concern for voter intimidation, threats, or violence by Experiment Condition",
+    subtitle = "Q25. Thinking about Maricopa County, AZ, how concerned should voters feel \nabout potential violence, \nthreats of violence, or intimidation while voting in person at their local polling place?")+
+  theme_bw()+
+  theme(legend.position = 'bottom')
+
+
+# barplot alternative
+# df |>
+#   # compute frequency within each combination
+#   group_by(group, q25) |>
+#   count() |>
+#   # compute proportion within group
+#   # n is the default variable created by count()
+#   group_by(group) |>
+#   mutate(prop = round(n/sum(n), digits = 3),
+#          pct = prop*100,
+#          res = str_c(pct,'% (', n, ')', sep = "")) |>
+#   ggplot(aes(x = q25, y = pct, fill = group))+
+#   geom_col(position = 'dodge')+
+#   geom_text(aes(label = res), position = position_dodge(1.0), size = 2.5 , vjust = -0.5)+
+#   scale_fill_grey(start = 0.5, end = 0.1)+
+#   # \n in a string tells R to break the line there
+#   labs(y = "Percentage",
+#        x = "Q25. Thinking about Maricopa County, AZ, how concerned \nshould voters feel about potential violence, \nthreats of violence, or intimidation while voting in person at their local polling place?",
+#        fill = "Group\nExperiment\nCondition",
+#        caption = 'Treatment n = 639, Control n = 624')+
+#   theme_bw()
+
+
+
+
+
+
+
+```
+
+### Q26
+
+```{r}
+#| fig-cap: "In-person voter safety in Maricopa County, AZ by Experiment Condition"
+#| fig-cap-location: top
+#| tbl-cap: "Q26. In-person voter safety in Maricopa County, AZ by Experiment Condition"
+#| tbl-column: margin
+
+
+# q26
+df |> 
+  ggstats::gglikert(include = q26, 
+                    variable_labels = c(q26 ="Confidence in Voter Safety"),
+                    y = 'group',
+                    facet_rows = vars(.question))+
+  labs(
+    title = "Confidence for In-person voter safety in Maricopa County, AZ by Experiment Condition",
+    subtitle = "Q26. How confident, if at all, are you that in person polling places in Maricopa County, AZ \nwill be safe places for voters to cast their ballots during the upcoming elections in November?",
+       caption = 'Treatment n = 638, Control n = 624')+
+  theme_bw()+
+  theme(legend.position = 'bottom')
+
+# alternative bar plot
+# df |> 
+#   drop_na(q26) |> 
+#   # compute frequency within each combination
+#   group_by(group, q26) |> 
+#   count() |>  
+#   # compute proportion within group
+#   # n is the default variable created by count()
+#   group_by(group) |> 
+#   mutate(prop = round(n/sum(n), digits = 3),
+#          pct = prop*100,
+#          res = str_c(pct,'% (', n, ')', sep = "")) |> 
+#   ggplot(aes(x = q26, y = pct, fill = group))+
+#   geom_col(position = 'dodge')+
+#   geom_text(aes(label = res), position = position_dodge(1.0), size = 2.5 , vjust = -0.5)+
+#   scale_fill_grey(start = 0.5, end = 0.1)+
+#   # \n in a string tells R to break the line there
+#   labs(y = "Percentage",
+#        x = "Q26. How confident, if at all, are you that in person polling places in Maricopa County, AZ \nwill be safe places for voters to cast their ballots during the upcoming elections in November?",
+#        fill = "Group\nExperiment\nCondition",
+#        caption = 'Treatment n = 638, Control n = 624')+
+#   theme_bw()
+
+
+
+# Crosstab of Q26 by treatment group
+df |> 
+  janitor::tabyl(group, q26, show_na = F) |>
+  janitor::adorn_percentages(denominator = 'row') |>
+  janitor::adorn_pct_formatting(digits = 1, affix_sign = F) |>
+  janitor::adorn_ns() |> 
+  janitor::adorn_title(
+    'combined',
+    row_name = "Group",
+    col_name = 'Q26') |>
+  gt::gt(
+    rowname_col = 'Q26',
+    groupname_col = 'Group' 
+  ) |>  
+  gt::cols_label(
+    c('Group/Q26') ~ "Group") |> 
+  gt::tab_style(
+    style = gt::cell_text(weight = "bold"),
+    locations = gt::cells_row_groups()
+  ) |> 
+  gt::tab_style(
+    style = gt::cell_text(weight = 'bold'),
+    locations = gt::cells_column_labels()
+  ) |> 
+  gt::tab_spanner(
+    columns = 2:5,
+    label = "Confidence for In-person voter safety in Maricopa County, AZ"
+  ) |>  
+  gt::tab_style(
+    style = gt::cell_text(weight = 'bold'),
+    locations = gt::cells_column_spanners()
+    ) |> 
+  gt::tab_footnote(
+    footnote = "Table reflects row percentages. NAs omitted") |> 
+  gt::tab_footnote(
+    footnote = "Q26. How confident, if at all, are you that in person polling places in Maricopa County, AZ \nwill be safe places for voters to cast their ballots during the upcoming elections in November?",
+    locations = gt::cells_column_spanners()) |> 
+  gt::cols_align(align = 'left', columns = everything()) |> 
+  gt::tab_options(
+    table.font.size = "small",
+    data_row.padding = gt::px(1)
+  )
+
+
+
+# df |> 
+#   janitor::tabyl(group, q26, show_na = F) |>  
+#   janitor::adorn_totals('both', na.rm = T) |> 
+#   janitor::adorn_percentages(denominator = 'row') |>
+#   janitor::adorn_pct_formatting(digits = 1, affix_sign = F) |>
+#   janitor::adorn_ns() |> 
+#   janitor::adorn_title(
+#     'combined',
+#     row_name = "Group",
+#     col_name = 'Q26') |> 
+#   kableExtra::kbl() |> 
+#   kableExtra::kable_styling(
+#     bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
+#     latex_options = "basic",
+#     font_size = 13
+#   )
+
+
+```
+
+
+
+```{r}
+#| fig-cap-location: top
+#| fig-cap: "Confidence in Election Administration by Experiment Condition"
+
+
+df |>
+  labelled::set_variable_labels(
+    q19 = "Q19. Accurate Vote counts",
+    q22 = "Q22. Fair process",
+    q23 = "Q23. Fair outcomes",
+    q24 = "Q24. Secure Election Tech",
+    q26 = "Q26. Safe In-person Voting"
+  ) |> 
+  ggstats::gglikert(include = c(q19,q22,q23,q24,q26), y = 'group')+
+  ggplot2::facet_grid(rows = vars(.question), labeller = label_wrap_gen(15))+
+  labs(
+    title = "Confidence in Election Administration by Experiment Condition"
+  )+
   theme_bw()+
   theme(legend.position = 'bottom')
 
@@ -292,167 +568,9 @@ df |>
 ```
 
 
-## Q25 Crosstab
-
-```{r}
-#| label: tbl-q25
-#| tbl-cap: "Q25. Concern for violence, threats, or voter intimidation in Maricopa County, AZ by Experiment Condition"
-#| tbl-column: body-outset-right
-
-# Crosstab of Q25 by treatment group
-df |> 
-  janitor::tabyl(group, q25, show_na = F) |>  
-  janitor::adorn_totals('both', na.rm = T) |> 
-  janitor::adorn_percentages(denominator = 'row') |>
-  janitor::adorn_pct_formatting(digits = 1, affix_sign = F) |>
-  janitor::adorn_ns() |> 
-  janitor::adorn_title(
-    'combined',
-    row_name = "Group",
-    col_name = 'Q25') |> 
-  kableExtra::kbl() |> 
-  kableExtra::kable_styling(
-    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
-    latex_options = "basic",
-    font_size = 13
-  )
 
 
-
-
-```
-
-:::
-
-::: {.panel-tabset}
-
-## Q26 Barplot
-
-```{r}
-#| label: fig-q26
-#| fig-cap: "In-person voter safety in Maricopa County, AZ by Experiment Condition"
-#| fig-column: body-outset-right
-
-df |> 
-  drop_na(q26) |> 
-  # compute frequency within each combination
-  group_by(group, q26) |> 
-  count() |>  
-  # compute proportion within group
-  # n is the default variable created by count()
-  group_by(group) |> 
-  mutate(prop = round(n/sum(n), digits = 3),
-         pct = prop*100,
-         res = str_c(pct,'% (', n, ')', sep = "")) |> 
-  ggplot(aes(x = q26, y = pct, fill = group))+
-  geom_col(position = 'dodge')+
-  geom_text(aes(label = res), position = position_dodge(1.0), size = 2.5 , vjust = -0.5)+
-  scale_fill_grey(start = 0.5, end = 0.1)+
-  # \n in a string tells R to break the line there
-  labs(y = "Percentage",
-       x = "Q26. How confident, if at all, are you that in person polling places in Maricopa County, AZ \nwill be safe places for voters to cast their ballots during the upcoming elections in November?",
-       fill = "Group\nExperiment\nCondition",
-       caption = 'Treatment n = 638, Control n = 624')+
-  theme_bw()
-
-```
-
-
-## Q26 Crosstab
-
-```{r}
-#| label: tbl-q26
-#| tbl-cap: "Q26. In-person voter safety in Maricopa County, AZ by Experiment Condition"
-#| tbl-column: body-outset-right
-
-# Crosstab of Q26 by treatment group
-df |> 
-  janitor::tabyl(group, q26, show_na = F) |>  
-  janitor::adorn_totals('both', na.rm = T) |> 
-  janitor::adorn_percentages(denominator = 'row') |>
-  janitor::adorn_pct_formatting(digits = 1, affix_sign = F) |>
-  janitor::adorn_ns() |> 
-  janitor::adorn_title(
-    'combined',
-    row_name = "Group",
-    col_name = 'Q26') |> 
-  kableExtra::kbl() |> 
-  kableExtra::kable_styling(
-    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
-    latex_options = "basic",
-    font_size = 13
-  )
-
-
-```
-
-:::
-
-
-::: {.panel-tabset}
-
-## Q27 Barplot
-
-```{r}
-#| label: fig-q27
-#| fig-cap: "Approval of Election Officials in Maricopa County, AZ by Experiment Condition"
-#| fig-column: body-outset-right
-
-df |> 
-  drop_na(q27) |> 
-  # compute frequency within each combination
-  group_by(group, q27) |> 
-  count() |>  
-  # compute proportion within group
-  # n is the default variable created by count()
-  group_by(group) |> 
-  mutate(prop = round(n/sum(n), digits = 3),
-         pct = prop*100,
-         res = str_c(pct,'% (', n, ')', sep = "")) |> 
-  ggplot(aes(x = q27, y = pct, fill = group))+
-  geom_col(position = 'dodge')+
-  geom_text(aes(label = res), position = position_dodge(1.0), size = 2.5 , vjust = -0.5)+
-  scale_fill_grey(start = 0.5, end = 0.1)+
-  # \n in a string tells R to break the line there
-  labs(y = "Percentage",
-       x = "Q27. Do you approve or disapprove of the way \nelection officials in Maricopa County, AZ are handling their jobs?",
-       fill = "Group\nExperiment\nCondition",
-       caption = 'Treatment n = 636, Control n = 623')+
-  theme_bw()
-
-```
-
-
-## Q27 Crosstab
-
-```{r}
-#| label: tbl-q27
-#| tbl-cap: "Q27. Approval of Election Officials in Maricopa County, AZ by Experiment Condition"
-#| tbl-column: body-outset-right
-
-# Crosstab of Q19 by treatment group
-df |> 
-  janitor::tabyl(group, q27, show_na = F) |>  
-  janitor::adorn_totals('both', na.rm = T) |> 
-  janitor::adorn_percentages(denominator = 'row') |>
-  janitor::adorn_pct_formatting(digits = 1, affix_sign = F) |>
-  janitor::adorn_ns() |> 
-  janitor::adorn_title(
-    'combined',
-    row_name = "Group",
-    col_name = 'Q27') |> 
-  kableExtra::kbl() |> 
-  kableExtra::kable_styling(
-    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
-    latex_options = "basic",
-    font_size = 13
-  )
-
-
-
-```
-
-:::
+{{< pagebreak >}}
 
 
 ## Survey Questions by Treatment Condition

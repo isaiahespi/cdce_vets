@@ -785,3 +785,98 @@ df |>
     data_row.padding = gt::px(1)
   )
 
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::####
+df |> 
+  group_by(group) |> 
+  sjmisc::frq(q26)
+
+df |>  
+  sjmisc::frq(q26)
+
+df |> 
+  janitor::tabyl(group, q19, show_na = F) |>  
+  janitor::adorn_totals('both', na.rm = T) |> 
+  janitor::adorn_percentages(denominator = 'row') |>
+  janitor::adorn_pct_formatting(digits = 1, affix_sign = F) |>
+  janitor::adorn_ns() |> 
+  janitor::adorn_title('combined')
+
+
+
+df |> 
+  janitor::tabyl(group, q22, show_na = F) |>  
+  janitor::adorn_totals('both', na.rm = T) |> 
+  janitor::adorn_percentages(denominator = 'row') |>
+  janitor::adorn_pct_formatting(digits = 1, affix_sign = F) |>
+  janitor::adorn_ns() |> 
+  janitor::adorn_title(
+    'combined',
+    row_name = "Group",
+    col_name = 'Q22') |> 
+  kableExtra::kbl() |> 
+  kableExtra::kable_styling(
+    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
+    latex_options = "basic",
+    font_size = 13
+  )
+
+
+
+df |> 
+  janitor::tabyl(group, q25, show_na = F) |>  
+  janitor::adorn_totals('both', na.rm = T) |> 
+  janitor::adorn_percentages(denominator = 'row') |>
+  janitor::adorn_pct_formatting(digits = 1, affix_sign = F) |>
+  janitor::adorn_ns() |> 
+  janitor::adorn_title(
+    'combined',
+    row_name = "Group",
+    col_name = 'Q25') |> 
+  kableExtra::kbl() |> 
+  kableExtra::kable_styling(
+    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
+    latex_options = "basic",
+    font_size = 13
+  )
+
+
+
+
+df |> 
+  janitor::tabyl(group, q26, show_na = F) |>  
+  janitor::adorn_totals('both', na.rm = T) |> 
+  janitor::adorn_percentages(denominator = 'row') |>
+  janitor::adorn_pct_formatting(digits = 1, affix_sign = F) |>
+  janitor::adorn_ns() |> 
+  janitor::adorn_title(
+    'combined',
+    row_name = "Group",
+    col_name = 'Q26') |> 
+  kableExtra::kbl() |> 
+  kableExtra::kable_styling(
+    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
+    latex_options = "basic",
+    font_size = 13
+  )
+
+
+
+df |> 
+  janitor::tabyl(group, q27, show_na = F) |>  
+  janitor::adorn_totals('both', na.rm = T) |> 
+  janitor::adorn_percentages(denominator = 'row') |>
+  janitor::adorn_pct_formatting(digits = 1, affix_sign = F) |>
+  janitor::adorn_ns() |> 
+  janitor::adorn_title(
+    'combined',
+    row_name = "Group",
+    col_name = 'Q27') |> 
+  kableExtra::kbl() |> 
+  kableExtra::kable_styling(
+    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
+    latex_options = "basic",
+    font_size = 13
+  )
+
+
+

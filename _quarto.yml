@@ -20,26 +20,17 @@ format:
     toc-depth: 3
     toc-expand: true
     toc-location: left
-    title-block-style: manuscript
+    title-block-style: default
     appendix-style: none
     theme:
       light: default
       dark: default
-    smooth-scroll: true
-    embed-resources: true
-    link-external-newwindow: true
-    footnotes-hover: false
-    reference-location: document
-    page-layout: article
     grid: 
-      body-width: 900px
-      margin-width: 200px
-    code-tools: true
-    code-fold: true
+      margin-width: 350px
     # Use a CSL to style (https://www.zotero.org/styles/)
     # csl: https://www.zotero.org/styles/american-political-science-review
   # docx: default
   # jats: default
-  # report-pdf:
-  #   keep-md: true
-  #   keep-tex: true
+  report-pdf:
+    keep-md: true
+    keep-tex: true

@@ -2,8 +2,8 @@
 
 # load packages
 library(tidyverse)
-library(janitor)
-library(kableExtra)
+# library(janitor)
+# library(kableExtra)
 # library(gtsummary)
 # library(gt)
 # library(labelled)
@@ -22,18 +22,15 @@ load("data/df-2024-09-11.Rdata") # df set as factor with dummy vars
 load("data/data_numeric_vets_survey-exp-2024-09-11.Rdata") # data2 numeric only
 load("data/vets-survey-exp-2024-09-11_spss.Rdata") #spss data set
 
+# load data dictionary/codebook
+df_dict <- read.csv("codebooks/df_dict.csv")
+
 # load raw SPSS export that includes display order vars
 # downloaded 2024-09-11 at 11:38 AM
 raw_spss <- haven::read_sav(file = "data-raw/vets_spss_do_2024-09-11_11.38.sav") 
 
-
-# load data dictionary/codebook
-df_dict <- read.csv("codebooks/df_dict.csv")
-
 # also load the raw data dict for comparison
 raw_spss_dict <- read.csv("codebooks/raw_spss_dict.csv")
-
-
 
 dplyr::glimpse(df)
 
