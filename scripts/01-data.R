@@ -2,23 +2,19 @@
 
 # load packages
 library(tidyverse)
-
-# library(haven)
-# library(surveytoolbox)
-# library(labelled)
-# library(sjlabelled)
+library(haven)
+library(surveytoolbox)
+library(labelled)
+library(sjlabelled)
 
 # load raw SPSS export that includes display order vars
 # downloaded 2024-09-11 at 11:38 AM
 raw_spss <- haven::read_sav(file = "data-raw/vets_spss_do_2024-09-11_11.38.sav") 
 
-
 # despite being a .sav file imported using `haven::read_sav()`, 
 # the data set is not "haven_labelled"
 # haven::is.labelled(raw_spss)
 
-# take a look
-# glimpse(raw_spss)
 
 # A data dictionary contains metadata about the data. The
 # `labelled::generate_dictionary` function is used to create a data
@@ -453,4 +449,4 @@ write.csv(df_dict, file = "codebooks/df_dict.csv")
 
 
 # remove uneeded dataframes and leave df and df_dict
-rm(data, data_dict_spss, data_spss, data_spss_dict, data2_dict_num, raw_spss, raw_spss_dict)
+rm(data, data_dict_spss, data_spss, data_spss_dict, data2_dict_num, raw_spss, raw_spss_dict, data_labels)

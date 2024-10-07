@@ -4,7 +4,7 @@ project:
   render: 
     - index.qmd
     - "!_manuscript/"
-    - "!notebooks/"
+    - notebooks/01-data-import-clean-process.qmd
 
 execute:
   freeze: auto
@@ -26,7 +26,7 @@ format:
       light: default
       dark: default
     grid: 
-      margin-width: 350px
+      margin-width: 450px
     # Use a CSL to style (https://www.zotero.org/styles/)
     # csl: https://www.zotero.org/styles/american-political-science-review
   # docx: default

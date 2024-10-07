@@ -157,6 +157,116 @@ df |>
   janitor::adorn_pct_formatting(digits = 2) |> 
   janitor::adorn_ns()
 
+# Crosstab of Q19 by treatment group
+df |> 
+  janitor::tabyl(group, q19, show_na = F) |>  
+  janitor::adorn_totals('both', na.rm = T) |> 
+  janitor::adorn_percentages(denominator = 'row') |>
+  janitor::adorn_pct_formatting(digits = 1, affix_sign = F) |>
+  janitor::adorn_ns() |> 
+  janitor::adorn_title(
+    'combined',
+    row_name = "Group",
+    col_name = 'Q19') |> 
+  kableExtra::kbl() |> 
+  kableExtra::kable_styling(
+    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
+    latex_options = "basic",
+    font_size = 13
+  )
+
+# same crosstab, gt style
+df |> 
+  janitor::tabyl(group, q19, show_na = F) |>
+  janitor::adorn_percentages(denominator = 'row') |>
+  janitor::adorn_pct_formatting(digits = 1, affix_sign = F) |>
+  janitor::adorn_ns() |> 
+  janitor::adorn_title(
+    'combined',
+    row_name = "Group",
+    col_name = 'Q19') |>
+  gt::gt(
+    rowname_col = 'Q19',
+    groupname_col = 'Group' 
+  ) |>  
+  gt::cols_label(
+    c('Group/Q19') ~ "Group") |> 
+  gt::tab_style(
+    style = gt::cell_text(weight = "bold"),
+    locations = gt::cells_row_groups()
+  ) |> 
+  gt::tab_style(
+    style = gt::cell_text(weight = 'bold'),
+    locations = gt::cells_column_labels()
+  ) |> 
+  gt::tab_spanner(
+    columns = 2:5,
+    label = "Q19. Vote Count Confidence for Maricopa County, AZ"
+  ) |>  
+  gt::tab_style(
+    style = gt::cell_text(weight = 'bold'),
+    locations = gt::cells_column_spanners()
+    ) |> 
+  gt::tab_footnote(
+    footnote = "Table reflects row percentages. NAs omitted") |> 
+  gt::tab_footnote(
+    footnote = "Q19. How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November?",
+    locations = gt::cells_column_spanners()) |> 
+  gt::cols_align(align = 'left', columns = everything()) |> 
+  gt::tab_options(
+    table.font.size = "small",
+    data_row.padding = gt::px(1)
+  )
+  
+
+df |> 
+  janitor::tabyl(q7, q19, group, show_na = F) |> 
+  # janitor::adorn_totals("both") |> 
+  janitor::adorn_percentages("row") |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
+  janitor::adorn_ns("rear") |> 
+  janitor::adorn_title("combined", 
+                       row_name = "Q7. Legitimacy of 2020 Election",
+                       col_name = "Q19") |>
+  bind_rows(.id = "group_var") |>   
+  gt::gt(
+    rowname_col = "row_var",
+    groupname_col = "group_var") |>  
+  gt::row_group_order(groups = c("Control", "Treatment")) |> 
+  gt::cols_label(
+    c('Q7. Legitimacy of 2020 Election/Q19') ~ "Q7. Legitimacy of 2020 Election") |>
+  # gt::cols_label_with(columns = '...1', fn = ~sjlabelled::get_label(df$q5.clps)) |> 
+  gt::tab_style(
+    style = gt::cell_text(weight = "bold"),
+    locations = gt::cells_row_groups()
+  ) |> 
+  gt::tab_style(
+    style = gt::cell_text(weight = 'bold'),
+    locations = gt::cells_column_labels()
+  ) |> 
+  gt::tab_spanner(
+    columns = 3:6,
+    label = "Q19. Vote Count Confidence for Maricopa County, AZ"
+  ) |> 
+  gt::tab_style(
+    style = gt::cell_text(weight = 'bold'),
+    locations = gt::cells_column_spanners()
+    ) |> 
+  gt::tab_footnote(
+    footnote = "Table reflects row percentages. NAs omitted") |> 
+  gt::tab_footnote(
+    footnote = "Q19. How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November?",
+    locations = gt::cells_column_spanners()) |> 
+  gt::tab_footnote(
+    footnote = "Q7.Regardless of whom you supported in the 2020 election, \ndo you think Joe Biden's election as president was legitimate, or was he not legitimately elected?",
+    locations = gt::cells_column_labels('Q7. Legitimacy of 2020 Election/Q19')
+    ) |> 
+  gt::cols_align(align = 'left', columns = everything()) |> 
+  gt::tab_options(
+    table.font.size = "small",
+    data_row.padding = gt::px(1)
+  )
+
 
 
 # ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::####

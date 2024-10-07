@@ -108,130 +108,11 @@ df |>
        fill = "Group\nExperiment\nCondition")
 
 
-
-
-
- 
-
-#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::####
-df |> 
-  group_by(group) |> 
-  sjmisc::frq(q26)
-
-df |>  
-  sjmisc::frq(q26)
-
-df |> 
-  janitor::tabyl(group, q19, show_na = F) |>  
-  janitor::adorn_totals('both', na.rm = T) |> 
-  janitor::adorn_percentages(denominator = 'row') |>
-  janitor::adorn_pct_formatting(digits = 1, affix_sign = F) |>
-  janitor::adorn_ns() |> 
-  janitor::adorn_title('combined')
-
-
-
-df |> 
-  janitor::tabyl(group, q22, show_na = F) |>  
-  janitor::adorn_totals('both', na.rm = T) |> 
-  janitor::adorn_percentages(denominator = 'row') |>
-  janitor::adorn_pct_formatting(digits = 1, affix_sign = F) |>
-  janitor::adorn_ns() |> 
-  janitor::adorn_title(
-    'combined',
-    row_name = "Group",
-    col_name = 'Q22') |> 
-  kableExtra::kbl() |> 
-  kableExtra::kable_styling(
-    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
-    latex_options = "basic",
-    font_size = 13
-  )
-
-
-
-df |> 
-  janitor::tabyl(group, q25, show_na = F) |>  
-  janitor::adorn_totals('both', na.rm = T) |> 
-  janitor::adorn_percentages(denominator = 'row') |>
-  janitor::adorn_pct_formatting(digits = 1, affix_sign = F) |>
-  janitor::adorn_ns() |> 
-  janitor::adorn_title(
-    'combined',
-    row_name = "Group",
-    col_name = 'Q25') |> 
-  kableExtra::kbl() |> 
-  kableExtra::kable_styling(
-    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
-    latex_options = "basic",
-    font_size = 13
-  )
-
-
-
-
-df |> 
-  janitor::tabyl(group, q26, show_na = F) |>  
-  janitor::adorn_totals('both', na.rm = T) |> 
-  janitor::adorn_percentages(denominator = 'row') |>
-  janitor::adorn_pct_formatting(digits = 1, affix_sign = F) |>
-  janitor::adorn_ns() |> 
-  janitor::adorn_title(
-    'combined',
-    row_name = "Group",
-    col_name = 'Q26') |> 
-  kableExtra::kbl() |> 
-  kableExtra::kable_styling(
-    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
-    latex_options = "basic",
-    font_size = 13
-  )
-
-
-
-df |> 
-  janitor::tabyl(group, q27, show_na = F) |>  
-  janitor::adorn_totals('both', na.rm = T) |> 
-  janitor::adorn_percentages(denominator = 'row') |>
-  janitor::adorn_pct_formatting(digits = 1, affix_sign = F) |>
-  janitor::adorn_ns() |> 
-  janitor::adorn_title(
-    'combined',
-    row_name = "Group",
-    col_name = 'Q27') |> 
-  kableExtra::kbl() |> 
-  kableExtra::kable_styling(
-    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
-    latex_options = "basic",
-    font_size = 13
-  )
-
-
-
-
-
 ### ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::####
 # trying to plot likert scales
 
-sjPlot::plot_gpt(data = df, x = q7, y = q19, grp = group)
-sjPlot::plot_xtab(x = df$q19, grp = df$group, margin = 'row', show.n = T, show.prc = T, coord.flip = T)
-
-
-azq28_t <- df |> 
-  filter(group == "Treatment") |> 
-  select(q28_1, q28_2, q28_3, q28_4, q28_5)
-
-azq28_c <- df |> 
-  filter(group == "Control") |> 
-  select(q28_1, q28_2, q28_3, q28_4, q28_5)
-
-sjPlot::plot_likert(azq28_t, sort.frq = 'pos.asc', show.n = T, show.prc.sign = T)
-sjPlot::plot_likert(azq28_c, sort.frq = 'pos.asc', show.n = T, show.prc.sign = T)
-
 # attempting to use the ggstats::gglikert()
 # ggstats::gglikert works beautifully
-
-ggstats::gglikert(azq28)
 
 df |> 
   mutate(across(c(q28_1:q28_5), ~ forcats::fct_rev(.))) |> 
@@ -269,11 +150,26 @@ df |>
     q24 = "Election systems will be secure from technological threats",
     q26 = "Voting sites will be safe places for in-person voting"
   ) |> 
-  ggstats::gglikert(include = c(q19,q20,q22,q23,q24,q26), y = 'group')+ 
-  facet_grid(rows = vars(.question), labeller = label_wrap_gen(15))+
+  ggstats::gglikert(include = c(q19,q20,q22,q23,q24,q26), facet_cols = vars(group))+ 
   labs(
-    title = "Impact on Confidence in Election Fairness and Accuracy by Experiment Condition",
-    subtitle = "Q41. How would the following impact your confidence in the fairness and accuracy of elections conducted this November?"
+    title = "Trust and Confidence Electoral Process by Experiment Condition"
+  )+
+  theme_bw()+
+  theme(legend.position = 'bottom')
+
+
+df |>
+  labelled::set_variable_labels(
+    q19 = "Q19. Accurate Vote counts",
+    q22 = "Q22. Fair process",
+    q23 = "Q23. Fair outcomes",
+    q24 = "Q24. Secure Election Tech",
+    q26 = "Q26. Safe In-person Voting"
+  ) |> 
+  ggstats::gglikert(include = c(q19,q22,q23,q24,q26), y = 'group')+
+  ggplot2::facet_grid(rows = vars(.question), labeller = label_wrap_gen(15))+
+  labs(
+    title = "Confidence in Election Administration by Experiment Condition"
   )+
   theme_bw()+
   theme(legend.position = 'bottom')
@@ -308,6 +204,37 @@ df |>
   theme_bw()+
   theme(legend.position = 'bottom')
 
+# q26
+df |> 
+  ggstats::gglikert(include = q26, 
+                    variable_labels = c(q26 ="Confidence in Voter Safety"),
+                    y = 'group',
+                    facet_rows = vars(.question))+
+  labs(
+    title = "Confidence for In-person voter safety in Maricopa County, AZ by Experiment Condition",
+    subtitle = "Q26. How confident, if at all, are you that in person polling places in Maricopa County, AZ \nwill be safe places for voters to cast their ballots during the upcoming elections in November?",
+       caption = 'Treatment n = 638, Control n = 624')+
+  theme_bw()+
+  theme(legend.position = 'bottom')
+
+
+# Q27
+df |> 
+  ggstats::gglikert(include = q27, 
+                    variable_labels = c(q26 ="Election Official Approval"),
+                    y = 'group',
+                    facet_rows = vars(.question))+
+  labs(
+    title = "Approval of Election Officials in Maricopa County, AZ by Experiment Condition",
+    subtitle = "Q27. Do you approve or disapprove of the way \nelection officials in Maricopa County, AZ are handling their jobs?",
+       caption = 'Treatment n = 636, Control n = 623')+
+  theme_bw()+
+  theme(legend.position = 'bottom')
+
+
+
+
+# q41 and q43
 df |> 
   mutate(qset = forcats::fct_recode(
     qset,
