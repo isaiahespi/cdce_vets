@@ -22,12 +22,12 @@ load("data/df-2024-09-11.Rdata") # df set as factor with dummy vars
 load("data/data_numeric_vets_survey-exp-2024-09-11.Rdata") # data2 numeric only
 load("data/vets-survey-exp-2024-09-11_spss.Rdata") #spss data set
 
-# load data dictionary/codebook
-df_dict <- read.csv("codebooks/df_dict.csv")
-
 # load raw SPSS export that includes display order vars
 # downloaded 2024-09-11 at 11:38 AM
 raw_spss <- haven::read_sav(file = "data-raw/vets_spss_do_2024-09-11_11.38.sav") 
+
+# load data dictionary/codebook
+df_dict <- read.csv("codebooks/df_dict.csv")
 
 # also load the raw data dict for comparison
 raw_spss_dict <- read.csv("codebooks/raw_spss_dict.csv")
@@ -876,3 +876,103 @@ q43_results <- ggstats::ggcoef_compare(
 
 q41_results[4,]
 q43_results[4,]
+
+
+################################################################################
+
+# Likert plot of q19 by q7 and group
+# only among those who believe Biden's election was not legitimate
+df |> 
+  select(group, q7, q19, q19.clps) |>
+  drop_na() |> 
+  filter(q7 == "Not legitimate") |> 
+  ggstats::gglikert(include = c(q19), y = 'group', facet_rows = vars(q7))+
+  labs(
+    title = "Confidence in Accuracy of Vote counts in Maricopa County, AZ \nby Experimental Condition",
+    subtitle = "Distinguished by those who believe Biden's 2020 election was legitimate or not legitimate"
+  )+
+  theme_bw()+
+  theme(legend.position = 'bottom')
+
+
+# run a linear model on q19 as a dummy var where "confident" = 1, all else = 0
+# by group, only among those who believe 2020 election was illegitimate
+modq19_q7 <- df |> 
+  # mutate q19 into a dummy numeric var 
+  # where 'Somewhat' and 'Very' confident = 1
+  mutate(q19.dum = dplyr::case_when(
+    q19.clps == "Confident" ~ 1,
+    q19.clps == "Not_confident" ~ 0,
+    TRUE ~ NA
+  ),
+  # mutate q7 into a numeric dummy var where legitimate = 1, not legit = 0
+  q7.dum = dplyr::case_when(
+    q7 == "Legitimate" ~ 1,
+    q7 == "Not legitimate" ~ 0,
+    TRUE ~ NA
+  )) |>
+  # select only those vars that will be in the model
+  select(group, q7.dum, q19.dum) |>
+  # drop any NA values from data
+  drop_na() %>%
+  # filter by those who believe that Biden's 2020 election was not legitimate
+  filter(q7.dum == 0) %>% # idk why the magitr pipe works but not the native pipe
+  # run a linear model
+  lm(q19.dum ~ group, data = .)
+
+# show the (tidy) results of the model
+# the (Intercept) estimate reflects the mean "confident" in the control group among those
+# who believe the 2020 election was not legitimate
+# the 'groupTreatment' estimate is the mean of "confident" in the treatment
+# group among those who believe the 2020 election was not legitimate
+# 'statistic' reflects the t-value, and p-value = 0.001706 
+summary(modq19_q7) |> broom::tidy(conf.int = T)
+
+# alternate way to view model results
+ggstats::ggcoef_model(model = modq19_q7, conf.int = T, return_data = T) |> 
+  dplyr::slice(2) |>
+  select(label, n_obs, 
+         estimate, std.error, statistic, p.value, 
+         conf.low, conf.high)
+
+# create a coef plot of the linear model with confidence interval error bars 
+ggstats::ggcoef_model(model = modq19_q7, conf.int = T)+
+  labs(
+    title = "Confidence in Accuracy of Vote counts in Maricopa County, AZ \namong those who believe Biden's 2020 election was not legitimate",
+    subtitle = "Means comparison with 95% confidence intervals\n'Very confident' and 'Somewhat confident' = 1, 'Not too confident' and 'Not confident at all' = 0'",
+    caption = "estimate = 0.145, SE = 0.0460, t-statistic = 3.16, CI [0.0548, 0.236]"
+  )+
+  theme_bw()+
+  theme(legend.position = 'bottom')
+
+# alternate method to make a coefficient plot
+summary(modq19_q7) |> broom::tidy(conf.int = T) |> 
+  ggplot(aes(estimate, term, xmin = conf.low, xmax = conf.high, height = 0))+
+  geom_point()+
+  geom_vline(xintercept = 0, lty = 4)+
+  geom_errorbarh()
+
+################################################################################
+
+# Q41.4 (vets), Q41.5 (lawyers), Q41.6 (students), by treatment
+df |> 
+  ggstats::gglikert(include = c(q41.4:q41.6), y = 'group',  symmetric = T, add_totals = T)+ 
+  facet_grid(rows = vars(.question), labeller = label_wrap_gen(15))+
+  labs(
+    subtitle = "Q41. How would the following impact your confidence in the fairness and accuracy of elections conducted this November?"
+  )+
+  theme_bw()+
+  theme(legend.position = 'bottom')
+
+
+# Q43.4 (vets), Q43.5 (lawyers), Q43.6 (students) by treatment 
+df |> 
+  ggstats::gglikert(include = c(q43.4:q43.6), y = 'group', symmetric = T, add_totals = F)+ 
+  facet_grid(rows = vars(.question), labeller = label_wrap_gen(15))+
+  labs(
+    title = "Impact on Confidence in Voter Safety at Polling Sites by Experiment Condition",
+    subtitle = "Q43. How would the following impact your confidence that voters are safe from violence, threats of violence, or intimidation while voting in-person during elections this November?"
+  )+
+  theme_bw()+
+  theme(legend.position = 'bottom')
+

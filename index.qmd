@@ -1,5 +1,6 @@
 ---
-title: "Survey Experiment"
+title: "Recruiting Veterans and Military Family Members Improves Confidence in Elections"
+subtitle: "Draft"
 author:
   - name: Isaiah
     #orcid: 0000-0002-0760-5497
@@ -11,17 +12,18 @@ author:
       - Reviewer
       - Analyst
     affiliations:
-      - Center for Democracy and Civic Engagement
-      - University of Maryland at College Park 
-  # - name: Rowan Cockett
-  #   orcid: 0000-0002-7859-8394
-  #   corresponding: false
-  #   roles: []
-  #   affiliations:
-  #     - Curvenote
+      - Research Fellow, Center for Democracy and Civic Engagement
+  - name: Michael J. Hanmer, PhD
+    # orcid: 0000-0002-7859-8394
+    corresponding: true
+    email: mhanmer@umd.edu
+    roles: 
+      - Principal Investigator
+    affiliations:
+      - Director, Center for Democracy and Civic Engagement
 
-phone: (410) 903 6911
-email: ssnovey@umd.edu
+phone: (301) 405 7379
+email: mhanmer@umd.edu
 department: Center for Democracy and Civic Engagement
 keywords:
   - Election Workers
@@ -29,16 +31,14 @@ keywords:
   - Veterans
   - Public opinion
   - Election administration
-plain-language-summary: |
-  Analysis and results of survey experiment.
-key-points:  
-  - Lorem ipsum odor amet, consectetuer adipiscing elit.
-  - Lorem ipsum odor amet, consectetuer adipiscing elit.
-  - Lorem ipsum odor amet, consectetuer adipiscing elit.
+# abstract:
 date: 2024-09-12
 # bibliography: references.bib
 # csl: american-political-science-association.csl
 link-citations: true
+title-block-banner: images/CDCE.png
+css: styles.css
+notebook-links: global
 code-tools: 
     source: https://github.com/isaiahespi/cdce_vets/blob/4953d971910f5040e0fe591e65e807adf5a198f5/index.qmd
 fig-responsive: true
@@ -49,6 +49,7 @@ footnotes-hover: false
 reference-location: document
 page-layout: article
 lightbox: true
+funding: "This research was supported by funding from The Democracy Fund. The views expressed are those of the authors only as are any errors."
 citation:
   container-title: Center for Democracy and Civic Engagement, University of Maryland
 number-sections: false
@@ -110,79 +111,31 @@ pvalue <- function(x, ...) {
 
 ```
 
-## Key Questions
 
-The following presents some key results from the survey experiment.
+# Introduction
 
-### Q19
+This report presents results from a survey experiment designed to examine how information that election officials are hiring veterans and military family members for the elections workforce influences the public’s attitudes about elections. The survey was developed by the Center for Democracy and Civic Engagement ([CDCE](https://cdce.umd.edu/)) at the University of Maryland (UMD) in consultation from [We the Veterans and Military Families](https://www.wetheveterans.us/). The survey was fielded from August 29 through September 9, 2024 on a sample of 1,263 US citizens of voting age purchased from Lucid and drawn to be representative of the US adult citizen population.
+
+After answering several background questions, participants were randomly assigned to read one of two vignettes we described as short excerpts from news stories. These vignettes were not from actual news stories, but they were modeled after relevant published articles. Both vignettes were set in Maricopa County, AZ and explained that local election officials were seeking to expand the elections workforce in advance of the upcoming presidential elections. We chose Maricopa County, AZ because it was a place where election administration was under close scrutiny in 2020 and could be again in 2024. 
+
+The treatment condition focused on the recruitment of veterans and military family members from the local community to serve in elections jobs, while the control condition focused on recruiting members of the local community without reference to any populations to which they might belong. Due to the randomization into conditions, any differences in responses can be attributed to the inclusion of information about veterans and military family members. The text of the treatment and control conditions appears in the Appendix. 
+
+We examined the potential effect of the treatment on a variety of attitudes about elections in Maricopa County, AZ such as confidence, concern about the potential for violence, and expectations of fraud. **Across all of the questions we asked, information about the recruitment of veterans and military family members to elections jobs led to improved outcomes. The implications are clear---elections officials who are recruiting veterans and military family members should publicize this fact and those who are not doing this recruitment should do so.** 
+
+
+
+## Trust and Confidence in Elections
+
+One of the most widely used questions in the study of attitudes about election administration asks how confident the respondent is that votes will be counted as intended. This question gets to the fundamental issue of how the process translates the voter’s behavior into the outcome. The figure below shows that **information that election officials are recruiting veterans and military family members boosts the rate at which respondents indicate they are very confident that votes in Maricopa County, AZ will be counted as intended (by 7 percentage points, from 30% to 37%, p<0.025, one-tailed[^1])**. 
+
+
+
+[^1]: All p-values are one-tailed as we have clear hypotheses that outcomes will be improved in the veterans and military veterans condition.
 
 ```{r}
-#| tbl-cap: "Confidence vote counts will be accurate in Maricopa County, AZ by Experiment Condition"
+#| label: fig-q19
 #| fig-cap: "Confidence in Accurate Vote Count by Experiment Condition"
 #| fig-cap-location: top
-#| tbl-column: margin
-
-# Crosstab of Q19 by treatment group
-df |> 
-  janitor::tabyl(group, q19, show_na = F) |>
-  janitor::adorn_percentages(denominator = 'row') |>
-  janitor::adorn_pct_formatting(digits = 1, affix_sign = F) |>
-  janitor::adorn_ns() |> 
-  janitor::adorn_title(
-    'combined',
-    row_name = "Group",
-    col_name = 'Q19') |>
-  gt::gt(
-    rowname_col = 'Q19',
-    groupname_col = 'Group' 
-  ) |>  
-  gt::cols_label(
-    c('Group/Q19') ~ "Group") |> 
-  gt::tab_style(
-    style = gt::cell_text(weight = "bold"),
-    locations = gt::cells_row_groups()
-  ) |> 
-  gt::tab_style(
-    style = gt::cell_text(weight = 'bold'),
-    locations = gt::cells_column_labels()
-  ) |> 
-  gt::tab_spanner(
-    columns = 2:5,
-    label = "Q19. Vote Count Confidence for Maricopa County, AZ"
-  ) |>  
-  gt::tab_style(
-    style = gt::cell_text(weight = 'bold'),
-    locations = gt::cells_column_spanners()
-    ) |> 
-  gt::tab_footnote(
-    footnote = "Table reflects row percentages. NAs omitted") |> 
-  gt::tab_footnote(
-    footnote = "Q19. How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November?",
-    locations = gt::cells_column_spanners()) |> 
-  gt::cols_align(align = 'left', columns = everything()) |> 
-  gt::tab_options(
-    table.font.size = "small",
-    data_row.padding = gt::px(1)
-  )
-
-# df |> 
-#   janitor::tabyl(group, q19, show_na = F) |>  
-#   janitor::adorn_totals('both', na.rm = T) |> 
-#   janitor::adorn_percentages(denominator = 'row') |>
-#   janitor::adorn_pct_formatting(digits = 1, affix_sign = F) |>
-#   janitor::adorn_ns() |> 
-#   janitor::adorn_title(
-#     'combined',
-#     row_name = "Group",
-#     col_name = 'Q19') |> 
-#   kableExtra::kbl() |> 
-#   kableExtra::kable_styling(
-#     bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
-#     latex_options = "basic",
-#     font_size = 13
-#   )
-
-
 
 # Q19 by experiment condition, barplot
 df |> 
@@ -209,77 +162,68 @@ df |>
 ```
 
 
-### Q22 
+Importantly, the effects are generally even larger among those expected to be the most skeptical. For example, **among those who said that they thought Joe Biden’s election to president was not legitimate, exposure to information about veterans and military family members increases confidence overall by 15 percentage points (from 60% to 75%, p<0.025)**. The bulk of this increase is driven by a shift in the rate at which respondents feel very confident, going from 9% in the control (community) condition to 19% in the treatment (veterans) condition. The following figures illustrate these results.
 
 ```{r}
+#| label: fig-q19-legit
+#| fig-cap: "Confidence in Accuracy of Vote counts in Maricopa County, AZ among those who believe Biden's 2020 election was or was not legitimate"
+#| fig-subcap: "Proportion of confidence in vote count by belief of Biden's election legitimacy and Experimental condition"
+#| fig-cap-location: top
+
+df |> 
+  select(group, q7, q19, q19.clps) |>
+  drop_na() |> 
+  filter(q7 == "Not legitimate") |> 
+  ggstats::gglikert(include = c(q19), y = 'group', facet_rows = vars(q7))+
+  theme_bw()+
+  theme(legend.position = 'bottom')
+
+
+
+
+
+```
+
+
+Veterans and military family members are also regarded highly by the public for their commitment. *Respondents were more likely to say the elections workforce would be very committed to making sure the elections held this November are fair and accurate when they heard that veterans and military family members were being recruited to elections jobs (by 9 percentage points, p<0.01)*. 
+
+```{r}
+#| label: fig-q21-barplot
+#| fig-cap: "Confidence in Commitment of Election Staff and Volunteers by Experiment Condition"
+#| fig-cap-location: top
+
+df |> 
+  # compute frequency within each combination
+  group_by(group, q21) |> 
+  count() |>  
+  # compute proportion within group
+  # n is the default variable created by count()
+  group_by(group) |> 
+  mutate(prop = round(n/sum(n), digits = 3),
+         pct = prop*100,
+         res = str_c(pct,'% (', n, ')', sep = "")) |> 
+  ggplot(aes(x = q21, y = pct, fill = group))+
+  geom_bar(position = 'dodge', stat = 'identity')+
+  geom_text(aes(label = res), position = position_dodge(1.0), size = 2.5 , vjust = -0.5)+
+  scale_fill_grey(start = 0.5, end = 0.1)+
+  # \n in a string tells R to break the line there
+  labs(y = "Percentage",
+       x = "Q21. How committed do you think Election Staff will be \nto making sure the elections held this November are fair and accurate?",
+       fill = "Group\nExperiment\nCondition",
+       caption = 'Treatment n = 639, Control n = 624')+
+  theme_bw()
+
+```
+
+As shown in @fig-q21-barplot, this increase is especially noteworthy as it brings the percentage of those saying very committed to nearly 50% (from just under 38.5% % to 48%).
+
+**Information that election officials were recruiting veterans and military family members also increased confidence that the voting process in Maricopa County, AZ would be fair (by 7 percentage points, p<0.01)**. 
+
+
+```{r}
+#| label: fig-q22-barplot
 #| fig-cap: "Confidence in Fair Voting Process by Experiment Condition"
 #| fig-cap-location: top
-#| tbl-cap: "Q22. Confidence in Fair Voting Process by Experiment Condition in Maricopa County, AZ by Experiment Condition"
-#| tbl-column: margin
-
-
-# Crosstab of Q22 by treatment group
-df |> 
-  janitor::tabyl(group, q22, show_na = F) |>
-  janitor::adorn_percentages(denominator = 'row') |>
-  janitor::adorn_pct_formatting(digits = 1, affix_sign = F) |>
-  janitor::adorn_ns() |> 
-  janitor::adorn_title(
-    'combined',
-    row_name = "Group",
-    col_name = 'Q22') |>
-  gt::gt(
-    rowname_col = 'Q22',
-    groupname_col = 'Group' 
-  ) |>  
-  gt::cols_label(
-    c('Group/Q22') ~ "Group") |> 
-  gt::tab_style(
-    style = gt::cell_text(weight = "bold"),
-    locations = gt::cells_row_groups()
-  ) |> 
-  gt::tab_style(
-    style = gt::cell_text(weight = 'bold'),
-    locations = gt::cells_column_labels()
-  ) |> 
-  gt::tab_spanner(
-    columns = 2:5,
-    label = "Q22. Confidence in Fair Voting Process for Maricopa County, AZ"
-  ) |>  
-  gt::tab_style(
-    style = gt::cell_text(weight = 'bold'),
-    locations = gt::cells_column_spanners()
-    ) |> 
-  gt::tab_footnote(
-    footnote = "Table reflects row percentages. NAs omitted") |> 
-  gt::tab_footnote(
-    footnote = "Q22.How confident are you that the voting process will be fair in Maricopa County, AZ?",
-    locations = gt::cells_column_spanners()) |> 
-  gt::cols_align(align = 'left', columns = everything()) |> 
-  gt::tab_options(
-    table.font.size = "small",
-    data_row.padding = gt::px(1)
-  )
-
-
-
-# df |> 
-#   janitor::tabyl(group, q22, show_na = F) |>  
-#   janitor::adorn_totals('both', na.rm = T) |> 
-#   janitor::adorn_percentages(denominator = 'row') |>
-#   janitor::adorn_pct_formatting(digits = 1, affix_sign = F) |>
-#   janitor::adorn_ns() |> 
-#   janitor::adorn_title(
-#     'combined',
-#     row_name = "Group",
-#     col_name = 'Q22') |> 
-#   kableExtra::kbl() |> 
-#   kableExtra::kable_styling(
-#     bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
-#     latex_options = "basic",
-#     font_size = 13
-#   )
-
 
 
 df |> 
@@ -308,328 +252,263 @@ df |>
 
 ```
 
-
-### Q25
+The bulk of this shift comes from an increase in the percentage of people saying they were very confident (6 points, p<0.025). **Again, the treatment effect was largest for those who said that Joe Biden was not elected legitimately**. Whereas 57% of those saying Biden’s victory was not legitimate were confident in the control (community) condition, confidence rose 16 percentage points to 73% among those who believe Biden's election was not legitimate in the treatment (veterans) condition.
 
 ```{r}
+#| label: fig-q22-legit
+#| fig-cap: "Confidence in Electoral Process in Maricopa County, AZ among those who believe Biden's 2020 election was not legitimate"
+#| fig-cap-location: top
+#| column: body-outset
+
+df |> 
+  select(group, q7, q22, q23, q22.clps) |>
+  drop_na() |> 
+  filter(q7 == "Not legitimate") |> 
+  ggstats::gglikert(
+    include = c(q22), 
+    y = 'group',
+    facet_rows = vars(q7), labels_accuracy = 0.1)+
+  theme_bw()+
+  theme(legend.position = 'bottom')
+
+
+```
+
+Although outcomes are subject to a wider variety of factors, the veterans treatment also increased confidence that the outcomes would be fair (by 4 percentage points, p<0.05), with a shift of 7 percentage points in the percentage saying they were very confident (p<0.025).
+
+```{r}
+#| label: fig-q23-barplot
+
+df |> 
+  # compute frequency within each combination
+  group_by(group, q23) |>
+  count() |>  
+  # compute proportion within group
+  # n is the default variable created by count()
+  group_by(group) |>  
+  drop_na() |> 
+  mutate(prop = round(n/sum(n), digits = 3),
+         pct = prop*100,
+         res = str_c(pct,'% (', n, ')', sep = "")) |> 
+  ggplot(aes(x = q23, y = pct, fill = group))+
+  geom_bar(position = 'dodge', stat = 'identity')+
+  geom_text(aes(label = res), position = position_dodge(1.0), size = 2.5 , vjust = -0.5)+
+  scale_fill_grey(start = 0.5, end = 0.1)+
+  # \n in a string tells R to break the line there
+  labs(y = "Percentage",
+       x = "Q23. How confident are you that the voting outcomes will be fair in Maricopa County, AZ?",
+       fill = "Group\nExperiment\nCondition",
+       caption = 'Treatment n = 639, Control n = 624')+
+  theme_bw()
+
+
+
+```
+
+Attitudes relating to election security and safety were also improved as a result of exposure to information that veterans and military family members were being recruited to elections jobs. **The percentage saying they were confident the election would be secure from hacking and other technological threats was 7 points higher (p<0.01) in the veterans condition**.
+
+```{r}
+#| label: fig-q24-barplot
+#| fig-cap: "Confidence in Election Systems Tech by Experiment Condition"
+#| fig-cap-location: top
+
+
+df |> 
+  # compute frequency within each combination
+  group_by(group, q24) |>
+  count() |>  
+  # compute proportion within group
+  # n is the default variable created by count()
+  group_by(group) |>  
+  drop_na() |> 
+  mutate(prop = round(n/sum(n), digits = 3),
+         pct = prop*100,
+         res = str_c(pct,'% (', n, ')', sep = "")) |> 
+  ggplot(aes(x = q24, y = pct, fill = group))+
+  geom_bar(position = 'dodge', stat = 'identity')+
+  geom_text(aes(label = res), position = position_dodge(1.0), size = 2.5 , vjust = -0.5)+
+  scale_fill_grey(start = 0.5, end = 0.1)+
+  # \n in a string tells R to break the line there
+  labs(y = "Percentage",
+       x = "Q24.How confident are you that election systems in Maricopa County, AZ will be secure from hacking and other technological threats?",
+       fill = "Group\nExperiment\nCondition",
+       caption = 'Treatment n = 639, Control n = 624')+
+  theme_bw()
+
+
+
+```
+
+
+We assessed perceptions of violence by asking how concerned voters in Maricopa County, AZ should feel about potential violence, threats of violence, or intimidation while voting in person at their local polling place. **The level of concern with potential violence, threats, and intimidation was considerably lower (by 8 percentage points, p<0.01) among those who read that veterans and military family members were being recruited to the elections workforce**. 
+
+
+```{r}
+#| label: fig-q25-barplot
 #| fig-cap: "Concern for violence, threats, or voter intimidation in Maricopa County, AZ by Experiment Condition"
 #| fig-cap-location: top
-#| tbl-cap: "Concern for violence, threats, or voter intimidation in Maricopa County, AZ by Experiment Condition"
-#| tbl-column: margin
 
-
-# Crosstab of Q25 by treatment group
-df |> 
-  janitor::tabyl(group, q25, show_na = F) |>
-  janitor::adorn_percentages(denominator = 'row') |>
-  janitor::adorn_pct_formatting(digits = 1, affix_sign = F) |>
-  janitor::adorn_ns() |> 
-  janitor::adorn_title(
-    'combined',
-    row_name = "Group",
-    col_name = 'Q25') |>
-  gt::gt(
-    rowname_col = 'Q25',
-    groupname_col = 'Group' 
-  ) |>  
-  gt::cols_label(
-    c('Group/Q25') ~ "Group") |> 
-  gt::tab_style(
-    style = gt::cell_text(weight = "bold"),
-    locations = gt::cells_row_groups()
-  ) |> 
-  gt::tab_style(
-    style = gt::cell_text(weight = 'bold'),
-    locations = gt::cells_column_labels()
-  ) |> 
-  gt::tab_spanner(
-    columns = 2:5,
-    label = "Concern for violence, threats, or voter intimidation in Maricopa County, AZ"
-  ) |>  
-  gt::tab_style(
-    style = gt::cell_text(weight = 'bold'),
-    locations = gt::cells_column_spanners()
-    ) |> 
-  gt::tab_footnote(
-    footnote = "Table reflects row percentages. NAs omitted") |> 
-  gt::tab_footnote(
-    footnote = "Q25. Thinking about Maricopa County, AZ, how concerned should voters feel \nabout potential violence, \nthreats of violence, or intimidation while voting in person at their local polling place?",
-    locations = gt::cells_column_spanners()) |> 
-  gt::cols_align(align = 'left', columns = everything()) |> 
-  gt::tab_options(
-    table.font.size = "small",
-    data_row.padding = gt::px(1)
-  )
-
-
-
-# alternative crosstab
-# df |> 
-#   janitor::tabyl(group, q25, show_na = F) |>  
-#   janitor::adorn_totals('both', na.rm = T) |> 
-#   janitor::adorn_percentages(denominator = 'row') |>
-#   janitor::adorn_pct_formatting(digits = 1, affix_sign = F) |>
-#   janitor::adorn_ns() |> 
-#   janitor::adorn_title(
-#     'combined',
-#     row_name = "Group",
-#     col_name = 'Q25') |> 
-#   kableExtra::kbl() |> 
-#   kableExtra::kable_styling(
-#     bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
-#     latex_options = "basic",
-#     font_size = 13
-#   )
-
-
-# plot
-df |> 
-  mutate(q25 = forcats::fct_rev(q25)) |> 
-  labelled::set_variable_labels(
-    q25 = 'Concern for voter intimidation, threats, or violence'
-  ) |> 
-  ggstats::gglikert(include = q25,
-                    y = 'group',
-                    facet_rows = vars(.question))+
-  labs(
-    title = "Concern for voter intimidation, threats, or violence by Experiment Condition",
-    subtitle = "Q25. Thinking about Maricopa County, AZ, how concerned should voters feel \nabout potential violence, \nthreats of violence, or intimidation while voting in person at their local polling place?")+
-  theme_bw()+
-  theme(legend.position = 'bottom')
-
-
-# barplot alternative
-# df |>
-#   # compute frequency within each combination
-#   group_by(group, q25) |>
-#   count() |>
-#   # compute proportion within group
-#   # n is the default variable created by count()
-#   group_by(group) |>
-#   mutate(prop = round(n/sum(n), digits = 3),
-#          pct = prop*100,
-#          res = str_c(pct,'% (', n, ')', sep = "")) |>
-#   ggplot(aes(x = q25, y = pct, fill = group))+
-#   geom_col(position = 'dodge')+
-#   geom_text(aes(label = res), position = position_dodge(1.0), size = 2.5 , vjust = -0.5)+
-#   scale_fill_grey(start = 0.5, end = 0.1)+
-#   # \n in a string tells R to break the line there
-#   labs(y = "Percentage",
-#        x = "Q25. Thinking about Maricopa County, AZ, how concerned \nshould voters feel about potential violence, \nthreats of violence, or intimidation while voting in person at their local polling place?",
-#        fill = "Group\nExperiment\nCondition",
-#        caption = 'Treatment n = 639, Control n = 624')+
-#   theme_bw()
-
-
-
-
-
+df |>
+  # compute frequency within each combination
+  group_by(group, q25) |>
+  count() |>
+  # compute proportion within group
+  # n is the default variable created by count()
+  group_by(group) |>
+  mutate(prop = round(n/sum(n), digits = 3),
+         pct = prop*100,
+         res = str_c(pct,'% (', n, ')', sep = "")) |>
+  ggplot(aes(x = q25, y = pct, fill = group))+
+  geom_col(position = 'dodge')+
+  geom_text(aes(label = res), position = position_dodge(1.0), size = 2.5 , vjust = -0.5)+
+  scale_fill_grey(start = 0.5, end = 0.1)+
+  # \n in a string tells R to break the line there
+  labs(y = "Percentage",
+       x = "Q25. Thinking about Maricopa County, AZ, how concerned should voters feel about \npotential violence, threats of violence, or intimidation while voting in person at their local polling place?",
+       fill = "Group\nExperiment\nCondition",
+       caption = 'Treatment n = 639, Control n = 624')+
+  theme_bw()
 
 
 ```
 
-### Q26
+
+The size of this effect is especially significant because it brings the level of concern ("Somewhat concerned" and "Very concerned") below the 50% mark. That is, while a majority, 53%, of those in the community condition (control) were at least somewhat concerned, this drops to 45% among those who learned that Maricopa County, AZ was recruiting veterans and military family members. 
+
+Additionally, those in the veterans condition were more likely to say they were confident (by 7 points, p<0.01) that polling places would be safe places for voting.
 
 ```{r}
+#| label: fig-q26-barplot
 #| fig-cap: "In-person voter safety in Maricopa County, AZ by Experiment Condition"
 #| fig-cap-location: top
-#| tbl-cap: "Q26. In-person voter safety in Maricopa County, AZ by Experiment Condition"
-#| tbl-column: margin
-
-
-# q26
-df |> 
-  ggstats::gglikert(include = q26, 
-                    variable_labels = c(q26 ="Confidence in Voter Safety"),
-                    y = 'group',
-                    facet_rows = vars(.question))+
-  labs(
-    title = "Confidence for In-person voter safety in Maricopa County, AZ by Experiment Condition",
-    subtitle = "Q26. How confident, if at all, are you that in person polling places in Maricopa County, AZ \nwill be safe places for voters to cast their ballots during the upcoming elections in November?",
-       caption = 'Treatment n = 638, Control n = 624')+
-  theme_bw()+
-  theme(legend.position = 'bottom')
-
-# alternative bar plot
-# df |> 
-#   drop_na(q26) |> 
-#   # compute frequency within each combination
-#   group_by(group, q26) |> 
-#   count() |>  
-#   # compute proportion within group
-#   # n is the default variable created by count()
-#   group_by(group) |> 
-#   mutate(prop = round(n/sum(n), digits = 3),
-#          pct = prop*100,
-#          res = str_c(pct,'% (', n, ')', sep = "")) |> 
-#   ggplot(aes(x = q26, y = pct, fill = group))+
-#   geom_col(position = 'dodge')+
-#   geom_text(aes(label = res), position = position_dodge(1.0), size = 2.5 , vjust = -0.5)+
-#   scale_fill_grey(start = 0.5, end = 0.1)+
-#   # \n in a string tells R to break the line there
-#   labs(y = "Percentage",
-#        x = "Q26. How confident, if at all, are you that in person polling places in Maricopa County, AZ \nwill be safe places for voters to cast their ballots during the upcoming elections in November?",
-#        fill = "Group\nExperiment\nCondition",
-#        caption = 'Treatment n = 638, Control n = 624')+
-#   theme_bw()
-
-
-
-# Crosstab of Q26 by treatment group
-df |> 
-  janitor::tabyl(group, q26, show_na = F) |>
-  janitor::adorn_percentages(denominator = 'row') |>
-  janitor::adorn_pct_formatting(digits = 1, affix_sign = F) |>
-  janitor::adorn_ns() |> 
-  janitor::adorn_title(
-    'combined',
-    row_name = "Group",
-    col_name = 'Q26') |>
-  gt::gt(
-    rowname_col = 'Q26',
-    groupname_col = 'Group' 
-  ) |>  
-  gt::cols_label(
-    c('Group/Q26') ~ "Group") |> 
-  gt::tab_style(
-    style = gt::cell_text(weight = "bold"),
-    locations = gt::cells_row_groups()
-  ) |> 
-  gt::tab_style(
-    style = gt::cell_text(weight = 'bold'),
-    locations = gt::cells_column_labels()
-  ) |> 
-  gt::tab_spanner(
-    columns = 2:5,
-    label = "Confidence for In-person voter safety in Maricopa County, AZ"
-  ) |>  
-  gt::tab_style(
-    style = gt::cell_text(weight = 'bold'),
-    locations = gt::cells_column_spanners()
-    ) |> 
-  gt::tab_footnote(
-    footnote = "Table reflects row percentages. NAs omitted") |> 
-  gt::tab_footnote(
-    footnote = "Q26. How confident, if at all, are you that in person polling places in Maricopa County, AZ \nwill be safe places for voters to cast their ballots during the upcoming elections in November?",
-    locations = gt::cells_column_spanners()) |> 
-  gt::cols_align(align = 'left', columns = everything()) |> 
-  gt::tab_options(
-    table.font.size = "small",
-    data_row.padding = gt::px(1)
-  )
-
-
-
-# df |> 
-#   janitor::tabyl(group, q26, show_na = F) |>  
-#   janitor::adorn_totals('both', na.rm = T) |> 
-#   janitor::adorn_percentages(denominator = 'row') |>
-#   janitor::adorn_pct_formatting(digits = 1, affix_sign = F) |>
-#   janitor::adorn_ns() |> 
-#   janitor::adorn_title(
-#     'combined',
-#     row_name = "Group",
-#     col_name = 'Q26') |> 
-#   kableExtra::kbl() |> 
-#   kableExtra::kable_styling(
-#     bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
-#     latex_options = "basic",
-#     font_size = 13
-#   )
-
-
-```
-
-
-
-```{r}
-#| fig-cap-location: top
-#| fig-cap: "Confidence in Election Administration by Experiment Condition"
 
 
 df |>
-  labelled::set_variable_labels(
-    q19 = "Q19. Accurate Vote counts",
-    q22 = "Q22. Fair process",
-    q23 = "Q23. Fair outcomes",
-    q24 = "Q24. Secure Election Tech",
-    q26 = "Q26. Safe In-person Voting"
-  ) |> 
-  ggstats::gglikert(include = c(q19,q22,q23,q24,q26), y = 'group')+
-  ggplot2::facet_grid(rows = vars(.question), labeller = label_wrap_gen(15))+
-  labs(
-    title = "Confidence in Election Administration by Experiment Condition"
-  )+
-  theme_bw()+
-  theme(legend.position = 'bottom')
+  drop_na(q26) |>
+  # compute frequency within each combination
+  group_by(group, q26) |>
+  count() |>
+  # compute proportion within group
+  # n is the default variable created by count()
+  group_by(group) |>
+  mutate(prop = round(n/sum(n), digits = 3),
+         pct = prop*100,
+         res = str_c(pct,'% (', n, ')', sep = "")) |>
+  ggplot(aes(x = q26, y = pct, fill = group))+
+  geom_col(position = 'dodge')+
+  geom_text(aes(label = res), position = position_dodge(1.0), size = 2.5 , vjust = -0.5)+
+  scale_fill_grey(start = 0.5, end = 0.1)+
+  # \n in a string tells R to break the line there
+  labs(y = "Percentage",
+       x = "Q26. How confident, if at all, are you that in person polling places in Maricopa County, AZ \nwill be safe places for voters to cast their ballots during the upcoming elections in November?",
+       fill = "Group\nExperiment\nCondition",
+       caption = 'Treatment n = 638, Control n = 624')+
+  theme_bw()
 
 
 
 ```
 
 
+Learning that Maricopa County, AZ was recruiting veterans and military family members for elections jobs also led to improved performance ratings for election officials there. In the veterans condition, those saying they somewhat or strongly approve of the way election officials are handling their jobs was 5 percentage points higher (p<0.05), driven by a nearly 8 point increase in the percentage saying they strongly approve of election officials (p<0.01). 
+
+
+```{r}
+#| label: fig-q27-likert
+#| fig-cap: "Approval of Election Officials in Maricopa County, AZ by Experiment Condition"
+#| fig-cap-location: top
+
+# Q27
+df |> 
+  ggstats::gglikert(
+    include = q27, 
+    variable_labels = c(q27 ="Election Official Approval"),
+    y = 'group',
+    facet_rows = vars(.question))+
+  labs(
+    subtitle = "Q27. Do you approve or disapprove of the way \nelection officials in Maricopa County, AZ are handling their jobs?",
+       caption = 'Treatment n = 636, Control n = 623')+
+  theme_bw()+
+  theme(legend.position = 'bottom')
+
+
+```
+
+We also asked a general question about confidence that Maricopa County, AZ elections officials would do a good job conduction elections this November. Those who read about veterans and military family members were more confident that election officials would do a good job conducting the election than those who read about community members (by 4.5 percentage points, p <0.025). 
+
+```{r}
+#| label: fig-q20-barplot
+#| fig-cap: "Confidence Election Officials in Maricopa County, AZ will do a good job by Experiment Condition"
+#| fig-cap-location: top
+
+# Q20 by experiment condition, barplot
+df |> 
+  # compute frequency within each combination
+  group_by(group, q20) |> 
+  count() |>  
+  # compute proportion within group
+  # n is the default variable created by count()
+  group_by(group) |> 
+  drop_na() |> 
+  mutate(prop = round(n/sum(n), digits = 3),
+         pct = prop*100,
+         res = str_c(pct,'% (', n, ')', sep = "")) |> 
+  ggplot(aes(x = q20, y = pct, fill = group))+
+  geom_bar(position = 'dodge', stat = 'identity')+
+  geom_text(aes(label = res), position = position_dodge(1.0), size = 2.5, vjust = -0.5)+
+  scale_fill_grey(start = 0.5, end = 0.1)+
+  # \n in a string tells R to break the line there
+  labs(y = "Percentage",
+       x = "Q20. How confident are you that election officials, their staff, and volunteers in Maricopa County, AZ \nwill do a good job conducting the elections this November?",
+       fill = "Group\nExperiment\nCondition",
+       caption = 'Treatment n = 638, Control n = 624')+
+  theme_bw()
+
+
+```
+
+
+Before asking a series of questions about election administration in their own community, we asked how much respondents would like to see their local community adopt a program for recruiting elections staff similar to the one they read about in Maricopa County, AZ. Among those in the community condition just under 73% said their local area should probably or definitely adopt the policy compared to over 77% in the veterans condition (difference of 5 percentage points, p<0.03). The difference is driven entirely by an increase in enthusiasm (i.e., the likelihood of saying definitely should adopt is 5 points higher in the veterans condition, p<0.025).
+
+```{r}
+#| label: fig-q29-barplot
+#| fig-cap: "Adopt by Experiment Condition"
+#| fig-cap-location: top
+
+
+df |>
+  # compute frequency within each combination
+  group_by(group, q29) |>
+  count() |>
+  # compute proportion within group
+  # n is the default variable created by count()
+  group_by(group) |>
+  drop_na() |> 
+  mutate(prop = round(n/sum(n), digits = 3),
+         pct = prop*100,
+         res = str_c(pct,'% (', n, ')', sep = "")) |>
+  ggplot(aes(x = q29, y = pct, fill = group))+
+  geom_col(position = 'dodge')+
+  geom_text(aes(label = res), position = position_dodge(1.0), size = 2.5 , vjust = -0.5)+
+  scale_fill_grey(start = 0.5, end = 0.1)+
+  # \n in a string tells R to break the line there
+  labs(y = "Percentage",
+       x = "Q29. How much would you like to see your local community adopt a program for recruiting elections staff like the one you read about in Maricopa County, AZ?",
+       fill = "Group\nExperiment\nCondition",
+       caption = 'Treatment n = 638, Control n = 622')+
+  theme_bw()
+
+
+
+
+```
 
 
 {{< pagebreak >}}
 
+## Expectation of Electoral Fraud
 
-## Survey Questions by Treatment Condition
-
-### Trust and Confidence in AZ Elections
-
-
-The following cross-tables break down relative observations and percentages of responses to survey questions across categories of the survey's experimental condition. The survey questions in the table below concerned a respondent's degree of trust and confidence in the electoral process in Maricopa County, AZ.
-
-```{r}
-#| label: tbl-1
-#| tbl-cap: "Trust and Confidence in Maricopa County, AZ Elections by Treatment Condition"
-#| column: page
-#| results: asis
-
-
-# q19 to q27 by treatment condition. p-value based on chi^2 test of independence
-tab1 <- table1::table1(
-  ~ q19.clps
-  + q20.clps
-  + q21.clps
-  + q22.clps
-  + q23.clps
-  + q24.clps
-  + q25.clps
-  + q26.clps
-  + q27.clps
-  + q29.clps | group,
-  data = df,
-  transpose = F,
-  overall = F,
-  render.missing = NULL,
-  extra.col = list('P-value' = pvalue)
-)
-
-
-# convert table1 object to "kableExtra" "kintr_kable"
-tab1 <- table1::t1kable(
-  tab1, booktabs = T
-  ) |>
-  kableExtra::footnote(
-    general = "Table reflects column percentages. \nP-values based on Pearson's Chi-squared test of independence."
-  ) |> 
-  kableExtra::kable_styling(
-    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
-    font_size = 13,
-    fixed_thead = T
-  )
-# print table
-print(tab1)
-
-
-```
-
-### Expectation of Electoral Fraud
-
-The next figure and table reviews a set of questions designed to assess a respondent's expectation of electoral fraud of some sort in Maricopa County, AZ. Again, responses are compared across categories of the survey experiment.
-
-For each of the following five statements, survey participants responded with their expectations of the likelihood that each would occur in Maricopa County, Arizona this election cycle on a scale of "Not likely at all" to "Very likely". The five statements were prefaced with the question, "How likely do you think any or all of the following will happen during this year´s elections in Maricopa County, AZ?"
+Our survey also asked respondents a series of questions designed to assess an individual's expectation of electoral fraud and voter suppression in Maricopa County, AZ. Five statements were prefaced with the question, "How likely do you think any or all of the following will happen during this year´s elections in Maricopa County, AZ?". Survey participants gave their expectations of the likelihood that each of the following would occur in Maricopa County, Arizona this election cycle on a scale of "Not likely at all", "Not too likely", "Somewhat likely", and "Very likely". 
 
 1.    There will be voter fraud, that is, people who are not eligible to vote will vote, or vote more than once;
 2.    Many votes will not actually be counted
@@ -637,9 +516,11 @@ For each of the following five statements, survey participants responded with th
 4.    A foreign country will tamper with the votes cast in this area to change the results
 5.    Election officials in Maricopa County, Arizona will try to discourage some people from voting
 
+
 ```{r}
-#| label: fig-q28
+#| label: fig-q28-likert
 #| fig-cap: "Expectation of Electoral Fraud in Maricopa County, AZ by Experiment Condition"
+#| fig-cap-location: top
 
 df |> 
   mutate(across(c(q28_1:q28_5), ~ forcats::fct_rev(.))) |> 
@@ -661,137 +542,27 @@ df |>
 
 ```
 
+As @fig-q28-likert illustrates, **those in the veterans condition were more likely to say that voter fraud was “not likely at all” (by 5 percentage points, p<0.025). The percentage saying that election officials will try to discourage people from voting was not likely to occur in Maricopa County was 8 percentage points higher among those who read that veterans and military family members would be part of the elections workforce** (p<0.01, with a shift of about 4 points among both those saying not too likely and not likely at all). Additionally, in the veterans condition the percentage saying that it was “not likely at all” that many votes will not actually be counted was nearly 7 percentage points higher (p<0.01), with a similar increase in the percentage saying it was not likely (not too likely and not likely at all) that many people will show up and be told they are not eligible (p<0.01). 
 
+When we asked about the likelihood that a foreign country would tamper with votes in Maricopa County, AZ a larger percentage of those in the veterans condition said this was “not likely at all” (by 4 percentage points, p<0.07).
 
-```{r}
-#| label: tbl-2
-#| tbl-cap: "Expectation of Electoral Fraud in Maricopa County, AZ by Treatment Condition"
-#| column: page
-#| results: asis
-
-# q28_1 to q29 by treatment condition p-value based on chi^2 test of independence
-tab2 <- table1::table1(
-  ~ q28_1.clps
-  + q28_2.clps
-  + q28_3.clps
-  + q28_4.clps
-  + q28_5.clps
-  | group,
-  data = df,
-  transpose = F,
-  overall = F,
-  render.missing = NULL,
-  extra.col = list('P-value' = pvalue)
-)
-
-# convert table1 object to "kableExtra" "kintr_kable"
-tab2 <- table1::t1kable(
-  tab2,
-  format = "html",
-  booktabs = T ) |>
-  kableExtra::footnote(
-    general = "Table reflects column percentages. \nP-values based on Pearson's Chi-squared test of independence."
-  ) |> 
-  kableExtra::kable_styling(
-    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
-    latex_options = "basic",
-    font_size = 13,
-    full_width = T,
-    fixed_thead = T
-  )
-
-# print table
-print(tab2)
-
-
-
-
-
-
-```
-
-# 3-way Crosstables 
-
-::: {.callout-note}
-This section is under construction. A select number of 3-way cross tables will be presented here.
-:::
-
-
-```{r}
-#| label: tbl-q19q7
-#| tbl-cap: "Confidence in Accurate Vote Counts among those who do and do not believe the 2020 election was legitimate by Treatment Condition"
-
-df |> 
-  janitor::tabyl(q7, q19, group, show_na = F) |> 
-  # janitor::adorn_totals("both") |> 
-  janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
-  janitor::adorn_ns("rear") |> 
-  janitor::adorn_title("combined", 
-                       row_name = "Q7. Legitimacy of 2020 Election",
-                       col_name = "Q19") |>
-  bind_rows(.id = "group_var") |>   
-  gt::gt(
-    rowname_col = "row_var",
-    groupname_col = "group_var") |>  
-  gt::row_group_order(groups = c("Control", "Treatment")) |> 
-  gt::cols_label(
-    c('Q7. Legitimacy of 2020 Election/Q19') ~ "Q7. Legitimacy of 2020 Election") |>
-  # gt::cols_label_with(columns = '...1', fn = ~sjlabelled::get_label(df$q5.clps)) |> 
-  gt::tab_style(
-    style = gt::cell_text(weight = "bold"),
-    locations = gt::cells_row_groups()
-  ) |> 
-  gt::tab_style(
-    style = gt::cell_text(weight = 'bold'),
-    locations = gt::cells_column_labels()
-  ) |> 
-  gt::tab_spanner(
-    columns = 3:6,
-    label = "Q19. Vote Count Confidence for Maricopa County, AZ"
-  ) |> 
-  gt::tab_style(
-    style = gt::cell_text(weight = 'bold'),
-    locations = gt::cells_column_spanners()
-    ) |> 
-  gt::tab_footnote(
-    footnote = "Table reflects row percentages. NAs omitted") |> 
-  gt::tab_footnote(
-    footnote = "Q19. How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November?",
-    locations = gt::cells_column_spanners()) |> 
-  gt::tab_footnote(
-    footnote = "Q7.Regardless of whom you supported in the 2020 election, \ndo you think Joe Biden's election as president was legitimate, or was he not legitimately elected?",
-    locations = gt::cells_column_labels('Q7. Legitimacy of 2020 Election/Q19')
-    ) |> 
-  gt::cols_align(align = 'left', columns = everything()) |> 
-  gt::tab_options(
-    table.font.size = "small",
-    data_row.padding = gt::px(1)
-  )
-
-
-
-
-
-```
-
-
-
-
-
+{{< pagebreak >}}
 
 ## Impacts on Confidence
 
+We asked respondents to report how various features of election administration would: 1) influence their confidence in the fairness and accuracy of elections this November; and 2) influence their confidence that voters would be safe from violence, threats of violence, or intimidation while voting in-person this election. One of the primary objectives was to determine whether recruiting veterans was preferable to recruiting lawyers and college students, two other groups that are commonly discussed as potential additions to the elections workforce. 
+
+
 ### Impact on confidence in fairness and accuracy of elections
 
-The following examines survey questions that asked respondents whether particular circumstances or election official actions would have any impact on their confidence in the fairness and accuracy of elections. Survey participants responded to six statements, all prefaced with the following,
+Survey participants responded to six statements, all prefaced with the following,
 
 > "Regardless of whether any of these are actually the case, how would the following impact your confidence in the fairness and accuracy of elections conducted this November?"
 
 1.    Election officials test every machine used in the election to ensure they are secure.
 2.    Election officials conduct audits of ballots after every election to confirm the results were accurate.
 3.    Poll watchers affiliated with the political parties or candidates observe the election.
-4.    Election staff and volunteers include military veterans and their family members from the community[^1].
+4.    Election staff and volunteers include military veterans and their family members from the community[^2].
 5.    Election staff and volunteers include lawyers from the community.
 6.    Election staff and volunteers include college students from the community.
 
@@ -804,17 +575,12 @@ For each statement, survey participants responded by selecting one of five respo
 5.    Increase confidence a lot
 
 
-The primary interest concerned whether confidence in election fairness would increase or decreased based on the composition of election staff and volunteers. Of particular importance are responses to the statement which asked respondents to consider whether inclusion of military veterans and veteran's family members as election staff and volunteers has any impact on their confidence in the fairness and accuracy of elections in November. In this case, significant differences were observed between treatment and control groups. 
-
-The figure below displays a clear boost in confidence when election staff includes veterans and family members, but most especially for those who were in the treatment group. That is, the percentage of people who said their confidence in election fairness would increase when election staff includes veterans was about 11.6 percentage points higher than those who said the same in the control group.
-
-::: {.panel-tabset}
-
-## Fig Q41
+The primary interest concerned whether confidence in election fairness would increase or decrease based on the composition of election staff and volunteers. Of particular importance are responses to the statement which asked respondents to consider whether inclusion of military veterans and veteran's family members as election staff and volunteers has any impact on their confidence in the fairness and accuracy of elections in November. 
 
 ```{r}
-#| label: fig-q41
-#| fig-column: page-inset-right
+#| label: fig-q41-likert
+#| fig-cap: "Impact on Confidence in Election Fairness and Accuracy by Experiment Condition"
+#| column: body-outset 
 
 
 # Q41.4 (vets), Q41.5 (lawyers), Q41.6 (students), by treatment
@@ -822,7 +588,6 @@ df |>
   ggstats::gglikert(include = c(q41.4:q41.6), y = 'group',  symmetric = T, add_totals = F)+ 
   facet_grid(rows = vars(.question), labeller = label_wrap_gen(15))+
   labs(
-    title = "Impact on Confidence in Election Fairness and Accuracy by Experiment Condition",
     subtitle = "Q41. How would the following impact your confidence in the fairness and accuracy of elections conducted this November?"
   )+
   theme_bw()+
@@ -830,114 +595,21 @@ df |>
 
 
 
-
-```
-
-```{r}
-#| include: false
-
-
-mod.q41.1 <- lm(formula = q41.1.clps.dum ~ group, data = df)
-mod.q41.2 <- lm(formula = q41.2.clps.dum ~ group, data = df)
-mod.q41.3 <- lm(formula = q41.3.clps.dum ~ group, data = df)
-mod.q41.4 <- lm(formula = q41.4.clps.dum ~ group, data = df)
-mod.q41.5 <- lm(formula = q41.5.clps.dum ~ group, data = df)
-mod.q41.6 <- lm(formula = q41.6.clps.dum ~ group, data = df)
-
-# place all the models in a list assigned as 'models' and include them in the
-# ggstats::ggcoef_compare() function
-models.q41 <- list(
-  "Test Every Machine" = mod.q41.1,
-  "Audit Ballots" = mod.q41.2,
-  "Partisan Poll Watchers" = mod.q41.3,
-  "Election Staff Includes Veterans" = mod.q41.4,
-  "Election Staff Includes Lawyers" = mod.q41.5,
-  "Election Staff Includes Students" = mod.q41.6
-)
-```
-
-## Q41 Coef Plot
-
-```{r}
-#| label: fig-q41-coef-plot
-#| fig-column: page-inset-right
-#| warning: false
-#| message: false
-
-# print the coef plot and selectively color coefficients
-ggstats::ggcoef_compare(
-  models.q41, 
-  conf.int = T, 
-  add_reference_rows = F,
-  categorical_terms_pattern = "{level} (ref: {reference_level})")+
-  ggplot2::scale_color_manual(
-    values = c("black", "black", "black", "red", "black", "black"))+
-  labs(
-    title = "Impact on Confidence in Election Fairness when Election Staff \nIncludes Veterans and Family by Experiment Condition",
-    subtitle = "Means comparison with 95% confidence intervals\n'Increase in confidence' = 1, 'No increase in confidence = 0'",
-    caption = "estimate = 0.11635, SE = 0.02799, t-statistic = 4.157, CI [-0.171, -0.0614]"
-  )+
-  theme_bw()+
-  theme(legend.position = 'bottom')
-
-
-```
-
-:::
-
-An 11.6 percentage point difference was observed between treatment and control groups among those who reported that their confidence in the fairness and accuracy of elections would "increase a lot" or "increase somewhat" when election staff and volunteers include (or consist of a majority of) military service veterans and their family members in the community. This difference was estimated with 95% confidence to be statistically significant (p < 0.01, CI [-0.169, -0.057]).  Conversely, no difference was observed between treatment and control groups among those who reported that their confidence would "decrease a lot" or "decrease somewhat".
-
-
-[^1]: Two different versions of this statement was presented to survey participants. Half of the sample read the statement as, "Election staff and volunteers *include* military veterans and their family members from the community", whereas the other half of the sample read, "The *majority* of election staff and volunteers consist of military veterans and their family members from the community." No significant differences in responses were observed between those who read one version of the statement over the other. However, the same was done for statements number 5 and 6 which concern "lawyers from the community" and "college students from the community". Significant differences were found when comparing responses between the different versions of these statements. See the appendix for further discussion on these results.  
-
-
-In the following table, responses were collapsed into three categories. Any increase in confidence (e.g., increase confidence a lot, increase confidence somewhat) were collapsed into one column, and likewise for any response indicating a decrease in confidence.
-
-```{r}
-#| label: tbl-4
-#| tbl-cap: "Confidence Impact on Election Fairness and Accuracy"
-#| column: body-outset-right
-#| results: asis
-
-# Simple Crosstab to show response breakdown by experiment condition
-# NAs omitted. 
-df |>
-  mutate(
-    confimpct_vets = dplyr::case_when(
-      q41.4.clps == "increase" ~ 'Increase Confidence',
-      q41.4.clps == "no_impact" ~ 'No Impact',
-      q41.4.clps == 'decrease' ~ 'Decrease Confidence'
-      )) |> 
-  janitor::tabyl(group, confimpct_vets,  show_na = F) |> 
-  janitor::adorn_totals('both') |> 
-  janitor::adorn_percentages('row') |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = T) |> 
-  janitor::adorn_ns("rear") |> 
-  janitor::adorn_title(
-    'combined',
-    row_name = "Condition", 
-    col_name = 'Election staff include veterans and family'
-    ) |> 
-  dplyr::relocate(
-    "No Impact", .before = "Increase Confidence"
-  ) |> 
-  kableExtra::kbl() |> 
-  kableExtra::footnote(
-    general = "NA omitted. % (n)"
-    ) |> 
-  kableExtra::kable_styling(
-    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
-    latex_options = "basic",
-    font_size = 13,
-    full_width = T,
-    fixed_thead = T
-  )
-  
-
 ```
 
 
+Results displayed in @fig-q41-likert suggest that county efforts to recruit veterans as election staff and volunteers does more to increase one’s confidence in the fairness and accuracy of elections regardless of the experimental condition. That is, even for those who were in the *control* group, respondents reported that the inclusion of veterans and their family members as election staff and volunteers would increase confidence in the fairness and accuracy of elections more than when election staff includes lawyers or college students. This increase in confidence was 9% percentage points higher compared to when lawyers are included as election staff, and 16% percentage points higher than when election staff and volunteers are said to include college students. 
 
+
+Moreover, @fig-q41-likert demonstrates a clear boost in confidence when election staff includes veterans and family members, especially for those who were in the treatment group. The percentage of people who said their confidence in election fairness would increase when election staff includes veterans was about 11.6% percentage points higher than those who said the same in the control group.
+
+These results suggest that county efforts to recruit veterans as election staff and volunteers does more to increase one’s confidence in the fairness and accuracy of elections, especially under the prospect that election staff and volunteers would include veterans and their family members.
+
+
+
+
+
+[^2]: Two different versions of this statement was presented to survey participants. Half of the sample read the statement as, "Election staff and volunteers *include* military veterans and their family members from the community", whereas the other half of the sample read, "The *majority* of election staff and volunteers consist of military veterans and their family members from the community." No significant differences in responses were observed between those who read one version of the statement over the other. However, the same was done for statements number 5 and 6 which concern "lawyers from the community" and "college students from the community". Significant differences were found when comparing responses between the different versions of these statements. See the appendix for further discussion on these results.  
 
 These results suggest that reading a vignette about county efforts to recruit veterans as election staff and volunteers does more to increase one's confidence in the fairness and accuracy of elections, especially under the prospect that election staff and volunteers would include veterans and their family members.
 
@@ -950,15 +622,10 @@ The same analysis was conducted for questions that assessed the reported impact 
 
 Again, the bar graph below displays a clear boost among participants in the treatment group who reported that their confidence in voter safety would increase when election staff is said to include veterans and their family members. 
 
-::: {.panel-tabset}
-
-## Fig Q43
 
 ```{r}
-#| label: fig-q43
-#| fig-column: page-inset-right
-
-
+#| label: fig-q43-likert
+#| column: body-outset
 
 # Q43.4 (vets), Q43.5 (lawyers), Q43.6 (students) by treatment 
 df |> 
@@ -974,112 +641,15 @@ df |>
 
 ```
 
-```{r}
-#| include: false
-
-
-mod.q43.1 <- lm(formula = q43.1.clps.dum ~ group, data = df)
-mod.q43.2 <- lm(formula = q43.2.clps.dum ~ group, data = df)
-mod.q43.3 <- lm(formula = q43.3.clps.dum ~ group, data = df)
-mod.q43.4 <- lm(formula = q43.4.clps.dum ~ group, data = df)
-mod.q43.5 <- lm(formula = q43.5.clps.dum ~ group, data = df)
-mod.q43.6 <- lm(formula = q43.6.clps.dum ~ group, data = df)
-
-# place all the models in a list assigned as 'models' and include them in the
-# ggstats::ggcoef_compare() function
-models.q43 <- list(
-  "Test Every Machine" = mod.q43.1,
-  "Audit Ballots" = mod.q43.2,
-  "Partisan Poll Watchers" = mod.q43.3,
-  "Election Staff Includes Veterans" = mod.q43.4,
-  "Election Staff Includes Lawyers" = mod.q43.5,
-  "Election Staff Includes Students" = mod.q43.6
-)
-```
-
-## Q43 Coef Plot
-
-```{r}
-#| label: fig-q43-coefplot
-#| fig-column: page-inset-right
-#| warning: false
-#| message: false
-
-
-# print the coef plot and selectively color coefficients
-ggstats::ggcoef_compare(
-  models.q43, 
-  conf.int = T, 
-  add_reference_rows = F, 
-  categorical_terms_pattern = "{level} (ref: {reference_level})")+
-  ggplot2::scale_color_manual(
-    values = c("black", "black", "black", "red", "black", "black"))+
-  labs(
-    title = "Impact on Confidence in Voter Safety when Election Staff \nIncludes Veterans and Family by Experiment Condition",
-    subtitle = "Means comparison with 95% confidence intervals\n'Increase in confidence' = 1, 'No increase in confidence = 0'",
-    caption = "estimate = 0.0841, SE = 0.0280, t-statistic = 3.00, CI [0.0291, 0.139]"
-  )+
-  theme_bw()+
-  theme(legend.position = 'bottom')
-
-
-```
-
-:::
 
 The proportion of people who said their confidence in voter safety would increase when election staff includes veterans was about 8.4 percentage points higher than those who said the same in the control group.
 
 
-```{r}
-#| label: tbl-7
-#| tbl-cap: "Confidence Impact on In-person Voter Safety"
-#| results: asis
-
-
-# Simple Crosstab to show response breakdown by experiment condition
-# NAs omitted. 
-df |>
-  mutate(
-    confimpct_vets = dplyr::case_when(
-      q43.4.clps == "increase" ~ 'Increase Confidence',
-      q43.4.clps == "no_impact" ~ 'No Impact',
-      q43.4.clps == 'decrease' ~ 'Decrease Confidence'
-      )) |> 
-  janitor::tabyl(group, confimpct_vets,  show_na = F) |> 
-  janitor::adorn_totals('both') |> 
-  janitor::adorn_percentages('row') |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = T) |> 
-  janitor::adorn_ns("rear") |> 
-  janitor::adorn_title(
-    'combined',
-    row_name = 'Condition',
-    col_name = 'Election staff include veterans and family') |>
-  dplyr::relocate(
-    "No Impact", .before = "Increase Confidence"
-  ) |> 
-  kableExtra::kbl() |> 
-  kableExtra::footnote(
-    general = "NA omitted. % (n)"
-    ) |> 
-  kableExtra::kable_styling(
-    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
-    latex_options = "basic",
-    font_size = 13,
-    full_width = T,
-    fixed_thead = T
-  )
-  
-
-
-
-```
-
-
 # Sample Demographics and Balance
 
-The decision was made to exclude any respondents who didn't complete the survey. There were a total of 125 respondents who started but didn't finish the survey. Of those 125, 105 quit before reaching `Q40_1`, whereas the rest exited the survey after that question[^2].
+The decision was made to exclude any respondents who didn't complete the survey. There were a total of 125 respondents who started but didn't finish the survey. Of those 125, 105 quit before reaching `Q40_1`, whereas the rest exited the survey after that question[^3].
 
-[^2]: Due to the programming of the survey, respondents were randomly assigned to either question set 'A' or question set 'B'. The grouping variable in the data set is `Qset`. Those respondents assigned to `Qset A` answered questions `Q41` and `Q43`; those assigned to `Qset B` answered question `Q44` and `Q46`. For each question, respondents were presented six statements and selected a response on a 5-point scale from "Decrease Confidence a lot" to "Increase confidence a lot". The six statements were the same for each question. This resulted in six variables per question within the data set (e.g., Q41_1 to Q41_6), where each variable consisted of responses to one of the six particular statements. Tests of differences in proportion between the question sets determined that responses were mostly equivalent between question sets (i.e., no statistically significant differences between proportions) except for the fifth and sixth statements pertaining to lawyers and college students. More detailed information on the results of this analysis are given in a supplementary document. 
+[^3]: Due to the programming of the survey, respondents were randomly assigned to either question set 'A' or question set 'B'. The grouping variable in the data set is `Qset`. Those respondents assigned to `Qset A` answered questions `Q41` and `Q43`; those assigned to `Qset B` answered question `Q44` and `Q46`. For each question, respondents were presented six statements and selected a response on a 5-point scale from "Decrease Confidence a lot" to "Increase confidence a lot". The six statements were the same for each question. This resulted in six variables per question within the data set (e.g., Q41_1 to Q41_6), where each variable consisted of responses to one of the six particular statements. Tests of differences in proportion between the question sets determined that responses were mostly equivalent between question sets (i.e., no statistically significant differences between proportions) except for the fifth and sixth statements pertaining to lawyers and college students. More detailed information on the results of this analysis are given in a supplementary document. 
 
  `NA` missing values from the `Qset` variable removes those 105 partial survey responses, i.e., respondents who quit prior to reaching `Q40`.
 
@@ -1126,3 +696,24 @@ print(t1.demog)
 # Appendix {.appendix}
 
 
+
+### Treatment Vignette
+
+> *Local Military Veterans Recruited for Election Jobs in Maricopa County*  
+
+> PHOENIX (AP) — Election officials in Maricopa County, Arizona, announced a program designed to recruit military veterans and their family members from the community to serve as election administrators, including election polling place workers, temporary workers, and full-time staff. As the U.S. general elections in November near, election officials must fill several thousand temporary positions and hundreds of other open positions to ensure sufficient staffing for the 2024 elections and beyond. 
+
+> Army veteran Jordan Braxton just joined the elections workforce. Jordan believes their role is important to ensuring a secure, accurate, and transparent election, “Many places are short on staff this election cycle. I served my country in the Army, and I want to do my part as a veteran and a citizen to ensure that everyone trusts the process and the outcome of the election.”
+
+: Text of the Treatment Condition: Recruitment of Veterans and Military Family Members {#fig-treatment}
+
+
+### Control Vignette
+
+> *Local Residents Recruited for Election Jobs in Maricopa County*
+
+> PHOENIX (AP) —Election officials in Maricopa County, Arizona, announced a program to recruit members of the community to serve as election administrators, including election polling place workers, temporary workers, and full-time staff. As the U.S. general elections in November near, election officials must fill several thousand temporary positions and hundreds of other open positions to ensure sufficient staffing for the 2024 elections and beyond.
+
+> Jordan Braxton just joined the elections workforce. Jordan believes their role is important to ensuring a secure, accurate, and transparent election, “Many places are short on staff this election cycle. I want to do my part as a citizen to ensure that everyone trusts the process and the outcome of the election.”
+
+: Text of the Control Condition: Recruitment of Community Members {#fig-control}

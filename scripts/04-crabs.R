@@ -381,7 +381,7 @@ df |>
   janitor::tabyl(q7, q19, group, show_na = F) |> 
   # janitor::adorn_totals("both") |> 
   janitor::adorn_percentages("row") |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = T) |>
   janitor::adorn_ns("rear") |> 
   janitor::adorn_title("combined", 
                        row_name = "Q7. Legitimacy of 2020 Election",
@@ -880,3 +880,57 @@ df |>
 
 
 
+################################################################################
+
+# q41.4 vets
+df |> 
+  janitor::tabyl(group, q41.4.clps, show_na = F) |>
+  janitor::adorn_totals('both') |> 
+  janitor::adorn_percentages(denominator = 'row') |>
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
+  janitor::adorn_ns() |> 
+  janitor::adorn_title(
+    'combined',
+    row_name = "Group",
+    col_name = 'Q41.4')
+
+
+# q41.5 lawyers
+df |> 
+  janitor::tabyl(group, q41.5.clps, show_na = F) |>
+  janitor::adorn_totals('both') |> 
+  janitor::adorn_percentages(denominator = 'row') |>
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
+  janitor::adorn_ns() |> 
+  janitor::adorn_title(
+    'combined',
+    row_name = "Group",
+    col_name = 'Q41.5')
+
+# q41.6 college students
+df |> 
+  janitor::tabyl(group, q41.6.clps, show_na = F) |>
+  janitor::adorn_totals('both') |> 
+  janitor::adorn_percentages(denominator = 'row') |>
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
+  janitor::adorn_ns() |> 
+  janitor::adorn_title(
+    'combined',
+    row_name = "Group",
+    col_name = 'Q41.6')
+
+# just an easier way for me to see all the counts and proportions I need in one
+# output
+df |> 
+  select(group, q41.4, q41.5, q41.6) |> 
+  drop_na() |> 
+  # compute frequency within each combination
+  group_by(group) |> 
+  summarise(
+    vets = sum(q41.4 == "Increase confidence a lot" | q41.4 == "Increase confidence somewhat", na.rm = T),
+    vets_prop = vets/sum(group == "Control" | group == "Treatment", na.rm = T),
+    lawyers = sum(q41.5 == "Increase confidence a lot" | q41.5 == "Increase confidence somewhat", na.rm = T),
+    lawyers_prop = lawyers/sum(group == "Control" | group == "Treatment", na.rm = T),
+    students = sum(q41.6 == "Increase confidence a lot" | q41.6 == "Increase confidence somewhat", na.rm = T),
+    students_prop = students/sum(group == "Control" | group == "Treatment", na.rm = T)
+  )

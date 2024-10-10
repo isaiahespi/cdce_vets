@@ -108,6 +108,30 @@ df |>
        fill = "Group\nExperiment\nCondition")
 
 
+# Q19 by experiment condition, barplot
+df |> 
+  # compute frequency within each combination
+  group_by(group, q19) |> 
+  count() |>  
+  # compute proportion within group
+  # n is the default variable created by count()
+  group_by(group) |> 
+  mutate(prop = round(n/sum(n), digits = 3),
+         pct = prop*100,
+         res = str_c(pct,'% (', n, ')', sep = "")) |> 
+  ggplot(aes(x = q19, y = pct, fill = group))+
+  geom_bar(position = 'dodge', stat = 'identity')+
+  geom_text(aes(label = res), position = position_dodge(1.0), size = 2.5, vjust = -0.5)+
+  # change color to black and grey
+  scale_fill_grey(start = 0.5, end = 0.1)+
+  # \n in a string tells R to break the line there
+  labs(y = "Percentage",
+       x = "Q19. How confident are you that votes in Maricopa County, AZ \nwill be counted as voters intend in the elections this November?",
+       fill = "Group\nExperiment\nCondition",
+       caption = 'Treatment n = 639, Control n = 624')+
+  theme_bw()
+
+
 ### ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::####
 # trying to plot likert scales
 
@@ -156,6 +180,23 @@ df |>
   )+
   theme_bw()+
   theme(legend.position = 'bottom')
+
+df |>
+  labelled::set_variable_labels(
+    q19 = "Votes will be counted as voters intend",
+    q20 = "Election staff in Maricopa County, AZ will do a good job",
+    q22 = "Voting process will be fair in Maricopa County, AZ",
+    q23 = "Voting outcomes will be fair in Maricopa county, AZ",
+    q24 = "Election systems will be secure from technological threats",
+    q26 = "Voting sites will be safe places for in-person voting"
+  ) |> 
+  ggstats::gglikert(include = c(q20), y = 'group', facet_rows = vars(.question))+ 
+  labs(
+    title = "Election staff in Maricopa County, AZ will do a good job by Experiment Condition"
+  )+
+  theme_bw()+
+  theme(legend.position = 'bottom')
+
 
 
 df |>
@@ -232,15 +273,17 @@ df |>
   theme(legend.position = 'bottom')
 
 
-
-
 # q41 and q43
-df |> 
-  mutate(qset = forcats::fct_recode(
-    qset,
-    "Election staff 'includes'..." = 'A',
-    "Election staff is 'Majority' of... " = 'B'
-  )) |> 
+# Likert plot to demonstrate difference between question sets with different
+# wording
+df |>
+  mutate(
+    qset = forcats::fct_recode(
+      qset,
+      "Election staff 'includes'..." = 'A',
+      "Election staff is 'Majority' of... " = 'B'
+    )
+  ) |>
   sjlabelled::var_labels(
     q41.4 = "Veterans",
     q41.5 = "Lawyers",
@@ -248,12 +291,14 @@ df |>
     q43.4 = "Veterans",
     q43.5 = "Lawyers",
     q43.6 = "College Students"
-  ) |> 
-  ggstats::gglikert(include = c(q41.4, q41.5, q41.6, q43.4, q43.5, q43.6),
-                    y = 'qset', facet_rows = vars(.question))+
-  labs(
-    title = "Differences in Proportion Between Question Wording")+
-  theme_bw()+
+  ) |>
+  ggstats::gglikert(
+    include = c(q41.4, q41.5, q41.6, q43.4, q43.5, q43.6),
+    y = 'qset',
+    facet_rows = vars(.question)
+  ) +
+  labs(title = "Differences in Proportion Between Question Wording") +
+  theme_bw() +
   theme(legend.position = 'bottom')
 
 # Q41.4 (vets), Q41.5 (lawyers), Q41.6 (students), by treatment
@@ -431,3 +476,148 @@ q43_results <- ggstats::ggcoef_compare(
 
 q41_results[4,]
 q43_results[4,]
+
+
+################################################################################
+
+
+# barplot of q41.4 by group
+df |> 
+  select(group, q41.4, q41.5, q41.6) |> 
+  drop_na() |> 
+  # compute frequency within each combination
+  group_by(group, q41.4) |> 
+  count() |> 
+  # compute proportion within group
+  # n is the default variable created by count()
+  group_by(group) |> 
+  mutate(prop = round(n/sum(n), digits = 3),
+         pct = prop*100,
+         res = str_c(pct,'% (', n, ')', sep = "")) |> 
+  # add y to inform geom_bar what to put in y-axis
+  ggplot(aes(x = q41.4, y = prop, fill = group))+
+  geom_col(position = 'dodge')+
+  geom_text(aes(label = res), position = position_dodge(1.0), size = 2.5 , vjust = -0.5)+
+  scale_fill_grey(start = 0.5, end = 0.1)+
+  # coord_flip()+
+  labs(y = "Prop",
+       x = "Q41.4",
+       fill = "Group\nExperiment\nCondition")
+
+df |> 
+  select(group, q41.4) |> 
+  drop_na() |> 
+  ggstats::gglikert(include = c(group), y = 'q41.4',
+                    facet_row = vars(.question),
+                    symmetric = T,
+                    add_totals = T)+
+  # change color to black and grey
+  scale_fill_grey(start = 0.7, end = 0.1)+
+  labs(
+    title = "How would the following impact your confidence in the fairness and accuracy of elections conducted this November?",
+    subtitle = "Election staff and volunteers include military veterans and their family members from the community.",
+    caption = "Treatment = 638, Control = 623"
+  )+
+  theme_bw()+
+  theme(legend.position = 'bottom', strip.text = element_blank())
+
+
+df |> 
+  select(group, q41.4.clps) |> 
+  drop_na() |> 
+  mutate(q41.4.clps = dplyr::case_when(
+    q41.4.clps == "decrease" ~ "Decrease Confidence",
+    q41.4.clps == "no_impact" ~ "No Impact",
+    q41.4.clps == "increase" ~ "Increase Confidence",
+    TRUE ~ NA
+  )) |> 
+  ggstats::gglikert(include = c(group), y = 'q41.4.clps', facet_row = vars(.question),  symmetric = T, add_totals = T)+
+  # change color to black and grey
+  scale_fill_grey(start = 0.7, end = 0.1)+
+  labs(
+    title = "How would the following impact your confidence in the fairness and accuracy of elections conducted this November?",
+    subtitle = "Election staff and volunteers include military veterans and their family members from the community.",
+    caption = "Treatment = 638, Control = 623"
+  )+
+  theme_bw()+
+  theme(legend.position = 'bottom', strip.text = element_blank())
+
+
+  
+
+# Q41.4 (vets) by treatment
+df |> 
+  select(group, q41.4) |> 
+  drop_na() |> 
+  ggstats::gglikert(include = c(group), y = 'q41.4', facet_row = vars(.question),  symmetric = T, add_totals = T)+
+  # change color to black and grey
+  scale_fill_grey(start = 0.7, end = 0.1)+
+  labs(
+    title = "How would the following impact your confidence in the fairness and accuracy of elections conducted this November?",
+    subtitle = "Election staff and volunteers include military veterans and their family members from the community."
+  )+
+  theme_bw()+
+  theme(legend.position = 'bottom', strip.text = element_blank())
+
+# vets
+df |> 
+  select(group, q41.4.clps) |> 
+  drop_na() |> 
+  mutate(q41.4.clps = dplyr::case_when(
+    q41.4.clps == "decrease" ~ "Decrease Confidence",
+    q41.4.clps == "no_impact" ~ "No Impact",
+    q41.4.clps == "increase" ~ "Increase Confidence",
+    TRUE ~ NA
+  )) |> 
+  ggstats::gglikert(include = c(group), y = 'q41.4.clps', facet_row = vars(.question),  symmetric = T, add_totals = T)+
+  # change color to black and grey
+  scale_fill_grey(start = 0.7, end = 0.1)+
+  labs(
+    title = "How would the following impact your confidence in the fairness and accuracy of elections conducted this November?",
+    subtitle = "Election staff and volunteers include military veterans and their family members from the community.",
+    caption = "Treatment = 638, Control = 623"
+  )+
+  theme_bw()+
+  theme(legend.position = 'bottom', strip.text = element_blank())
+
+# lawyers
+df |> 
+  select(group, q41.5.clps) |> 
+  drop_na() |> 
+  mutate(q41.5.clps = dplyr::case_when(
+    q41.5.clps == "decrease" ~ "Decrease Confidence",
+    q41.5.clps == "no_impact" ~ "No Impact",
+    q41.5.clps == "increase" ~ "Increase Confidence",
+    TRUE ~ NA
+  )) |> 
+  ggstats::gglikert(include = c(group), y = 'q41.5.clps', facet_row = vars(.question),  symmetric = T, add_totals = T)+
+  # change color to black and grey
+  scale_fill_grey(start = 0.7, end = 0.1)+
+  labs(
+    title = "How would the following impact your confidence in the fairness and accuracy of elections conducted this November?",
+    subtitle = "Election staff and volunteers include lawyers from the community.",
+    caption = "Treatment = 638, Control = 623"
+  )+
+  theme_bw()+
+  theme(legend.position = 'bottom', strip.text = element_blank())
+
+# students
+df |> 
+  select(group, q41.6.clps) |> 
+  drop_na() |> 
+  mutate(q41.6.clps = dplyr::case_when(
+    q41.6.clps == "decrease" ~ "Decrease Confidence",
+    q41.6.clps == "no_impact" ~ "No Impact",
+    q41.6.clps == "increase" ~ "Increase Confidence",
+    TRUE ~ NA
+  )) |> 
+  ggstats::gglikert(include = c(group), y = 'q41.6.clps', facet_row = vars(.question),  symmetric = T, add_totals = T)+
+  # change color to black and grey
+  scale_fill_grey(start = 0.7, end = 0.1)+
+  labs(
+    title = "How would the following impact your confidence in the fairness and accuracy of elections conducted this November?",
+    subtitle = "Election staff and volunteers include college students from the community.",
+    caption = "Treatment = 638, Control = 623"
+  )+
+  theme_bw()+
+  theme(legend.position = 'bottom', strip.text = element_blank())

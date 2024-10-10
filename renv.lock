@@ -997,20 +997,6 @@
       ],
       "Hash": "15e9634c0fcd294799e9b2e929ed1b86"
     },
-    "ggeffects": {
-      "Package": "ggeffects",
-      "Version": "1.7.1",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "graphics",
-        "insight",
-        "stats",
-        "utils"
-      ],
-      "Hash": "16caf33f38238c1e88f3436bee01d7af"
-    },
     "ggplot2": {
       "Package": "ggplot2",
       "Version": "3.5.1",
@@ -2581,37 +2567,6 @@
       ],
       "Hash": "5c47e84dc0a3ca761ae1d307889e796d"
     },
-    "sjPlot": {
-      "Package": "sjPlot",
-      "Version": "2.8.16",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "MASS",
-        "R",
-        "bayestestR",
-        "datawizard",
-        "dplyr",
-        "ggeffects",
-        "ggplot2",
-        "grDevices",
-        "graphics",
-        "insight",
-        "knitr",
-        "parameters",
-        "performance",
-        "purrr",
-        "rlang",
-        "scales",
-        "sjlabelled",
-        "sjmisc",
-        "sjstats",
-        "stats",
-        "tidyr",
-        "utils"
-      ],
-      "Hash": "70480a924eaef8284d95a473195e05ed"
-    },
     "sjlabelled": {
       "Package": "sjlabelled",
       "Version": "1.2.0",
@@ -2647,23 +2602,6 @@
         "utils"
       ],
       "Hash": "a8f86596ca0fa8de37f7ef1774d89158"
-    },
-    "sjstats": {
-      "Package": "sjstats",
-      "Version": "0.19.0",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "datawizard",
-        "effectsize",
-        "insight",
-        "parameters",
-        "performance",
-        "stats",
-        "utils"
-      ],
-      "Hash": "b3fbc97de6990bdb3004c7baaa6b2cc0"
     },
     "snakecase": {
       "Package": "snakecase",
