@@ -288,6 +288,167 @@ az_crabs[[1]] |>
     font_size = 13
   )
 
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::####
+# Basic 2-way cross tables for reference
+
+# q19, group
+df |> 
+  janitor::tabyl(group, q19, show_na = F) |> 
+  janitor::adorn_totals("both") |> 
+  janitor::adorn_percentages("row") |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
+  janitor::adorn_ns("rear") |> 
+  janitor::adorn_title("combined", 
+                       row_name = "Group",
+                       col_name = "Q19")
+
+# q20, group
+df |> 
+  janitor::tabyl(group, q20, show_na = F) |> 
+  janitor::adorn_totals("both") |> 
+  janitor::adorn_percentages("row") |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
+  janitor::adorn_ns("rear") |> 
+  janitor::adorn_title("combined", 
+                       row_name = "Group",
+                       col_name = "Q20")
+
+
+
+# q21, group
+df |> 
+  janitor::tabyl(group, q21, show_na = F) |> 
+  janitor::adorn_totals("both") |> 
+  janitor::adorn_percentages("row") |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
+  janitor::adorn_ns("rear") |> 
+  janitor::adorn_title("combined", 
+                       row_name = "Group",
+                       col_name = "Q21")
+
+# q22, group
+df |> 
+  janitor::tabyl(group, q22, show_na = F) |> 
+  janitor::adorn_totals("both") |> 
+  janitor::adorn_percentages("row") |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
+  janitor::adorn_ns("rear") |> 
+  janitor::adorn_title("combined", 
+                       row_name = "Group",
+                       col_name = "Q22")
+
+
+# q23, group
+df |> 
+  janitor::tabyl(group, q23, show_na = F) |> 
+  janitor::adorn_totals("both") |> 
+  janitor::adorn_percentages("row") |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
+  janitor::adorn_ns("rear") |> 
+  janitor::adorn_title("combined", 
+                       row_name = "Group",
+                       col_name = "Q23")
+
+# q24, group
+df |> 
+  janitor::tabyl(group, q24, show_na = F) |> 
+  janitor::adorn_totals("both") |> 
+  janitor::adorn_percentages("row") |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
+  janitor::adorn_ns("rear") |> 
+  janitor::adorn_title("combined", 
+                       row_name = "Group",
+                       col_name = "Q24")
+
+# q25, group
+df |> 
+  janitor::tabyl(group, q25, show_na = F) |> 
+  janitor::adorn_totals("both") |> 
+  janitor::adorn_percentages("row") |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
+  janitor::adorn_ns("rear") |> 
+  janitor::adorn_title("combined", 
+                       row_name = "Group",
+                       col_name = "Q25")
+
+# q26, group
+df |> 
+  janitor::tabyl(group, q26, show_na = F) |> 
+  janitor::adorn_totals("both") |> 
+  janitor::adorn_percentages("row") |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
+  janitor::adorn_ns("rear") |> 
+  janitor::adorn_title("combined", 
+                       row_name = "Group",
+                       col_name = "Q26")
+
+
+# q27, group
+df |> 
+  janitor::tabyl(group, q27, show_na = F) |> 
+  janitor::adorn_totals("both") |> 
+  janitor::adorn_percentages("row") |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
+  janitor::adorn_ns("rear") |> 
+  janitor::adorn_title("combined", 
+                       row_name = "Group",
+                       col_name = "Q27")
+
+
+# Need to skip Q28 here since it is a series....
+
+# q29, group
+df |> 
+  janitor::tabyl(group, q29, show_na = F) |> 
+  janitor::adorn_totals("both") |> 
+  janitor::adorn_percentages("row") |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
+  janitor::adorn_ns("rear") |> 
+  janitor::adorn_title("combined", 
+                       row_name = "Group",
+                       col_name = "Q29")
+
+df |> 
+  janitor::tabyl(group, q29.clps, show_na = F) |> 
+  janitor::adorn_totals("both") |> 
+  janitor::adorn_percentages("row") |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
+  janitor::adorn_ns("rear") |> 
+  janitor::adorn_title("combined", 
+                       row_name = "Group",
+                       col_name = "Q29")
+
+# q36, group
+df |> 
+  janitor::tabyl(group, q36, show_na = F) |> 
+  janitor::adorn_totals("both") |> 
+  janitor::adorn_percentages("row") |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
+  janitor::adorn_ns("rear") |> 
+  janitor::adorn_title("combined", 
+                       row_name = "Group",
+                       col_name = "Q36")
+# q37, group
+df |> 
+  janitor::tabyl(group, q37, show_na = F) |> 
+  janitor::adorn_totals("both") |> 
+  janitor::adorn_percentages("row") |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
+  janitor::adorn_ns("rear") |> 
+  janitor::adorn_title("combined", 
+                       row_name = "Group",
+                       col_name = "Q37")
+# q38, group
+df |> 
+  janitor::tabyl(group, q38, show_na = F) |> 
+  janitor::adorn_totals("both") |> 
+  janitor::adorn_percentages("row") |> 
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
+  janitor::adorn_ns("rear") |> 
+  janitor::adorn_title("combined", 
+                       row_name = "Group",
+                       col_name = "Q38")
+
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::####
 # 3-way cross tables, yet again

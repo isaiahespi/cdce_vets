@@ -976,3 +976,33 @@ df |>
   theme_bw()+
   theme(legend.position = 'bottom')
 
+
+
+
+################################################################################
+# To avoid excessive copy/paste, I made a function to create Likert plots
+# it is mostly a wrapper around `ggstats::gglikert`, but with a specific set up
+# particular colors, theme, etc. 
+likert_plot <- function(data, x, y){
+  ggstats::gglikert(data = data, include = {{ x }}, y = {{ y }}, 
+                    facet_rows = vars(.question))+
+    # customize color
+    scale_fill_manual(values = c("black", "grey35", "firebrick1", "firebrick3"))+
+    theme_bw()+
+    theme(
+      legend.position = 'bottom',    # place legend on bottom
+      axis.text.x = element_blank(), # remove percentage text along x-axis
+      strip.text = element_blank() # remove label of facet
+        )
+}
+
+# it works! 
+likert_plot(data = df, x = q19, y = group)+
+  ggplot2::labs(x = attr(df$q19, "label"))
+  
+
+# test
+df |> 
+likert_plot(q26, group)+
+  ggplot2::labs(x = str_wrap(attr(df$q26, "label"), width = 95))
+

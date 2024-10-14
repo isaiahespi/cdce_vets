@@ -86,8 +86,6 @@
 \usepackage[normalem]{ulem}
 \usepackage{makecell}
 \usepackage{xcolor}
-\usepackage{caption}
-\usepackage{anyfontsize}
 \makeatletter
 \@ifpackageloaded{tcolorbox}{}{\usepackage[skins,breakable]{tcolorbox}}
 \@ifpackageloaded{fontawesome5}{}{\usepackage{fontawesome5}}
@@ -158,8 +156,8 @@
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same} % disable monospaced font for URLs
 \hypersetup{
-  pdftitle={Survey Experiment},
-  pdfauthor={Isaiah},
+  pdftitle={Recruiting Veterans and Military Family Members Improves Confidence in Elections},
+  pdfauthor={Isaiah; Michael J. Hanmer, PhD},
   pdfkeywords={Election Workers, Poll workers, Veterans, Public
 opinion, Election administration},
   colorlinks=true,
@@ -268,7 +266,15 @@ opinion, Election administration},
 
 % Title and date
 
-\title{Survey Experiment}
+\title{Recruiting Veterans and Military Family Members Improves
+Confidence in Elections}
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+\subtitle{Draft}
 \date{2024-9-12}
 
 \def\Date{\number\day}
@@ -288,9 +294,9 @@ opinion, Election administration},
 
   \def\name{Center for Democracy and Civic Engagement}
 % 
-  \telephone{(410) 903 6911}
+  \telephone{(301) 405 7379}
 % 
-  \email{ssnovey@umd.edu}
+  \email{mhanmer@umd.edu}
 
 \def\webaddress{\url{https://cdce.umd.edu/}}
 \def\abn{12 377 614 012}
@@ -360,281 +366,371 @@ opinion, Election administration},
 
 % Authors
 
-\author{\sf{\Large\textbf{Isaiah} \\[0.5cm]}}
-%\lfoot{\sf Isaiah: 2024-9-12}
+\author{\sf{\Large\textbf{Isaiah} \\[0.5cm]}{\Large\textbf{Michael J.
+Hanmer, PhD} \\[0.5cm]}}
+%\lfoot{\sf Isaiah, Michael J. Hanmer: 2024-9-12}
 \begin{document}
 \maketitle
 
 
 \setstretch{1.5}
-\subsection{Key Questions}\label{key-questions}
+\begin{tcolorbox}[enhanced jigsaw, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, breakable, toprule=.15mm, coltitle=black, bottomrule=.15mm, arc=.35mm, bottomtitle=1mm, leftrule=.75mm, colframe=quarto-callout-note-color-frame, left=2mm, rightrule=.15mm, colbacktitle=quarto-callout-note-color!10!white, toptitle=1mm, titlerule=0mm, opacitybacktitle=0.6]
 
-The following presents some key results from the survey experiment.
+You are reading a work-in-progress.
 
-\subsubsection{Q19}\label{q19}
+\end{tcolorbox}
 
-\marginnote{\begin{footnotesize}
+\section{Introduction}\label{introduction}
 
-\begingroup
-\setlength{\LTpost}{0mm}
-\begin{longtable}{lllll}
-\caption{Confidence vote counts will be accurate in Maricopa County, AZ by
-Experiment Condition}\tabularnewline
+This report presents results from a survey experiment designed to
+examine how information that election officials are hiring veterans and
+military family members for the elections workforce influences the
+public's attitudes about elections. The survey was developed by the
+Center for Democracy and Civic Engagement
+(\href{https://cdce.umd.edu/}{CDCE}) at the University of Maryland (UMD)
+in consultation from \href{https://www.wetheveterans.us/}{We the
+Veterans and Military Families}. The survey was fielded from August 29
+through September 9, 2024 on a sample of 1,263 US citizens of voting age
+purchased from Lucid and drawn to be representative of the US adult
+citizen population.
 
-\toprule
- & \multicolumn{4}{c}{{\bfseries Q19. Vote Count Confidence for Maricopa County, AZ}\textsuperscript{\textit{1}}} \\ 
-\cmidrule(lr){2-5}
-Group & {\bfseries Not at all confident} & {\bfseries Not too confident} & {\bfseries Somewhat confident} & {\bfseries Very confident} \\ 
-\midrule\addlinespace[2.5pt]
-Control & 3.8 (24) & 17.1 (107) & 49.2 (307) & 29.8 (186) \\ 
-Treatment & 3.9 (25) & 12.7  (81) & 46.6 (298) & 36.8 (235) \\ 
-\bottomrule
-\end{longtable}
-\begin{minipage}{\linewidth}
-Table reflects row percentages. NAs omitted\\
-\textsuperscript{\textit{1}}Q19. How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November?\\
-\end{minipage}
-\endgroup
+After answering several background questions, participants were randomly
+assigned to read one of two vignettes we described as short excerpts
+from news stories. These vignettes were not from actual news stories,
+but they were modeled after relevant published articles. Both vignettes
+were set in Maricopa County, AZ and explained that local election
+officials were seeking to expand the elections workforce in advance of
+the upcoming presidential elections. We chose Maricopa County, AZ
+because it was a place where election administration was under close
+scrutiny in 2020 and could be again in 2024.
 
-Confidence in Accurate Vote Count by Experiment Condition
+The treatment condition focused on the recruitment of veterans and
+military family members from the local community to serve in elections
+jobs, while the control condition focused on recruiting members of the
+local community without reference to any populations to which they might
+belong. Due to the randomization into conditions, any differences in
+responses can be attributed to the inclusion of information about
+veterans and military family members. The text of the treatment and
+control conditions appears in the Appendix.
 
-\end{footnotesize}}
+We examined the potential effect of the treatment on a variety of
+attitudes about elections in Maricopa County, AZ such as confidence,
+concern about the potential for violence, and expectations of fraud.
+\textbf{Across all of the questions we asked, information about the
+recruitment of veterans and military family members to elections jobs
+led to improved outcomes. The implications are clear---elections
+officials who are recruiting veterans and military family members should
+publicize this fact and those who are not doing this recruitment should
+do so.}
 
-\begin{figure}[H]
+\subsection{Trust and Confidence in Election Process and
+Administration}\label{trust-and-confidence-in-election-process-and-administration}
 
-{\centering \includegraphics{index_files/figure-pdf/unnamed-chunk-3-1.pdf}
+One of the most widely used questions in the study of attitudes about
+election administration asks how confident the respondent is that votes
+will be counted as intended. This question gets to the fundamental issue
+of how the process translates the voter's behavior into the outcome. The
+figure below shows that \textbf{information that election officials are
+recruiting veterans and military family members boosts the rate at which
+respondents indicate they are very confident that votes in Maricopa
+County, AZ will be counted as intended (by 7 percentage points, from
+30\% to 37\%, p\textless0.025, one-tailed}\footnote{\textbf{All p-values
+  are one-tailed as we have clear hypotheses that outcomes will be
+  improved in the veterans and military veterans condition.}}).
+
+\begin{figure}
+
+\caption{\label{fig-q19-likert}Confidence in Accurate Vote Count by
+Recruitment Program}
+
+\centering{
+
+\includegraphics{index_files/figure-pdf/fig-q19-likert-1.pdf}
 
 }
-
-\caption{Confidence in Accurate Vote Count by Experiment Condition}
 
 \end{figure}%
 
-\subsubsection{Q22}\label{q22}
+Importantly, the effects are generally even larger among those expected
+to be the most skeptical. For example, \textbf{among those who said that
+they thought Joe Biden's election to president was not legitimate,
+exposure to information about veterans and military family members
+increases confidence overall by 15 percentage points (from 60\% to 75\%,
+p\textless0.025)}. The bulk of this increase is driven by a shift in the
+rate at which respondents feel very confident, going from 9\% in the
+control (community) condition to 19\% in the treatment (veterans)
+condition. The following figures illustrate these results.
 
-\marginnote{\begin{footnotesize}
+\begin{figure}
 
-\begingroup
-\setlength{\LTpost}{0mm}
-\begin{longtable}{lllll}
-\caption{Q22. Confidence in Fair Voting Process by Experiment Condition in
-Maricopa County, AZ by Experiment Condition}\tabularnewline
+\caption{\label{fig-q19-legit}Confidence in Vote Count by Beliefs of
+2020 Election Legitimacy and Recruitment Program}
 
-\toprule
- & \multicolumn{4}{c}{{\bfseries Q22. Confidence in Fair Voting Process for Maricopa County, AZ}\textsuperscript{\textit{1}}} \\ 
-\cmidrule(lr){2-5}
-Group & {\bfseries Not at all confident} & {\bfseries Not too confident} & {\bfseries Somewhat confident} & {\bfseries Very confident} \\ 
-\midrule\addlinespace[2.5pt]
-Control & 4.8 (30) & 18.9 (118) & 45.2 (282) & 31.1 (194) \\ 
-Treatment & 4.2 (27) & 12.2  (78) & 46.3 (296) & 37.2 (238) \\ 
-\bottomrule
-\end{longtable}
-\begin{minipage}{\linewidth}
-Table reflects row percentages. NAs omitted\\
-\textsuperscript{\textit{1}}Q22.How confident are you that the voting process will be fair in Maricopa County, AZ?\\
-\end{minipage}
-\endgroup
+\centering{
 
-Confidence in Fair Voting Process by Experiment Condition
+\centering{
 
-\end{footnotesize}}
-
-\begin{figure}[H]
-
-{\centering \includegraphics{index_files/figure-pdf/unnamed-chunk-4-1.pdf}
+\includegraphics{index_files/figure-pdf/fig-q19-legit-1.pdf}
 
 }
 
-\caption{Confidence in Fair Voting Process by Experiment Condition}
+\subcaption{\label{fig-q19-legit}Proportion of confidence in vote count
+by belief of Biden's election legitimacy and Experimental condition}
+
+}
 
 \end{figure}%
 
-\subsubsection{Q25}\label{q25}
+Veterans and military family members are also regarded highly by the
+public for their commitment. \emph{Respondents were more likely to say
+the elections workforce would be very committed to making sure the
+elections held this November are fair and accurate when they heard that
+veterans and military family members were being recruited to elections
+jobs (by 9 percentage points, p\textless0.01)}.
 
-\marginnote{\begin{footnotesize}
+\begin{figure}
 
-\begingroup
-\setlength{\LTpost}{0mm}
-\begin{longtable}{lllll}
-\caption{Concern for violence, threats, or voter intimidation in Maricopa County,
-AZ by Experiment Condition}\tabularnewline
+\caption{\label{fig-q21-likert}Confidence in Commitment of Election
+Staff and Volunteers by Recruitment Program}
 
-\toprule
- & \multicolumn{4}{c}{{\bfseries Concern for violence, threats, or voter intimidation in Maricopa County, AZ}\textsuperscript{\textit{1}}} \\ 
-\cmidrule(lr){2-5}
-Group & {\bfseries Not at all concerned} & {\bfseries Not too concerned} & {\bfseries Somewhat concerned} & {\bfseries Very concerned} \\ 
-\midrule\addlinespace[2.5pt]
-Control & 12.8  (80) & 34.0 (212) & 41.0 (256) & 12.2 (76) \\ 
-Treatment & 16.1 (103) & 38.5 (246) & 34.1 (218) & 11.3 (72) \\ 
-\bottomrule
-\end{longtable}
-\begin{minipage}{\linewidth}
-Table reflects row percentages. NAs omitted\\
-\textsuperscript{\textit{1}}Q25. Thinking about Maricopa County, AZ, how concerned should voters feel 
-about potential violence, 
-threats of violence, or intimidation while voting in person at their local polling place?\\
-\end{minipage}
-\endgroup
+\centering{
 
-Concern for violence, threats, or voter intimidation in Maricopa County,
-AZ by Experiment Condition
-
-\end{footnotesize}}
-
-\begin{figure}[H]
-
-{\centering \includegraphics{index_files/figure-pdf/unnamed-chunk-5-1.pdf}
+\includegraphics{index_files/figure-pdf/fig-q21-likert-1.pdf}
 
 }
-
-\caption{Concern for violence, threats, or voter intimidation in
-Maricopa County, AZ by Experiment Condition}
 
 \end{figure}%
 
-\subsubsection{Q26}\label{q26}
+As shown in Figure~\ref{fig-q21-likert}, this increase is especially
+noteworthy as it brings the percentage of those saying very committed to
+nearly 50\% (from just under 38.5\% \% to 48\%).
 
-\begin{figure}[H]
+\textbf{Information that election officials were recruiting veterans and
+military family members also increased confidence that the voting
+process in Maricopa County, AZ would be fair (by 7 percentage points,
+p\textless0.01)}.
 
-{\centering \includegraphics{index_files/figure-pdf/unnamed-chunk-6-1.pdf}
+\begin{figure}
+
+\caption{\label{fig-q22-likert}Confidence in Fair Voting Process by
+Recruitment Program}
+
+\centering{
+
+\includegraphics{index_files/figure-pdf/fig-q22-likert-1.pdf}
 
 }
-
-\caption{In-person voter safety in Maricopa County, AZ by Experiment
-Condition}
 
 \end{figure}%
 
-\marginnote{\begin{footnotesize}
+The bulk of this shift comes from an increase in the percentage of
+people saying they were very confident (6 points, p\textless0.025).
+\textbf{Again, the treatment effect was largest for those who said that
+Joe Biden was not elected legitimately}. Whereas 57\% of those saying
+Biden's victory was not legitimate were confident in the control
+(community) condition, confidence rose 16 percentage points to 73\%
+among those who believe Biden's election was not legitimate in the
+treatment (veterans) condition.
 
-\begingroup
-\setlength{\LTpost}{0mm}
-\begin{longtable}{lllll}
-\caption{Q26. In-person voter safety in Maricopa County, AZ by Experiment
-Condition}\tabularnewline
+\begin{figure}
 
-\toprule
- & \multicolumn{4}{c}{{\bfseries Confidence for In-person voter safety in Maricopa County, AZ}\textsuperscript{\textit{1}}} \\ 
-\cmidrule(lr){2-5}
-Group & {\bfseries Not at all confident} & {\bfseries Not too confident} & {\bfseries Somewhat confident} & {\bfseries Very confident} \\ 
-\midrule\addlinespace[2.5pt]
-Control & 4.5 (28) & 17.5 (109) & 53.8 (336) & 24.2 (151) \\ 
-Treatment & 3.8 (24) & 11.6  (74) & 52.2 (333) & 32.4 (207) \\ 
-\bottomrule
-\end{longtable}
-\begin{minipage}{\linewidth}
-Table reflects row percentages. NAs omitted\\
-\textsuperscript{\textit{1}}Q26. How confident, if at all, are you that in person polling places in Maricopa County, AZ 
-will be safe places for voters to cast their ballots during the upcoming elections in November?\\
-\end{minipage}
-\endgroup
+\caption{\label{fig-q22-legit}Confidence in Fair Voting Process in
+Maricopa County, AZ among those who believe Biden's 2020 election was
+not legitimate}
 
-In-person voter safety in Maricopa County, AZ by Experiment Condition
+\centering{
 
-\end{footnotesize}}
-
-\begin{figure}[H]
-
-{\centering \includegraphics{index_files/figure-pdf/unnamed-chunk-7-1.pdf}
+\includegraphics{index_files/figure-pdf/fig-q22-legit-1.pdf}
 
 }
 
-\caption{Confidence in Election Administration by Experiment Condition}
+\end{figure}%
+
+Although outcomes are subject to a wider variety of factors, the
+veterans treatment also increased confidence that the outcomes would be
+fair (by 4 percentage points, p\textless0.05), with a shift of 7
+percentage points in the percentage saying they were very confident
+(p\textless0.025).
+
+\begin{figure}
+
+\caption{\label{fig-q23-likert}Confidence in Fair Voting Outcomes by
+Recruitment Program}
+
+\centering{
+
+\includegraphics{index_files/figure-pdf/fig-q23-likert-1.pdf}
+
+}
+
+\end{figure}%
+
+\subsubsection{Trust and Confidence in Election Security and Voter
+Safety}\label{trust-and-confidence-in-election-security-and-voter-safety}
+
+Attitudes relating to election security and safety were also improved as
+a result of exposure to information that veterans and military family
+members were being recruited to elections jobs. \textbf{The percentage
+saying they were confident the election would be secure from hacking and
+other technological threats was 7 points higher (p\textless0.01) in the
+veterans condition}.
+
+\begin{figure}
+
+\caption{\label{fig-q24-likert}Trust in Election Systems Tech by
+Recruitment Program}
+
+\centering{
+
+\includegraphics{index_files/figure-pdf/fig-q24-likert-1.pdf}
+
+}
+
+\end{figure}%
+
+We assessed concerns for violence by asking how concerned voters in
+Maricopa County, AZ should feel about potential violence, threats of
+violence, or intimidation while voting in person at their local polling
+place. The level of concern with potential violence, threats, and
+intimidation was considerably lower (by 8 percentage points,
+p\textless0.01) among those who read that veterans and military family
+members were being recruited to the elections workforce. \textbf{In
+other words, concerns over the prospect of violence, threats of
+violence, and voter intimidation at election polling sites was far lower
+among those who were given information that veterans and their family
+members are being recruited to work as election staff compared to those
+who were given information that made no mention of veterans and family
+members.}
+
+\begin{figure}
+
+\caption{\label{fig-q25-likert}Concern for violence, threats, or voter
+intimidation in Maricopa County, AZ by Recruitment Program}
+
+\centering{
+
+\includegraphics{index_files/figure-pdf/fig-q25-likert-1.pdf}
+
+}
+
+\end{figure}%
+
+The size of this effect is especially significant because it brings the
+level of concern (``Somewhat concerned'' and ``Very concerned'') below
+the 50\% mark. That is, while a majority (53\%) of those who read about
+a standard election staff recruitment program were at least somewhat
+concerned, concerns for violence drop down to 45\% among those who
+learned that officials of Maricopa County, AZ launched a program
+designed specifically to recruit veterans and family members.
+Additionally, those who learned about the VMF recruitment program were
+more likely to say they were confident that polling places would be safe
+places for voting in-person by 7 percentage points (p\textless0.01).
+
+\begin{figure}
+
+\caption{\label{fig-q26-likert}In-person voter safety in Maricopa
+County, AZ by Recruitment Program}
+
+\centering{
+
+\includegraphics{index_files/figure-pdf/fig-q26-likert-1.pdf}
+
+}
+
+\end{figure}%
+
+Note the nuanced distinction between the survey questions of
+\textbf{?@fig-25-likert} and \textbf{?@fig-26-likert}: the former asks
+how concerned \emph{the voters of Maricopa County, AZ should be} about
+violence, etc., whereas the latter asks for the respondent's personal
+judgement of \emph{how safe it will be in Maricopa County, AZ} to cast a
+vote in-person. These two survey items use slightly different questions
+to inquire about the same essential attitude---i.e., perceptions of
+voter safety at the polls. While there were still a hefty proportion of
+concern over the prospect of violence and voter safety at the polls
+across the board, these results suggest that special efforts to recruit
+veterans and their family members to work as election staff and
+volunteers eases such concerns quite significantly.
+
+Learning that Maricopa County, AZ was recruiting veterans and military
+family members for elections jobs also led to improved performance
+ratings for election officials there. In the veterans condition, those
+saying they somewhat or strongly approve of the way election officials
+are handling their jobs was 5 percentage points higher (p\textless0.05),
+driven by a nearly 8 point increase in the percentage saying they
+strongly approve of election officials (p\textless0.01).
+
+\begin{figure}
+
+\caption{\label{fig-q27-likert}Approval of Election Officials in
+Maricopa County, AZ by Recruitment Program}
+
+\centering{
+
+\includegraphics{index_files/figure-pdf/fig-q27-likert-1.pdf}
+
+}
+
+\end{figure}%
+
+We also asked a general question about confidence that Maricopa County,
+AZ elections officials would do a good job conduction elections this
+November. Those who read about veterans and military family members were
+more confident that election officials would do a good job conducting
+the election than those who read about community members (by 4.5
+percentage points, p \textless0.05).
+
+\begin{figure}
+
+\caption{\label{fig-20-likert}Confidence Election Officials in Maricopa
+County, AZ will do a good job by Recruitment Program}
+
+\centering{
+
+\includegraphics{index_files/figure-pdf/fig-20-likert-1.pdf}
+
+}
+
+\end{figure}%
+
+Before asking a series of questions about election administration in
+their own community, we asked how much respondents would like to see
+their local community adopt a program for recruiting elections staff
+similar to the one they read about in Maricopa County, AZ. Among those
+in the community condition just under 73\% said their local area should
+probably or definitely adopt the policy compared to over 77\% in the
+veterans condition (difference of 5 percentage points, p\textless0.03).
+The difference is driven entirely by an increase in enthusiasm (i.e.,
+the likelihood of saying definitely should adopt is 5 points higher in
+the veterans condition, p\textless0.025).
+
+\begin{figure}
+
+\caption{\label{fig-q29-likert}Approval of Election Officials in
+Maricopa County, AZ by Recruitment Program}
+
+\centering{
+
+\includegraphics{index_files/figure-pdf/fig-q29-likert-1.pdf}
+
+}
 
 \end{figure}%
 
 \newpage{}
 
-\subsection{Survey Questions by Treatment
-Condition}\label{survey-questions-by-treatment-condition}
-
-\subsubsection{Trust and Confidence in AZ
-Elections}\label{trust-and-confidence-in-az-elections}
-
-The following cross-tables break down relative observations and
-percentages of responses to survey questions across categories of the
-survey's experimental condition. The survey questions in the table below
-concerned a respondent's degree of trust and confidence in the electoral
-process in Maricopa County, AZ.
-
-\begin{table}
-
-\caption{\label{tbl-1}Trust and Confidence in Maricopa County, AZ
-Elections by Treatment Condition}
-
-\centering{
-
-\centering\begingroup\fontsize{13}{15}\selectfont
-
-\begin{tabular}[t]{llll}
-\toprule
-  & Control & Treatment & P-value\\
-\midrule
- & (N=624) & (N=639) & \\
-\addlinespace[0.3em]
-\multicolumn{4}{l}{\textbf{Confidence vote counts will be accurate, AZ}}\\
-\hspace{1em}Not\_confident & 131 (21.0\%) & 106 (16.6\%) & 0.0533\\
-\hspace{1em}Confident & 493 (79.0\%) & 533 (83.4\%) & \\
-\addlinespace[0.3em]
-\multicolumn{4}{l}{\textbf{Competence of Election Staff, AZ}}\\
-\hspace{1em}Not\_confident & 129 (20.7\%) & 103 (16.1\%) & 0.0451\\
-\hspace{1em}Confident & 495 (79.3\%) & 535 (83.7\%) & \\
-\addlinespace[0.3em]
-\multicolumn{4}{l}{\textbf{Commitment of Election Staff, AZ}}\\
-\hspace{1em}not\_committed & 106 (17.0\%) & 94 (14.7\%) & 0.303\\
-\hspace{1em}committed & 518 (83.0\%) & 545 (85.3\%) & \\
-\addlinespace[0.3em]
-\multicolumn{4}{l}{\textbf{Fair Process, AZ}}\\
-\hspace{1em}Not\_confident & 148 (23.7\%) & 105 (16.4\%) & 0.00155\\
-\hspace{1em}Confident & 476 (76.3\%) & 534 (83.6\%) & \\
-\addlinespace[0.3em]
-\multicolumn{4}{l}{\textbf{Fair Outcomes, AZ}}\\
-\hspace{1em}Not\_confident & 139 (22.3\%) & 116 (18.2\%) & 0.0817\\
-\hspace{1em}Confident & 485 (77.7\%) & 522 (81.7\%) & \\
-\addlinespace[0.3em]
-\multicolumn{4}{l}{\textbf{Security of Voting Tech, AZ}}\\
-\hspace{1em}Not\_confident & 188 (30.1\%) & 147 (23.0\%) & 0.00479\\
-\hspace{1em}Confident & 435 (69.7\%) & 492 (77.0\%) & \\
-\addlinespace[0.3em]
-\multicolumn{4}{l}{\textbf{Voters Will Be Free From Intimidation/Violence, AZ}}\\
-\hspace{1em}not\_concerned & 292 (46.8\%) & 349 (54.6\%) & 0.00646\\
-\hspace{1em}concerned & 332 (53.2\%) & 290 (45.4\%) & \\
-\addlinespace[0.3em]
-\multicolumn{4}{l}{\textbf{Safe In-person Voting, AZ}}\\
-\hspace{1em}Not\_confident & 137 (22.0\%) & 98 (15.3\%) & 0.00332\\
-\hspace{1em}Confident & 487 (78.0\%) & 540 (84.5\%) & \\
-\addlinespace[0.3em]
-\multicolumn{4}{l}{\textbf{Election Official Approval, AZ}}\\
-\hspace{1em}disapprove & 160 (25.6\%) & 134 (21.0\%) & 0.0618\\
-\hspace{1em}approve & 463 (74.2\%) & 502 (78.6\%) & \\
-\addlinespace[0.3em]
-\multicolumn{4}{l}{\textbf{Adopt AZ Program}}\\
-\hspace{1em}oppose & 170 (27.2\%) & 144 (22.5\%) & 0.059\\
-\hspace{1em}support & 452 (72.4\%) & 494 (77.3\%) & \\
-\bottomrule
-\multicolumn{4}{l}{\rule{0pt}{1em}\textit{Note: }}\\
-\multicolumn{4}{l}{\rule{0pt}{1em}makecell[l]{Table reflects column percentages. \P-values based on Pearson's Chi-squared test of independence.}}\\
-\end{tabular}
-\endgroup{}
-
-}
-
-\end{table}%
-
-\subsubsection{Expectation of Electoral
+\subsection{Expectation of Electoral
 Fraud}\label{expectation-of-electoral-fraud}
 
-The next figure and table reviews a set of questions designed to assess
-a respondent's expectation of electoral fraud of some sort in Maricopa
-County, AZ. Again, responses are compared across categories of the
-survey experiment.
-
-For each of the following five statements, survey participants responded
-with their expectations of the likelihood that each would occur in
-Maricopa County, Arizona this election cycle on a scale of ``Not likely
-at all'' to ``Very likely''. The five statements were prefaced with the
-question, ``How likely do you think any or all of the following will
-happen during this year´s elections in Maricopa County, AZ?''
+Our survey also asked respondents a series of questions designed to
+assess an individual's expectation of electoral fraud and voter
+suppression in Maricopa County, AZ. Five statements were prefaced with
+the question, ``How likely do you think any or all of the following will
+happen during this year´s elections in Maricopa County, AZ?''. Survey
+participants gave their expectations of the likelihood that each of the
+following would occur in Maricopa County, Arizona this election cycle on
+a scale of ``Not likely at all'', ``Not too likely'', ``Somewhat
+likely'', and ``Very likely''.
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -656,179 +752,59 @@ happen during this year´s elections in Maricopa County, AZ?''
 
 \begin{figure}
 
+\caption{\label{fig-q28-likert}Expectation of Electoral Fraud in
+Maricopa County, AZ by Recruitment Program}
+
 \centering{
 
-\includegraphics{index_files/figure-pdf/fig-q28-1.pdf}
+\includegraphics{index_files/figure-pdf/fig-q28-likert-1.pdf}
 
 }
-
-\caption{\label{fig-q28}Expectation of Electoral Fraud in Maricopa
-County, AZ by Experiment Condition}
 
 \end{figure}%
 
-\begin{table}
+As Figure~\ref{fig-q28-likert} illustrates, \textbf{those in the
+veterans condition were more likely to say that voter fraud was ``not
+likely at all'' (by 5 percentage points, p\textless0.025). The
+percentage saying that election officials will try to discourage people
+from voting was not likely to occur in Maricopa County was 8 percentage
+points higher among those who read that veterans and military family
+members would be part of the elections workforce} (p\textless0.01, with
+a shift of about 4 points among both those saying not too likely and not
+likely at all). Additionally, in the veterans condition the percentage
+saying that it was ``not likely at all'' that many votes will not
+actually be counted was nearly 7 percentage points higher
+(p\textless0.01), with a similar increase in the percentage saying it
+was not likely (not too likely and not likely at all) that many people
+will show up and be told they are not eligible (p\textless0.01).
 
-\caption{\label{tbl-2}Expectation of Electoral Fraud in Maricopa County,
-AZ by Treatment Condition}
+When we asked about the likelihood that a foreign country would tamper
+with votes in Maricopa County, AZ a larger percentage of those in the
+veterans condition said this was ``not likely at all'' (by 4 percentage
+points, p\textless0.07).
 
-\centering{
+\newpage{}
 
-~
+\subsection{Impacts on Confidence}\label{impacts-on-confidence}
 
-Control
+\begin{tcolorbox}[enhanced jigsaw, opacityback=0, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colback=white, breakable, toprule=.15mm, coltitle=black, bottomrule=.15mm, arc=.35mm, bottomtitle=1mm, leftrule=.75mm, colframe=quarto-callout-note-color-frame, left=2mm, rightrule=.15mm, colbacktitle=quarto-callout-note-color!10!white, toptitle=1mm, titlerule=0mm, opacitybacktitle=0.6]
 
-Treatment
-
-P-value
-
-(N=624)
-
-(N=639)
-
-Voter fraud, AZ
-
-Not\_likely
-
-337 (54.0\%)
-
-374 (58.5\%)
-
-0.126
-
-Likely
-
-286 (45.8\%)
-
-265 (41.5\%)
-
-Votes won't be counted, AZ
-
-Not\_likely
-
-355 (56.9\%)
-
-405 (63.4\%)
-
-0.0215
-
-Likely
-
-268 (42.9\%)
-
-233 (36.5\%)
-
-People will turned away, AZ
-
-Not\_likely
-
-317 (50.8\%)
-
-370 (57.9\%)
-
-0.0132
-
-Likely
-
-306 (49.0\%)
-
-268 (41.9\%)
-
-Foreign interference with votes, AZ
-
-Not\_likely
-
-411 (65.9\%)
-
-434 (67.9\%)
-
-0.499
-
-Likely
-
-212 (34.0\%)
-
-205 (32.1\%)
-
-EOs discourage people from voting, AZ
-
-Not\_likely
-
-376 (60.3\%)
-
-439 (68.7\%)
-
-0.00236
-
-Likely
-
-247 (39.6\%)
-
-200 (31.3\%)
-
-{Note: }
-
-Table reflects column percentages. P-values based on Pearson's
-Chi-squared test of independence.
-
-}
-
-\end{table}%
-
-\section{3-way Crosstables}\label{way-crosstables}
-
-\begin{tcolorbox}[enhanced jigsaw, leftrule=.75mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, bottomrule=.15mm, breakable, colback=white, rightrule=.15mm, colframe=quarto-callout-note-color-frame, titlerule=0mm, opacityback=0, opacitybacktitle=0.6, coltitle=black, left=2mm, bottomtitle=1mm, colbacktitle=quarto-callout-note-color!10!white, toptitle=1mm, arc=.35mm, toprule=.15mm]
-
-This section is under construction. A select number of 3-way cross
-tables will be presented here.
+Everything beyond this point is subject to change.
 
 \end{tcolorbox}
 
-\begingroup
-\setlength{\LTpost}{0mm}
-
-\begin{longtable}{lllll}
-
-\caption{\label{tbl-q19q7}Confidence in Accurate Vote Counts among those
-who do and do not believe the 2020 election was legitimate by Treatment
-Condition}
-
-\tabularnewline
-
-\toprule
- & \multicolumn{4}{c}{{\bfseries Q19. Vote Count Confidence for Maricopa County, AZ}\textsuperscript{\textit{1}}} \\ 
-\cmidrule(lr){2-5}
-Q7. Legitimacy of 2020 Election\textsuperscript{\textit{2}} & {\bfseries Not at all confident} & {\bfseries Not too confident} & {\bfseries Somewhat confident} & {\bfseries Very confident} \\ 
-\midrule\addlinespace[2.5pt]
-\multicolumn{5}{l}{{\bfseries Control}} \\[2.5pt] 
-\midrule\addlinespace[2.5pt]
-Legitimate & 1.18  (5) & 10.85 (46) & 48.35 (205) & 39.62 (168) \\ 
-Not legitimate & 9.50 (19) & 30.50 (61) & 51.00 (102) & 9.00  (18) \\ 
-\midrule\addlinespace[2.5pt]
-\multicolumn{5}{l}{{\bfseries Treatment}} \\[2.5pt] 
-\midrule\addlinespace[2.5pt]
-Legitimate & 2.58 (11) & 9.39 (40) & 42.25 (180) & 45.77 (195) \\ 
-Not legitimate & 6.25 (13) & 19.23 (40) & 55.77 (116) & 18.75  (39) \\ 
-\bottomrule
-
-\end{longtable}
-
-\begin{minipage}{\linewidth}
-Table reflects row percentages. NAs omitted\\
-\textsuperscript{\textit{1}}Q19. How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November?\\
-\textsuperscript{\textit{2}}Q7.Regardless of whom you supported in the 2020 election, 
-do you think Joe Biden's election as president was legitimate, or was he not legitimately elected?\\
-\end{minipage}
-\endgroup
-
-\subsection{Impacts on Confidence}\label{impacts-on-confidence}
+We asked respondents to report how various features of election
+administration would: 1) influence their confidence in the fairness and
+accuracy of elections this November; and 2) influence their confidence
+that voters would be safe from violence, threats of violence, or
+intimidation while voting in-person this election. One of the primary
+objectives was to determine whether recruiting veterans was preferable
+to recruiting lawyers and college students, two other groups that are
+commonly discussed as potential additions to the elections workforce.
 
 \subsubsection{Impact on confidence in fairness and accuracy of
 elections}\label{impact-on-confidence-in-fairness-and-accuracy-of-elections}
 
-The following examines survey questions that asked respondents whether
-particular circumstances or election official actions would have any
-impact on their confidence in the fairness and accuracy of elections.
 Survey participants responded to six statements, all prefaced with the
 following,
 
@@ -892,92 +868,51 @@ five response options:
 \end{enumerate}
 
 The primary interest concerned whether confidence in election fairness
-would increase or decreased based on the composition of election staff
+would increase or decrease based on the composition of election staff
 and volunteers. Of particular importance are responses to the statement
 which asked respondents to consider whether inclusion of military
 veterans and veteran's family members as election staff and volunteers
 has any impact on their confidence in the fairness and accuracy of
-elections in November. In this case, significant differences were
-observed between treatment and control groups.
-
-The figure below displays a clear boost in confidence when election
-staff includes veterans and family members, but most especially for
-those who were in the treatment group. That is, the percentage of people
-who said their confidence in election fairness would increase when
-election staff includes veterans was about 11.6 percentage points higher
-than those who said the same in the control group.
-
-\subsection{Fig Q41}
+elections in November.
 
 \begin{figure*}
 
 \centering{
 
-\includegraphics{index_files/figure-pdf/fig-q41-1.pdf}
+\includegraphics{index_files/figure-pdf/fig-q41-likert-1.pdf}
 
 }
 
-\caption{\label{fig-q41}}
+\caption{\label{fig-q41-likert}Impact on Confidence in Election Fairness
+and Accuracy by Recruitment Program}
 
 \end{figure*}%
 
-\subsection{Q41 Coef Plot}
+Results displayed in Figure~\ref{fig-q41-likert} suggest that county
+efforts to recruit veterans as election staff and volunteers does more
+to increase one's confidence in the fairness and accuracy of elections
+regardless of the experimental condition. That is, even for those who
+were in the \emph{control} group, respondents reported that the
+inclusion of veterans and their family members as election staff and
+volunteers would increase confidence in the fairness and accuracy of
+elections more than when election staff includes lawyers or college
+students. This increase in confidence was 9\% percentage points higher
+compared to when lawyers are included as election staff, and 16\%
+percentage points higher than when election staff and volunteers are
+said to include college students.
 
-\begin{figure*}
+Moreover, Figure~\ref{fig-q41-likert} demonstrates a clear boost in
+confidence when election staff includes veterans and family members,
+especially for those who were in the treatment group. The percentage of
+people who said their confidence in election fairness would increase
+when election staff includes veterans was about 11.6\% percentage points
+higher than those who said the same in the control group.
 
-\centering{
-
-\includegraphics{index_files/figure-pdf/fig-q41-coef-plot-1.pdf}
-
-}
-
-\caption{\label{fig-q41-coef-plot}}
-
-\end{figure*}%
-
-An 11.6 percentage point difference was observed between treatment and
-control groups among those who reported that their confidence in the
-fairness and accuracy of elections would ``increase a lot'' or
-``increase somewhat'' when election staff and volunteers include (or
-consist of a majority of) military service veterans and their family
-members in the community. This difference was estimated with 95\%
-confidence to be statistically significant (p \textless{} 0.01, CI
-{[}-0.169, -0.057{]}). Conversely, no difference was observed between
-treatment and control groups among those who reported that their
-confidence would ``decrease a lot'' or ``decrease somewhat''.
-
-In the following table, responses were collapsed into three categories.
-Any increase in confidence (e.g., increase confidence a lot, increase
-confidence somewhat) were collapsed into one column, and likewise for
-any response indicating a decrease in confidence.
-
-\begin{table}
-
-\caption{\label{tbl-4}Confidence Impact on Election Fairness and
-Accuracy}
-
-\centering{
-
-\begingroup\fontsize{13}{15}\selectfont
-
-\begin{tabu} to \linewidth {>{\raggedright}X>{\raggedright}X>{\raggedright}X>{\raggedright}X>{\raggedright}X}
-\hline
-Condition/Election staff include veterans and family & Decrease Confidence & No Impact & Increase Confidence & Total\\
-\hline
-Control & 10.11\%  (63) & 44.78\% (279) & 45.10\% (281) & 100.00\%   (623)\\
-\hline
-Treatment & 8.62\%  (55) & 34.64\% (221) & 56.74\% (362) & 100.00\%   (638)\\
-\hline
-Total & 9.36\% (118) & 39.65\% (500) & 50.99\% (643) & 100.00\% (1,261)\\
-\hline
-\multicolumn{5}{l}{\rule{0pt}{1em}\textit{Note: }}\\
-\multicolumn{5}{l}{\rule{0pt}{1em}NA omitted. \% (n)}\\
-\end{tabu}
-\endgroup{}
-
-}
-
-\end{table}%
+These results suggest that county efforts to recruit veterans as
+election staff and volunteers does more to increase one's confidence in
+the fairness and accuracy of elections, especially under the prospect
+that election staff and volunteers would include veterans and their
+family members.
 
 These results suggest that reading a vignette about county efforts to
 recruit veterans as election staff and volunteers does more to increase
@@ -1004,64 +939,21 @@ the treatment group who reported that their confidence in voter safety
 would increase when election staff is said to include veterans and their
 family members.
 
-\subsection{Fig Q43}
-
 \begin{figure*}
 
 \centering{
 
-\includegraphics{index_files/figure-pdf/fig-q43-1.pdf}
+\includegraphics{index_files/figure-pdf/fig-q43-likert-1.pdf}
 
 }
 
-\caption{\label{fig-q43}}
-
-\end{figure*}%
-
-\subsection{Q43 Coef Plot}
-
-\begin{figure*}
-
-\centering{
-
-\includegraphics{index_files/figure-pdf/fig-q43-coefplot-1.pdf}
-
-}
-
-\caption{\label{fig-q43-coefplot}}
+\caption{\label{fig-q43-likert}}
 
 \end{figure*}%
 
 The proportion of people who said their confidence in voter safety would
 increase when election staff includes veterans was about 8.4 percentage
 points higher than those who said the same in the control group.
-
-\begin{table}
-
-\caption{\label{tbl-7}Confidence Impact on In-person Voter Safety}
-
-\centering{
-
-\begingroup\fontsize{13}{15}\selectfont
-
-\begin{tabu} to \linewidth {>{\raggedright}X>{\raggedright}X>{\raggedright}X>{\raggedright}X>{\raggedright}X}
-\hline
-Condition/Election staff include veterans and family & Decrease Confidence & No Impact & Increase Confidence & Total\\
-\hline
-Control & 12.20\%  (76) & 38.68\% (241) & 49.12\% (306) & 100.00\%   (623)\\
-\hline
-Treatment & 9.09\%  (58) & 33.39\% (213) & 57.52\% (367) & 100.00\%   (638)\\
-\hline
-Total & 10.63\% (134) & 36.00\% (454) & 53.37\% (673) & 100.00\% (1,261)\\
-\hline
-\multicolumn{5}{l}{\rule{0pt}{1em}\textit{Note: }}\\
-\multicolumn{5}{l}{\rule{0pt}{1em}NA omitted. \% (n)}\\
-\end{tabu}
-\endgroup{}
-
-}
-
-\end{table}%
 
 \section{Sample Demographics and
 Balance}\label{sample-demographics-and-balance}
@@ -1103,7 +995,7 @@ condition}
 
 \begin{tabu} to \linewidth {>{\raggedright}X>{\raggedright}X>{\raggedright}X>{\raggedright}X}
 \toprule
-  & Control & Treatment & Overall\\
+  & Standard Recruitment & VMF Recruitment & Overall\\
 \midrule
  & (N=624) & (N=639) & (N=1263)\\
 \addlinespace[0.3em]
@@ -1158,7 +1050,7 @@ condition}
 \hspace{1em}Yes & 215 (34.5\%) & 223 (34.9\%) & 438 (34.7\%)\\
 \hspace{1em}No & 409 (65.5\%) & 416 (65.1\%) & 825 (65.3\%)\\
 \addlinespace[0.3em]
-\multicolumn{4}{l}{\textbf{Q66. Turnout 2020}}\\
+\multicolumn{4}{l}{\textbf{Turnout 2020}}\\
 \hspace{1em}Didn't vote & 129 (20.7\%) & 117 (18.3\%) & 246 (19.5\%)\\
 \hspace{1em}Unsure/Ineligible & 49 (7.9\%) & 52 (8.1\%) & 101 (8.0\%)\\
 \hspace{1em}Voted & 446 (71.5\%) & 470 (73.6\%) & 916 (72.5\%)\\
@@ -1182,7 +1074,77 @@ condition}
 
 \end{table}%
 
-\section{Appendix}\label{appendix}
+\section{Appendix: Survey Experiment
+Vignettes}\label{appendix-survey-experiment-vignettes}
+
+\begin{figure}
+
+\begin{minipage}{0.50\linewidth}
+
+\centering{
+
+\subsubsection{Treatment Vignette}\label{treatment-vignette}
+
+\textbf{Local Military Veterans Recruited for Election Jobs in Maricopa
+County}\\
+\strut \\
+\strut ~~PHOENIX (AP) --- Election officials in Maricopa County,
+Arizona, announced a program designed to recruit military veterans and
+their family members from the community to serve as election
+administrators, including election polling place workers, temporary
+workers, and full-time staff. As the U.S. general elections in November
+near, election officials must fill several thousand temporary positions
+and hundreds of other open positions to ensure sufficient staffing for
+the 2024 elections and beyond.\\
+\strut \\
+\strut ~~Army veteran Jordan Braxton just joined the elections
+workforce. Jordan believes their role is important to ensuring a secure,
+accurate, and transparent election, ``Many places are short on staff
+this election cycle. I served my country in the Army, and I want to do
+my part as a veteran and a citizen to ensure that everyone trusts the
+process and the outcome of the election.''
+
+}
+
+\subcaption{\label{fig-treatment}Text of the Treatment Condition:
+Recruitment of Veterans and Military Family Members}
+
+\end{minipage}%
+%
+\begin{minipage}{0.50\linewidth}
+
+\centering{
+
+\subsubsection{Control Vignette}\label{control-vignette}
+
+\textbf{Local Residents Recruited for Election Jobs in Maricopa
+County}\\
+\strut \\
+\strut ~~PHOENIX (AP) ---Election officials in Maricopa County, Arizona,
+announced a program to recruit members of the community to serve as
+election administrators, including election polling place workers,
+temporary workers, and full-time staff. As the U.S. general elections in
+November near, election officials must fill several thousand temporary
+positions and hundreds of other open positions to ensure sufficient
+staffing for the 2024 elections and beyond.\\
+\strut \\
+\strut ~~Jordan Braxton just joined the elections workforce. Jordan
+believes their role is important to ensuring a secure, accurate, and
+transparent election, ``Many places are short on staff this election
+cycle. I want to do my part as a citizen to ensure that everyone trusts
+the process and the outcome of the election.''
+
+}
+
+\subcaption{\label{fig-control}Text of the Control Condition:
+Recruitment of Community Members}
+
+\end{minipage}%
+
+\caption{\label{fig-vignettes}Fabricated Article Vignettes utilized as
+Experimental Stimulus}
+
+\end{figure}%
 
 
 

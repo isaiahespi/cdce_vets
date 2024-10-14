@@ -23,13 +23,26 @@ format:
     toc-expand: true
     toc-location: left
     title-block-style: default
+    title-block-banner: images/CDCE.png
     appendix-style: none
     search: false
+    link-citations: true
+    css: styles.css
+    # notebook-links: global # hold off on this until ready
+    fig-responsive: true
+    smooth-scroll: true
+    embed-resources: true
+    link-external-newwindow: true
+    footnotes-hover: false
+    reference-location: document
+    page-layout: article
+    lightbox: true
+    number-sections: false
     theme:
       light: default
       dark: darkly
     grid: 
-      margin-width: 450px
+      body-width: 900px
     # Use a CSL to style (https://www.zotero.org/styles/)
     # csl: https://www.zotero.org/styles/american-political-science-review
   # docx: default

@@ -190,14 +190,27 @@ df |>
     q24 = "Election systems will be secure from technological threats",
     q26 = "Voting sites will be safe places for in-person voting"
   ) |> 
-  ggstats::gglikert(include = c(q20), y = 'group', facet_rows = vars(.question))+ 
+  ggstats::gglikert(include = c(q19, q20, q22, q23, q24, q26), y = 'group', facet_rows = vars(.question))+ 
   labs(
-    title = "Election staff in Maricopa County, AZ will do a good job by Experiment Condition"
+    title = "Trust and Confidence Electoral Process by Experiment Condition"
   )+
+  scale_fill_manual(
+    values = c("black", "firebrick4", "firebrick3", "firebrick1")
+  )+
+  # paletteer::scale_fill_paletteer_d("rockthemes::miles", direction = 1) +
   theme_bw()+
   theme(legend.position = 'bottom')
 
-
+"rockthemes::faithnomore"
+"nord::frost"
+"awtools::gpalette" # gray af
+"nbapalettes::hawks" # close to Maryland colors
+"nbapalettes::heat_dark"
+"nbapalettes::hornets_city2"
+"rockthemes::miles"
+"ggthemes::wsj_black_green"
+"ggthemes::wsj_dem_rep"
+"rockthemes::alice"
 
 df |>
   labelled::set_variable_labels(
@@ -220,6 +233,24 @@ df |>
 # this is for the same questions but as concern the local community
 ggstats::gglikert(data = df, include = c(q30, q31, q33, q34, q35, q37), y = 'group', facet_rows = vars(.question))
 
+
+df |>
+  ggstats::gglikert(include = c(q19), y = 'group')+
+  ggplot2::facet_grid(cols = vars(.question))+
+  labs(
+    title = "Confidence in Vote Count by Experiment Condition",
+    caption = "VMF Recruitment = 639, Standard Recruitment = 624",
+    x = "How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November?"
+  )+
+  # customize color
+  scale_fill_manual(
+    values = c("black", "grey35", "firebrick1", "firebrick3")
+  )+
+  theme_bw()+
+  theme(legend.position = 'bottom',    # place legend on bottom
+        axis.text.x = element_blank(), # remove percentage text along x-axis
+        strip.text.x = element_blank() # remove label of facet
+        )
 
 # committed
 # no big whoop here
@@ -621,3 +652,57 @@ df |>
   )+
   theme_bw()+
   theme(legend.position = 'bottom', strip.text = element_blank())
+
+
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::####
+
+# Q36 "Thinking about your local area, how concerned should voters feel about potential violence, threats of violence, or intimidation while voting in person at their local polling place?"
+
+df |> 
+  labelled::set_variable_labels(
+    q36 = "Prospect of violence, Local",
+    q25 = "Prospect of violence, AZ",
+    q37 = "In-person voter safety",
+    q38 = "Personal safety voting local"
+  ) |>  
+  ggstats::gglikert(include = c(q25, q36), y = 'group', facet_rows = vars(.question))+
+  ggplot2::facet_grid(labeller = label_wrap_gen(15))+
+  # customize color
+  scale_fill_manual(values = c("black", "grey35", "firebrick1", "firebrick3"))+
+  theme_bw()+
+  theme(legend.position = 'bottom',    # place legend on bottom
+        axis.text.x = element_blank(), # remove percentage text along x-axis
+        )
+
+# Q37 "How confident, if at all, are you that in person polling places in your local area will be safe places for voters to cast their ballots during the upcoming elections in November?"
+df |>
+  labelled::set_variable_labels(
+    q36 = "Prospect of violence, threats, intimidation",
+    q37 = "In-person voter safety",
+    q38 = "Personal safety voting local"
+  ) |>  
+  ggstats::gglikert(include = c(q37), y = 'group')+
+  ggplot2::facet_grid(rows = vars(.question), labeller = label_wrap_gen(15))+
+  # customize color
+  scale_fill_manual(values = c("black", "grey35", "firebrick1", "firebrick3"))+
+  theme_bw()+
+  theme(legend.position = 'bottom',    # place legend on bottom
+        axis.text.x = element_blank(), # remove percentage text along x-axis
+        )
+
+
+# Q38 "Overall, how safe would you feel voting in person in your local area?"
+df |>
+  labelled::set_variable_labels(
+    q36 = "Prospect of violence, threats, intimidation",
+    q37 = "In-person voter safety",
+    q38 = "Personal safety voting local"
+  ) |>  
+  ggstats::gglikert(include = c(q38), y = 'group')+
+  ggplot2::facet_grid(rows = vars(.question), labeller = label_wrap_gen(15))+
+  # customize color
+  scale_fill_manual(values = c("black", "grey35", "firebrick1", "firebrick3"))+
+  theme_bw()+
+  theme(legend.position = 'bottom',    # place legend on bottom
+        axis.text.x = element_blank(), # remove percentage text along x-axis
+        )

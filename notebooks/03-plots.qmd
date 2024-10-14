@@ -22,10 +22,62 @@ library(janitor)
 # load data
 load("data/df-2024-09-11.Rdata") # df set as factor with dummy vars
 
+
+# To avoid excessive copy/paste, I made a function to create Likert plots
+# it is mostly a wrapper around `ggstats::gglikert`, but with a specific set up
+# particular colors, theme, etc. 
+likert_plot <- function(data, x, y){
+  ggstats::gglikert(data = data, include = {{ x }}, y = {{ y }}, 
+                    facet_rows = vars(.question))+
+    # customize color
+    scale_fill_manual(values = c("black", "grey35", "firebrick1", "firebrick3"))+
+    theme_bw()+
+    theme(
+      legend.position = 'bottom',    # place legend on bottom
+      axis.text.x = element_blank(), # remove percentage text along x-axis
+      strip.text = element_blank() # remove label of facet
+        )
+}
+
+
+
 ```
 
 
 ## Figures
+
+```{r}
+#| label: fig-q19-likert
+#| fig-cap: "Confidence in Accurate Vote Count by Experiment Condition"
+#| fig-cap-location: top
+
+# Q19 by experiment condition, Likert style plot
+likert_plot(df, q19, group)+
+  labs(
+    title = "Confidence in Vote Count by Recruitment Program",
+    caption = "VMF Recruitment = 639, Standard Recruitment = 624",
+    x = str_wrap(attr(df$q19, "label"), width = 95))
+
+# same plot, without the function
+df |>
+  ggstats::gglikert(include = c(q19), y = 'group')+
+  ggplot2::facet_grid(cols = vars(.question))+
+  labs(
+    title = "Confidence in Vote Count by Experiment Condition",
+    caption = "VMF Recruitment = 639, Standard Recruitment = 624",
+    x = "How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November?"
+  )+
+  # customize color
+  scale_fill_manual(
+    values = c("black", "grey35", "firebrick1", "firebrick3")
+  )+
+  theme_bw()+
+  theme(legend.position = 'bottom',    # place legend on bottom
+        axis.text.x = element_blank(), # remove percentage text along x-axis
+        strip.text.x = element_blank()) # remove label of facet
+
+```
+
 
 ```{r}
 #| label: fig-q19-barplot
@@ -33,6 +85,7 @@ load("data/df-2024-09-11.Rdata") # df set as factor with dummy vars
 #| fig-cap-location: top
 
 # Q19 by experiment condition, barplot
+# black and white. Includes number of obs
 df |> 
   # compute frequency within each combination
   group_by(group, q19) |> 
@@ -53,8 +106,45 @@ df |>
        fill = "Group\nExperiment\nCondition",
        caption = 'Treatment n = 639, Control n = 624')+
   theme_bw()
-
 ```
+
+
+```{r}
+#| label: fig-q19-barplot2
+#| fig-cap: "Confidence in Accurate Vote Count by Experiment Condition"
+#| fig-cap-location: top
+
+# alternate
+# Q19 by experiment condition, barplot
+# different colors. Removes number of obs
+df |> 
+  # compute frequency within each combination
+  group_by(group, q19) |> 
+  count() |>  
+  # compute proportion within group
+  # n is the default variable created by count()
+  group_by(group) |> 
+  mutate(prop = round(n/sum(n), digits = 3),
+         pct = prop*100,
+         res = str_c(pct,'%')) |> 
+  ggplot(aes(x = q19, y = pct, fill = group))+
+  geom_bar(position = 'dodge', stat = 'identity')+
+  geom_text(aes(label = res), position = position_dodge(1.0), size = 2.5, vjust = -0.5)+
+  # set fill colors manually
+  scale_fill_manual(
+    values = c("grey28", 'firebrick3'))+
+  # scale_fill_grey(start = 0.5, end = 0.1)+
+  # \n in a string tells R to break the line there
+  labs(y = "Percentage",
+       x = "How confident are you that votes in Maricopa County, AZ \nwill be counted as voters intend in the elections this November?",
+       fill = "Group\nExperiment\nCondition",
+       caption = 'Treatment n = 639, Control n = 624')+
+  theme_bw()+
+  theme(legend.position = "bottom")
+```
+
+
+
 
 ```{r}
 #| label: fig-q19-legit
@@ -65,13 +155,18 @@ df |>
 df |> 
   select(group, q7, q19, q19.clps) |>
   drop_na() |> 
-  ggstats::gglikert(include = c(q19), y = 'group', facet_rows = vars(q7))+
+  ggstats::gglikert(include = c(q19), y = 'group')+
+  ggplot2::facet_grid(rows = vars(q7))+
+  # customize color
+  scale_fill_manual(values = c("black", "grey35", "firebrick1", "firebrick3"))+
+  labs(
+    title = "Confidence in Vote Count by Beliefs of 2020 Election Legitimacy and Election Staff Recruitment",
+    subtitle = "Do you think Joe Biden's election as president was legitimate, or was he not legitimately elected?",
+    caption = "VMF Recruitment = 639, Standard Recruitment = 624",
+    x = "How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November?"
+  )+
   theme_bw()+
-  theme(legend.position = 'bottom')
-
-
-
-
+  theme(legend.position = 'bottom', axis.text.x = element_blank())
 
 ```
 
@@ -172,6 +267,32 @@ df |>
 
 ```
 
+```{r}
+#| label: fig-q20-coefplot
+
+
+modq20 <- df |> 
+  select(group, q20, q20.clps) |> 
+  drop_na() |> 
+  mutate(q20.dum = dplyr::case_when(
+    q20.clps == "Confident" ~ 1,
+    q20.clps == "Not_confident" ~ 0,
+    TRUE ~ NA
+  )) %>%
+  lm(q20.dum ~ group, data = .)
+
+# modq20 |> summary() |> broom::tidy(conf.int = T)
+
+
+# create a coef plot of the linear model with confidence interval error bars 
+ggstats::ggcoef_model(model = modq20, conf.int = T)+
+  theme_bw()+
+  theme(legend.position = 'bottom')
+
+
+
+```
+
 
 
 ```{r}
@@ -195,13 +316,64 @@ df |>
   scale_fill_grey(start = 0.5, end = 0.1)+
   # \n in a string tells R to break the line there
   labs(y = "Percentage",
-       x = "Q21. How committed do you think Election Staff will be \nto making sure the elections held this November are fair and accurate?",
+       x = "How committed do you think Election Staff will be \nto making sure the elections held this November are fair and accurate?",
        fill = "Group\nExperiment\nCondition",
        caption = 'Treatment n = 639, Control n = 624')+
   theme_bw()
 
 ```
 
+```{r}
+#| label: fig-q21-likert
+#| fig-cap: "Confidence in Commitment of Election Staff and Volunteers by Experiment Condition"
+#| fig-cap-location: top
+
+df |>
+  ggstats::gglikert(include = c(q21), y = 'group')+
+  ggplot2::facet_grid(cols = vars(.question))+
+  labs(
+    title = "Confidence in Commitment of Election Staff and Volunteers by Experiment Condition",
+    caption = "VMF Recruitment = 639, Standard Recruitment = 624",
+    x = "How committed do you think Election Staff will be \nto making sure the elections held this November are fair and accurate?"
+  )+
+  # customize color
+  scale_fill_manual(
+    values = c("black", "grey35", "firebrick1", "firebrick3")
+  )+
+  theme_bw()+
+  theme(legend.position = 'bottom',    # place legend on bottom
+        axis.text.x = element_blank(), # remove percentage text along x-axis
+        strip.text.x = element_blank()) # remove label of facet
+
+
+
+```
+
+```{r}
+#| label: fig-q22-likert
+#| fig-cap: "Confidence in Fair Voting Process by Experiment Condition"
+#| fig-cap-location: top
+
+df |>
+  ggstats::gglikert(include = c(q22), y = 'group')+
+  ggplot2::facet_grid(cols = vars(.question))+
+  labs(
+    title = "Confidence in Fair Voting Process by Experiment Condition",
+    caption = "VMF Recruitment = 639, Standard Recruitment = 624",
+    x = "How confident are you that the voting process will be fair in Maricopa County, AZ?"
+  )+
+  # customize color
+  scale_fill_manual(
+    values = c("black", "grey35", "firebrick1", "firebrick3")
+  )+
+  theme_bw()+
+  theme(legend.position = 'bottom',    # place legend on bottom
+        axis.text.x = element_blank(), # remove percentage text along x-axis
+        strip.text.x = element_blank()) # remove label of facet
+
+
+
+```
 
 ```{r}
 #| label: fig-q22-barplot
@@ -225,7 +397,7 @@ df |>
   scale_fill_grey(start = 0.5, end = 0.1)+
   # \n in a string tells R to break the line there
   labs(y = "Percentage",
-       x = "Q22.How confident are you that the voting process will be fair in Maricopa County, AZ?",
+       x = "How confident are you that the voting process will be fair in Maricopa County, AZ?",
        fill = "Group\nExperiment\nCondition",
        caption = 'Treatment n = 639, Control n = 624')+
   theme_bw()
@@ -285,6 +457,32 @@ ggstats::ggcoef_model(model = modq19_q7, conf.int = T)+
 ```
 
 ```{r}
+#| label: fig-q23-likert
+#| fig-cap: "Confidence in Fair Voting Outcomes by Recruitment Program"
+#| fig-cap-location: top
+
+df |>
+  ggstats::gglikert(include = c(q23), y = 'group')+
+  ggplot2::facet_grid(cols = vars(.question))+
+  labs(
+    title = "Confidence in Fair Voting Outcomes by Recruitment Program",
+    caption = "VMF Recruitment = 639, Standard Recruitment = 624",
+    x = "How confident are you that the voting outcomes will be fair in Maricopa County, AZ?"
+  )+
+  # customize color
+  scale_fill_manual(
+    values = c("black", "grey35", "firebrick1", "firebrick3")
+  )+
+  theme_bw()+
+  theme(legend.position = 'bottom',    # place legend on bottom
+        axis.text.x = element_blank(), # remove percentage text along x-axis
+        strip.text.x = element_blank()) # remove label of facet
+
+
+
+```
+
+```{r}
 #| label: fig-q23-barplot
 
 df |> 
@@ -335,6 +533,34 @@ df |>
 ```
 
 ```{r}
+#| label: fig-q24-likert
+#| fig-cap: "Trust in Election Systems Tech by Recruitment Program"
+#| fig-cap-location: top
+
+df |>
+  select(q24, group) |> 
+  drop_na() |> 
+  ggstats::gglikert(include = c(q24), y = 'group')+
+  ggplot2::facet_grid(cols = vars(.question))+
+  labs(
+    title = "Trust in Election Systems Tech by Recruitment Program",
+    caption = "VMF Recruitment = 639, Standard Recruitment = 623",
+    x = "How confident are you that election systems in Maricopa County, AZ will be secure from hacking and other technological threats?"
+  )+
+  # customize color
+  scale_fill_manual(
+    values = c("black", "grey35", "firebrick1", "firebrick3")
+  )+
+  theme_bw()+
+  theme(legend.position = 'bottom',    # place legend on bottom
+        axis.text.x = element_blank(), # remove percentage text along x-axis
+        strip.text.x = element_blank()) # remove label of facet
+
+
+
+```
+
+```{r}
 #| label: fig-q24-barplot
 #| fig-cap: "Confidence in Election Systems Tech by Experiment Condition"
 #| fig-cap-location: top
@@ -368,6 +594,35 @@ df |>
 
 
 ```{r}
+#| label: fig-q25-likert
+#| fig-cap: "Concern for violence, threats, or voter intimidation in Maricopa County, AZ by Recruitment Program"
+#| fig-cap-location: top
+
+df |>
+  select(q25, group) |> 
+  drop_na() |> 
+  # dplyr::mutate(q25 = forcats::fct_rev(q25)) |> 
+  ggstats::gglikert(include = c(q25), y = 'group', reverse_likert = F)+
+  ggplot2::facet_grid(cols = vars(.question))+
+  labs(
+    title ="Concern for violence, threats, or voter intimidation in Maricopa County, AZ by Recruitment Program",
+    caption = "VMF Recruitment = 639, Standard Recruitment = 623",
+    x = "Thinking about Maricopa County, AZ, how concerned should voters feel about \npotential violence, threats of violence, or intimidation while voting in person at their local polling place?"
+  )+
+  # customize color
+  scale_fill_manual(
+    values = c("black", "grey35", "firebrick1", "firebrick3")
+  )+
+  theme_bw()+
+  theme(legend.position = 'bottom',    # place legend on bottom
+        axis.text.x = element_blank(), # remove percentage text along x-axis
+        strip.text.x = element_blank()) # remove label of facet
+
+
+
+```
+
+```{r}
 #| label: fig-q25-barplot
 #| fig-cap: "Concern for violence, threats, or voter intimidation in Maricopa County, AZ by Experiment Condition"
 #| fig-cap-location: top
@@ -397,29 +652,6 @@ df |>
 ```
 
 
-```{r}
-#| label: fig-q25-likert
-#| fig-cap: "Concern for violence, threats, or voter intimidation in Maricopa County, AZ by Experiment Condition"
-#| fig-cap-location: top
-
-
-# plot
-df |> 
-  mutate(q25 = forcats::fct_rev(q25)) |> 
-  labelled::set_variable_labels(
-    q25 = 'Concern for voter intimidation, threats, or violence'
-  ) |> 
-  ggstats::gglikert(include = q25,
-                    y = 'group',
-                    facet_rows = vars(.question))+
-  labs(
-    title = "Concern for voter intimidation, threats, or violence by Experiment Condition",
-    subtitle = "Q25. Thinking about Maricopa County, AZ, how concerned should voters feel about \npotential violence, threats of violence, or intimidation while voting in person at their local polling place?")+
-  theme_bw()+
-  theme(legend.position = 'bottom')
-
-
-```
 
 ```{r}
 #| label: fig-q26-barplot
@@ -452,8 +684,6 @@ df |>
 
 
 ```
-
-
 
 ```{r}
 #| label: fig-q26-likert
@@ -564,40 +794,67 @@ df |>
 #| fig-cap-location: top
 
 # Q27
-df |> 
-  ggstats::gglikert(
-    include = q27, 
-    variable_labels = c(q27 ="Election Official Approval"),
-    y = 'group',
-    facet_rows = vars(.question))+
+likert_plot(df, q27, group)+
   labs(
-    subtitle = "Q27. Do you approve or disapprove of the way \nelection officials in Maricopa County, AZ are handling their jobs?",
-       caption = 'Treatment n = 636, Control n = 623')+
-  theme_bw()+
-  theme(legend.position = 'bottom')
+    title = "Approval of Election Officials in Maricopa County, AZ by Recruitment Program",
+    caption = 'VMF Recruitment =  636, Standard Recruitment = 623',
+    x = str_wrap(attr(df$q27, "label"), width = 95)
+    )
+
+# same thing, but not wrapped within the function
+# df |> 
+#   ggstats::gglikert(
+#     include = q27, 
+#     variable_labels = c(q27 ="Election Official Approval"),
+#     y = 'group',
+#     facet_rows = vars(.question))+
+#   labs(
+#     title = "Approval of Election Officials in Maricopa County, AZ by Recruitment Program",
+#     subtitle = "Do you approve or disapprove of the way \nelection officials in Maricopa County, AZ are handling their jobs?",
+#     caption = 'Treatment n = 636, Control n = 623')+
+#   # customize color
+#   scale_fill_manual(
+#     values = c("black", "grey35", "firebrick1", "firebrick3")
+#   )+
+#   theme_bw()+
+#   theme(legend.position = 'bottom',    # place legend on bottom
+#         axis.text.x = element_blank(), # remove percentage text along x-axis
+#         strip.text.x = element_blank()) # remove label of facet
 
 
 ```
 
 ```{r}
 #| label: fig-q28-likert
-#| fig-cap: "Expectation of Electoral Fraud in Maricopa County, AZ by Experiment Condition"
+#| fig-cap: "Expectation of Electoral Fraud in Maricopa County, AZ by Recruitment Program"
 #| fig-cap-location: top
 
-df |> 
-  mutate(across(c(q28_1:q28_5), ~ forcats::fct_rev(.))) |> 
+df |>
+  mutate(across(c(q28_1:q28_5), ~ forcats::fct_rev(.))) |>
   labelled::set_variable_labels(
     q28_1 = "Voter fraud",
     q28_2 = "Vote Miscount",
     q28_3 = "Rejected",
     q28_4 = "Interference",
     q28_5 = "Discouraged"
-  ) |> 
-  ggstats::gglikert(include = q28_1:q28_5, y = 'group', facet_rows = vars(.question))+
+  ) |>
+  ggstats::gglikert(
+    include = q28_1:q28_5,
+    y = 'group',
+    facet_rows = vars(.question)
+  ) +
+  # customize color
+  scale_fill_manual(values = c("black", "grey35", "firebrick1", "firebrick3")) +
   labs(
-    subtitle = "How likely do you think any or all of the following will \nhappen during this year´s elections in Maricopa County, AZ?")+
-  theme_bw()
-  
+    title = "Expectation of Electoral Fraud in Maricopa County, AZ by Recruitment Program",
+    caption = 'VMF Recruitment = 639, Standard Recruitment = 624', 
+    x = "How likely do you think any or all of the following will \nhappen during this year´s elections in Maricopa County, AZ?") +
+  theme_bw() +
+  theme(
+    legend.position = 'bottom',     # place legend on bottom
+    axis.text.x = element_blank(),  # remove percentage text along x-axis
+    strip.text.x = element_blank()) # remove label of facet
+
 
 
 
@@ -641,24 +898,90 @@ df |>
 
 ```{r}
 #| label: fig-q29-likert
-#| fig-cap: "Approval of Election Officials in Maricopa County, AZ by Experiment Condition"
+#| fig-cap: "Approval of Election Officials in Maricopa County, AZ by Recruitment Program"
 #| fig-cap-location: top
 
 # Q29
-df |> 
-  ggstats::gglikert(
-    include = q29, 
-    variable_labels = c(q29 ="Adopt Maricopa County Program"),
-    y = 'group',
-    facet_rows = vars(.question))+
+likert_plot(df, q29, group)+
   labs(
-    subtitle = "How much would you like to see your local community adopt a program for recruiting elections staff like the one you read about in Maricopa County, AZ?",
-       caption = 'Treatment n = 638, Control n = 622')+
-  theme_bw()+
-  theme(legend.position = 'bottom')
+    title = "Approval of Election Officials in Maricopa County, AZ by Recruitment Program",
+    x = str_wrap(attr(df$q29, "label"), width = 95),
+    caption = 'VMF Recruitment = 638, Standard Recruitment = 622')
+
+# df |> 
+#   ggstats::gglikert(
+#     include = q29, 
+#     variable_labels = c(q29 ="Adopt Maricopa County Program"),
+#     y = 'group',
+#     facet_rows = vars(.question))+
+#   labs(
+#     subtitle = "How much would you like to see your local community adopt a program for recruiting elections staff like the one you read about in Maricopa County, AZ?",
+#        caption = 'Treatment n = 638, Control n = 622')+
+#   theme_bw()+
+#   theme(legend.position = 'bottom')
 
 
 ```
+
+```{r}
+#| label: fig-q29-coefplot
+
+modq29 <- df |> 
+  select(group, q29, q29.clps) |> 
+  drop_na() |> 
+  mutate(q29.dum = dplyr::case_when(
+    q29.clps == "support" ~ 1,
+    q29.clps == "oppose" ~ 0,
+    TRUE ~ NA
+  )) %>%
+  lm(q29.dum ~ group, data = .)
+
+modq29 |> summary() |> broom::tidy(conf.int = T)
+# this one is right on the line of statistical significance. t-statistic = 1.955, p-value = 0.0508
+# so technically it is not statistically significant, which means we can't reject null that mean support (i.e., should adopt) is different from mean support for those in the control group with a one-tailed test. 
+
+# create a coef plot of the linear model with confidence interval error bars 
+ggstats::ggcoef_model(model = modq29, conf.int = T)+
+  theme_bw()+
+  theme(legend.position = 'bottom')
+
+# I ran a t-test and a prop.test to confirm the results that were reported in the draft
+# df |> 
+#   select(group, q29, q29.clps) |> 
+#   drop_na() |> 
+#   mutate(q29.dum = dplyr::case_when(
+#     q29.clps == "support" ~ 1,
+#     q29.clps == "oppose" ~ 0,
+#     TRUE ~ NA
+#   ),
+#   group = dplyr::case_when(
+#     group == "VMF Recruitment" ~ 1,
+#     group == "Standard Recruitment" ~ 0,
+#     TRUE ~ NA
+#   )) %>%
+#   t.test(q29.dum ~ group, data = ., alternative = 'l') |> broom::tidy()
+# 
+# df |> 
+#   select(group, q29, q29.clps) |> 
+#   drop_na() |>
+#   mutate(q29.clps = fct_rev(q29.clps)) |> 
+#   mutate(q29.dum = dplyr::case_when(
+#     q29.clps == "support" ~ 1,
+#     q29.clps == "oppose" ~ 0,
+#     TRUE ~ NA
+#   ),
+#   group = dplyr::case_when(
+#     group == "VMF Recruitment" ~ 1,
+#     group == "Standard Recruitment" ~ 0,
+#     TRUE ~ NA
+#   )) %>%
+#   janitor::tabyl(group, q29.dum, show_na = F) |> 
+#   dplyr::relocate("1", .before = "0") |> 
+#   select(-1) %>% 
+#   rstatix::prop_test(alternative = "l", detailed = T)
+  
+```
+
 
 
 ```{r}
