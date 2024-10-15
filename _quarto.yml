@@ -3,7 +3,6 @@ project:
   output-dir: docs
   render: 
     - index.qmd
-    - "!_manuscript/"
     - "!notebooks/01-data-import-clean-process.qmd"
     - "!notebooks/02-crosstables.qmd"
     - "!notebooks/03-plots.qmd"
@@ -24,7 +23,7 @@ format:
     toc: true
     toc-depth: 3
     toc-expand: true
-    toc-location: left-body
+    toc-location: left
     title-block-style: default
     title-block-banner: images/CDCE.png
     appendix-style: none
@@ -37,7 +36,7 @@ format:
     embed-resources: true
     link-external-newwindow: true
     footnotes-hover: false
-    reference-location: document
+    reference-location: section
     page-layout: article
     lightbox: true
     number-sections: false

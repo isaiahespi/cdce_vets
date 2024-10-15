@@ -35,8 +35,13 @@ keywords:
 # abstract:
 # bibliography: references.bib
 # csl: american-political-science-association.csl
-code-tools: 
-    source: repo
+code-links:
+    - text: "Project GitHub Repository"
+      icon: github
+      href: https://github.com/isaiahespi/cdce_vets
+    - text: "Data Import and Clean Process"
+      icon: file-code
+      href: https://github.com/isaiahespi/cdce_vets/blob/main/notebooks/01-data-import-clean-process.qmd
 funding: "This research was supported by funding from The Democracy Fund. The views expressed are those of the authors only as are any errors."
 citation:
   container-title: Center for Democracy and Civic Engagement, University of Maryland
@@ -128,22 +133,38 @@ You are reading a work-in-progress.
 
 # Introduction
 
-This report presents results from a survey experiment designed to examine how information that election officials are hiring veterans and military family members for the elections workforce influences the public’s attitudes about elections. The survey was developed by the Center for Democracy and Civic Engagement ([CDCE](https://cdce.umd.edu/)) at the University of Maryland (UMD) in consultation from [We the Veterans and Military Families](https://www.wetheveterans.us/). The survey was fielded from August 29 through September 9, 2024 on a sample of 1,263 US citizens of voting age purchased from Lucid and drawn to be representative of the US adult citizen population.
+This report presents results from a survey experiment designed to examine how information that election officials are hiring veterans and military family members for the elections workforce influences the public’s attitudes about elections. The survey was developed by the Center for Democracy and Civic Engagement ([CDCE](https://cdce.umd.edu/)) at the University of Maryland (UMD) in consultation from [We the Veterans and Military Families](https://www.wetheveterans.us/). The survey was fielded from August 29 through September 9, 2024 on a sample of 1,263 US citizens of voting age purchased from Lucid and drawn to be representative of the US adult citizen population[^1].
+
+[^1]: It is important to note that because the sample is a non-probability sample, we focus on the differences across the conditions into which respondents were randomly assigned rather than the overall estimates for either group or the combined groups. Non-probability sampling uses non-random ways to select a group of people to participate in a research study or survey.
 
 After answering several background questions, participants were randomly assigned to read one of two vignettes we described as short excerpts from news stories. These vignettes were not from actual news stories, but they were modeled after relevant published articles. Both vignettes were set in Maricopa County, AZ and explained that local election officials were seeking to expand the elections workforce in advance of the upcoming presidential elections. We chose Maricopa County, AZ because it was a place where election administration was under close scrutiny in 2020 and could be again in 2024.
 
-The treatment condition focused on the recruitment of veterans and military family members from the local community to serve in elections jobs, while the control condition focused on recruiting members of the local community without reference to any populations to which they might belong. Due to the randomization into conditions, any differences in responses can be attributed to the inclusion of information about veterans and military family members. The text of the treatment and control conditions appears in the Appendix.
+The vignette of primary interest focused on the recruitment of veterans and military family members from the local community to serve in elections jobs (VMF recruitment), while the comparison condition focused on a standard recruitment of people from the local community without reference to any populations to which they might belong (standard recruitment). Due to the randomization into conditions, any differences in responses can be attributed to the inclusion of information about veterans and military family members[^2]. The text of the treatment and control conditions appears in the Appendix.
+
+[^2]: It is worth emphasizing that the differences between the VMF recruitment vignette and Standard Recruitment vignette are minimal. The former refers to a program designed to recruit veterans and their family members and describes the interviewee "Jordan Braxton" as an Army veteran; whereas the latter vignette simply omits any mention of veterans and their family members, and doesn't describe "Jordan Braxton" as an Army veteran. Beyond those small differences and the headlines, the article vignettes are identical. Thus, the effects discussed throughout this study refer to the effect of this difference.
 
 We examined the potential effect of the treatment on a variety of attitudes about elections in Maricopa County, AZ such as confidence, concern about the potential for violence, and expectations of fraud. **Across all of the questions we asked, information about the recruitment of veterans and military family members to elections jobs led to improved outcomes. The implications are clear---elections officials who are recruiting veterans and military family members should publicize this fact and those who are not doing this recruitment should do so.**
 
+The results also lead to the recommendation that election officials seek information about the status of their current workforce, full-time and temporary alike, as members of the VMF community. Given the usual age composition of individuals who sign up to be poll workers, it is highly likely that many served in the military themselves or members of their immediate family have done so. That is, it is likely that our elections workforce is already populated with veterans and military family members. Where this is the case, our results suggest that publicizing this information can help increase confidence in elections.
+
+# Results 
+
 ## Trust and Confidence in Election Process and Administration
 
-One of the most widely used questions in the study of attitudes about election administration asks how confident the respondent is that votes will be counted as intended. This question gets to the fundamental issue of how the process translates the voter’s behavior into the outcome. The figure below shows that **information that election officials are recruiting veterans and military family members boosts the rate at which respondents indicate they are very confident that votes in Maricopa County, AZ will be counted as intended (by 7 percentage points, from 30% to 37%, p\<0.025, one-tailed**[^1]).
+One of the most widely used questions in the study of attitudes about election administration asks how confident the respondent is that votes will be counted as intended. This question gets to the fundamental issue of how the process translates the voter’s behavior into the outcome. 
+
+@fig-q19-likert shows that **information that election officials are recruiting veterans and military family members (VMF recruitment) boosts the rate at which respondents indicate they are very confident that votes in Maricopa County, AZ will be counted as intended by 7 percentage points, from 30% to 37% (p\<0.025, one-tailed**[^3]).
+
+::: {.aside}
+Here's how to read @fig-q19-likert and all other plots like it. The question text that was presented to survey participants is displayed on top of the plot (i.e., bar graph). The horizontal bars represent the proportion of the sample separated according to which phony article (i.e., vignette) was read; either the `VMF Recruitment` vignette or the `Standard Recruitment` vignette. The bottom of the graph tells us that there were 624 who read the `Standard Recruitment` vignette, and 639 who read the `VMF Recruitment` vignette. Each horizontal bar is cut into four boxes that reflect the four response choices for the question and the percentage values inside each box represent the proportion of the sample in that group who chose the associated response. For instance, for those in the `Standard Recruitment` condition, 30% said they were "Very confident" and 49% said they were "Somewhat confident" that votes would be counted as voters intend. The percentage value on the far right (79%) represents the combined proportion of "Very confident" and "Somewhat confident" responses in the `Standard Recruitment` group condition. The percentage value on the far left (21%) represents the combined proportion of "Not at all confident" and "Not too confident" responses for that same group.
+:::
+
 
 ```{r}
 #| label: fig-q19-likert
-#| fig-cap: "Confidence in Accurate Vote Count by Recruitment Program"
+#| fig-cap: "Confidence Votes will be Counted as Intended by Condition (VMF recruitment vs. Standard Recruitment)"
 #| fig-cap-location: top
+#| column: page-right
 
 # Q19 by Recruitment Program, Likert style plot
 df |>
@@ -152,9 +173,8 @@ df |>
   ggstats::gglikert(include = c(q19), y = 'group')+
   ggplot2::facet_grid(cols = vars(.question))+
   labs(
-    title = "Confidence in Vote Count by Recruitment Program",
-    caption = "VMF Recruitment = 639, Standard Recruitment = 624",
-    x = "How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November?"
+    subtitle = str_wrap("How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November?", width = 85),
+    caption = "VMF Recruitment = 639, Standard Recruitment = 624"
   )+
   # customize color
   scale_fill_manual(
@@ -171,12 +191,14 @@ df |>
 
 ```
 
-Importantly, the effects are generally even larger among those expected to be the most skeptical. For example, **among those who said that they thought Joe Biden’s election to president was not legitimate, exposure to information about veterans and military family members increases confidence overall by 15 percentage points (from 60% to 75%, p\<0.025)**. The bulk of this increase is driven by a shift in the rate at which respondents feel very confident, going from 9% in the control (community) condition to 19% in the treatment (veterans) condition. The following figures illustrate these results.
+
+
+
+Importantly, the effects are generally even larger among those expected to be the most skeptical. For example, **among those who said that they thought Joe Biden’s election to president was not legitimate, exposure to information about veterans and military family members increases confidence overall by 15 percentage points from 60% to 75% (p\<0.025)**. The bulk of this increase is driven by a shift in the rate at which respondents feel very confident, going from 9% in the control (community) condition to 19% in the treatment (veterans) condition. The following figures illustrate these results.
 
 ```{r}
 #| label: fig-q19-legit
 #| fig-cap: "Confidence in Vote Count by Beliefs of 2020 Election Legitimacy and Recruitment Program"
-#| fig-subcap: "Proportion of confidence in vote count by belief of Biden's election legitimacy and Experimental condition"
 #| fig-cap-location: top
 
 
@@ -188,10 +210,9 @@ df |>
   # customize color
   scale_fill_manual(values = c("black", "grey35", "firebrick1", "firebrick3"))+
   labs(
-    title = "Confidence in Vote Count by Beliefs of 2020 Election Legitimacy and Election Staff Recruitment",
-    subtitle = "Do you think Joe Biden's election as president was legitimate, or was he not legitimately elected?",
+    subtitle = str_wrap("Do you think Joe Biden's election as president was legitimate, or was he not legitimately elected?", width = 85),
     caption = "VMF Recruitment = 639, Standard Recruitment = 624",
-    x = "How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November?"
+    x = str_wrap("How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November?", width = 85)
   )+
   theme_bw()+
   theme(legend.position = 'bottom', axis.text.x = element_blank())
@@ -204,16 +225,15 @@ Veterans and military family members are also regarded highly by the public for 
 
 ```{r}
 #| label: fig-q21-likert
-#| fig-cap: "Confidence in Commitment of Election Staff and Volunteers by Recruitment Program"
+#| fig-cap: "Confidence in Commitment of Election Staff and Volunteers by Condition (VMF recruitment vs. Standard Recruitment)"
 #| fig-cap-location: top
 
 df |>
   ggstats::gglikert(include = c(q21), y = 'group')+
   ggplot2::facet_grid(cols = vars(.question))+
   labs(
-    title = "Confidence in Commitment of Election Staff and Volunteers by Recruitment Program",
     caption = "VMF Recruitment = 639, Standard Recruitment = 624",
-    x = "How committed do you think Election Staff will be \nto making sure the elections held this November are fair and accurate?"
+    subtitle = str_wrap("How committed do you think Election Staff will be \nto making sure the elections held this November are fair and accurate?", width = 85)
   )+
   # customize color
   scale_fill_manual(
@@ -234,16 +254,15 @@ As shown in @fig-q21-likert, this increase is especially noteworthy as it brings
 
 ```{r}
 #| label: fig-q22-likert
-#| fig-cap: "Confidence in Fair Voting Process by Recruitment Program"
+#| fig-cap: "Confidence in Fair Voting Process by Condition (VMF recruitment vs. Standard Recruitment)"
 #| fig-cap-location: top
 
 df |>
   ggstats::gglikert(include = c(q22), y = 'group')+
   ggplot2::facet_grid(cols = vars(.question))+
   labs(
-    title = "Confidence in Fair Voting Process by Recruitment Program",
     caption = "VMF Recruitment = 639, Standard Recruitment = 624",
-    x = "How confident are you that the voting process will be fair in Maricopa County, AZ?"
+    subtitle = str_wrap("How confident are you that the voting process will be fair in Maricopa County, AZ?", width = 85)
   )+
   # customize color
   scale_fill_manual(
@@ -263,7 +282,7 @@ The bulk of this shift comes from an increase in the percentage of people saying
 
 ```{r}
 #| label: fig-q22-legit
-#| fig-cap: "Confidence in Fair Voting Process in Maricopa County, AZ among those who believe Biden's 2020 election was not legitimate"
+#| fig-cap: "Confidence in Fair Voting Process in Maricopa County, AZ by Beliefs of 2020 Election Legitimacy and Recruitment Program"
 #| fig-cap-location: top
 #| column: body-outset
 
@@ -277,10 +296,9 @@ df |>
   # customize color
   scale_fill_manual(values = c("black", "grey35", "firebrick1", "firebrick3"))+
   labs(
-    title = "Confidence in Fair Voting Process in Maricopa County, AZ by Beliefs of 2020 Election Legitimacy and Recruitment Program",
-    subtitle = "Do you think Joe Biden's election as president was legitimate, or was he not legitimately elected?",
+    subtitle = str_wrap("Do you think Joe Biden's election as president was legitimate, or was he not legitimately elected?", width = 85),
     caption = "VMF Recruitment = 639, Standard Recruitment = 624",
-    x = "How confident are you that the voting process will be fair in Maricopa County, AZ?"
+    x = str_wrap("How confident are you that the voting process will be fair in Maricopa County, AZ?", width = 85)
   )+
   theme_bw()+
   theme(legend.position = 'bottom', axis.text.x = element_blank())
@@ -292,16 +310,15 @@ Although outcomes are subject to a wider variety of factors, the veterans treatm
 
 ```{r}
 #| label: fig-q23-likert
-#| fig-cap: "Confidence in Fair Voting Outcomes by Recruitment Program"
+#| fig-cap: "Confidence in Fair Voting Outcomes by Condition (VMF recruitment vs. Standard Recruitment)"
 #| fig-cap-location: top
 
 df |>
   ggstats::gglikert(include = c(q23), y = 'group')+
   ggplot2::facet_grid(cols = vars(.question))+
   labs(
-    title = "Confidence in Fair Voting Outcomes by Recruitment Program",
     caption = "VMF Recruitment = 639, Standard Recruitment = 624",
-    x = "How confident are you that the voting outcomes will be fair in Maricopa County, AZ?"
+    subtitle = str_wrap("How confident are you that the voting outcomes will be fair in Maricopa County, AZ?", width = 85)
   )+
   # customize color
   scale_fill_manual(
@@ -322,7 +339,7 @@ Attitudes relating to election security and safety were also improved as a resul
 
 ```{r}
 #| label: fig-q24-likert
-#| fig-cap: "Trust in Election Systems Tech by Recruitment Program"
+#| fig-cap: "Trust in Election Systems Tech by Condition (VMF recruitment vs. Standard Recruitment)"
 #| fig-cap-location: top
 
 df |>
@@ -331,9 +348,8 @@ df |>
   ggstats::gglikert(include = c(q24), y = 'group')+
   ggplot2::facet_grid(cols = vars(.question))+
   labs(
-    title = "Trust in Election Systems Tech by Recruitment Program",
     caption = "VMF Recruitment = 639, Standard Recruitment = 623",
-    x = "How confident are you that election systems in Maricopa County, AZ will be secure from hacking and other technological threats?"
+    subtitle = str_wrap("How confident are you that election systems in Maricopa County, AZ will be secure from hacking and other technological threats?", width = 85)
   )+
   # customize color
   scale_fill_manual(
@@ -353,7 +369,7 @@ We assessed concerns for violence by asking how concerned voters in Maricopa Cou
 
 ```{r}
 #| label: fig-q25-likert
-#| fig-cap: "Concern for violence, threats, or voter intimidation in Maricopa County, AZ by Recruitment Program"
+#| fig-cap: "Concern for violence, threats, or voter intimidation in Maricopa County, AZ by Condition (VMF recruitment vs. Standard Recruitment)"
 #| fig-cap-location: top
 
 df |>
@@ -363,9 +379,8 @@ df |>
   ggstats::gglikert(include = c(q25), y = 'group', reverse_likert = F)+
   ggplot2::facet_grid(cols = vars(.question))+
   labs(
-    title ="Concern for violence, threats, or voter intimidation in Maricopa County, AZ by Recruitment Program",
     caption = "VMF Recruitment = 639, Standard Recruitment = 623",
-    x = "Thinking about Maricopa County, AZ, how concerned should voters feel about \npotential violence, threats of violence, or intimidation while voting in person at their local polling place?"
+    subtitle = str_wrap("Thinking about Maricopa County, AZ, how concerned should voters feel about \npotential violence, threats of violence, or intimidation while voting in person at their local polling place?", width = 85)
   )+
   # customize color
   scale_fill_manual(
@@ -384,7 +399,7 @@ The size of this effect is especially significant because it brings the level of
 
 ```{r}
 #| label: fig-q26-likert
-#| fig-cap: "In-person voter safety in Maricopa County, AZ by Recruitment Program"
+#| fig-cap: "In-person voter safety in Maricopa County, AZ by Condition (VMF recruitment vs. Standard Recruitment)"
 #| fig-cap-location: top
 
 # q26
@@ -395,9 +410,8 @@ df |>
   ggstats::gglikert(include = c(q26), y = 'group', reverse_likert = F)+
   ggplot2::facet_grid(cols = vars(.question))+
   labs(
-    title ="In-person voter safety in Maricopa County, AZ by Recruitment Program",
     caption = "VMF Recruitment = 639, Standard Recruitment = 623",
-    x = "How confident, if at all, are you that in person polling places in Maricopa County, AZ \nwill be safe places for voters to cast their ballots during the upcoming elections in November?"
+    subtitle = str_wrap("How confident, if at all, are you that in person polling places in Maricopa County, AZ will be safe places for voters to cast their ballots during the upcoming elections in November?", width = 85)
   )+
   # customize color
   scale_fill_manual(
@@ -416,15 +430,14 @@ Learning that Maricopa County, AZ was recruiting veterans and military family me
 
 ```{r}
 #| label: fig-q27-likert
-#| fig-cap: "Approval of Election Officials in Maricopa County, AZ by Recruitment Program"
+#| fig-cap: "Approval of Election Officials in Maricopa County, AZ by Condition (VMF recruitment vs. Standard Recruitment)"
 #| fig-cap-location: top
 
 # Q27
 likert_plot(df, q27, group)+
   labs(
-    title = "Approval of Election Officials in Maricopa County, AZ by Recruitment Program",
     caption = 'VMF Recruitment =  636, Standard Recruitment = 623',
-    x = str_wrap(attr(df$q27, "label"), width = 95)
+    subtitle = str_wrap(attr(df$q27, "label"), width = 95)
     )
 
 ```
@@ -433,15 +446,14 @@ We also asked a general question about confidence that Maricopa County, AZ elect
 
 ```{r}
 #| label: fig-20-likert
-#| fig-cap: "Confidence Election Officials in Maricopa County, AZ will do a good job by Recruitment Program"
+#| fig-cap: "Confidence Election Officials in Maricopa County, AZ will do a good job by Condition (VMF recruitment vs. Standard Recruitment)"
 #| fig-cap-location: top
 
 # Q20 by Recruitment program, likert plot
 likert_plot(df, q20, group)+
   labs(
-    title = "Confidence Election Officials in Maricopa County, AZ will do a good job by Recruitment Program",
     caption = 'VMF Recruitment =  638, Standard Recruitment = 624',
-    x = str_wrap(attr(df$q20, "label"), width = 95)
+    subtitle = str_wrap(attr(df$q20, "label"), width = 95)
   )
 
 
@@ -452,14 +464,13 @@ Before asking a series of questions about election administration in their own c
 
 ```{r}
 #| label: fig-q29-likert
-#| fig-cap: "Approval of Election Officials in Maricopa County, AZ by Recruitment Program"
+#| fig-cap: "Approval of Election Officials in Maricopa County, AZ by Condition (VMF recruitment vs. Standard Recruitment)"
 #| fig-cap-location: top
 
 # Q29
 likert_plot(df, q29, group)+
   labs(
-    title = "Approval of Election Officials in Maricopa County, AZ by Recruitment Program",
-    x = str_wrap(attr(df$q29, "label"), width = 95),
+    subtitle = str_wrap(attr(df$q29, "label"), width = 95),
     caption = 'VMF Recruitment = 638, Standard Recruitment = 622')
 
 
@@ -479,7 +490,7 @@ Our survey also asked respondents a series of questions designed to assess an in
 
 ```{r}
 #| label: fig-q28-likert
-#| fig-cap: "Expectation of Electoral Fraud in Maricopa County, AZ by Recruitment Program"
+#| fig-cap: "Expectation of Electoral Fraud in Maricopa County, AZ by Condition (VMF recruitment vs. Standard Recruitment)"
 #| fig-cap-location: top
 
 df |>
@@ -499,9 +510,8 @@ df |>
   # customize color
   scale_fill_manual(values = c("black", "grey35", "firebrick1", "firebrick3")) +
   labs(
-    title = "Expectation of Electoral Fraud in Maricopa County, AZ by Recruitment Program",
     caption = 'VMF Recruitment = 639, Standard Recruitment = 624', 
-    x = "How likely do you think any or all of the following will \nhappen during this year´s elections in Maricopa County, AZ?") +
+    subtitle = str_wrap("How likely do you think any or all of the following will happen during this year´s elections in Maricopa County, AZ?", width = 85)) +
   theme_bw() +
   theme(
     legend.position = 'bottom',     # place legend on bottom
@@ -524,7 +534,7 @@ When we asked about the likelihood that a foreign country would tamper with vote
 ## Impacts on Confidence
 
 ::: {.callout-note}
-Everything beyond this point is subject to change.
+This section is subject to change.
 :::
 
 
@@ -547,7 +557,7 @@ Survey participants responded to six statements, all prefaced with the following
 1.  Election officials test every machine used in the election to ensure they are secure.
 2.  Election officials conduct audits of ballots after every election to confirm the results were accurate.
 3.  Poll watchers affiliated with the political parties or candidates observe the election.
-4.  Election staff and volunteers include military veterans and their family members from the community[^2].
+4.  Election staff and volunteers include military veterans and their family members from the community[^4].
 5.  Election staff and volunteers include lawyers from the community.
 6.  Election staff and volunteers include college students from the community.
 
@@ -563,7 +573,7 @@ The primary interest concerned whether confidence in election fairness would inc
 
 ```{r}
 #| label: fig-q41-likert
-#| fig-cap: "Impact on Confidence in Election Fairness and Accuracy by Recruitment Program"
+#| fig-cap: "Impact on Confidence in Election Fairness and Accuracy by Condition (VMF recruitment vs. Standard Recruitment)"
 #| column: page-right
 
 
@@ -574,7 +584,7 @@ df |>
   # customize color
   scale_fill_manual(values = c("black", "grey20", "grey45", "firebrick1", "firebrick3")) +
   labs(
-    x = str_wrap("How would the following impact your confidence in the fairness and accuracy of elections conducted this November?", width = 95)
+    subtitle = str_wrap("How would the following impact your confidence in the fairness and accuracy of elections conducted this November?", width = 85)
   )+
   theme_bw()+
   theme(legend.position = 'bottom',
@@ -604,7 +614,7 @@ Again, the bar graph below displays a clear boost among participants in the trea
 
 ```{r}
 #| label: fig-q43-likert
-#| fig-cap: "Impact on Confidence in Voter Safety at Polling Sites by Recruitment Program"
+#| fig-cap: "Impact on Confidence in Voter Safety at Polling Sites by Condition (VMF recruitment vs. Standard Recruitment)"
 #| column: page-right
 
 # Q43.4 (vets), Q43.5 (lawyers), Q43.6 (students) by treatment 
@@ -614,9 +624,8 @@ df |>
   # customize color
   scale_fill_manual(values = c("black", "grey20", "grey45", "firebrick1", "firebrick3")) +
   labs(
-    title = "Impact on Confidence in Voter Safety at Polling Sites by Recruitment Program",
-    subtitle = "Comparing increase in confidence when election staff/volunteers include veterans, lawyers, and college students",
-    x = str_wrap("How would the following impact your confidence that voters are safe from violence, threats of violence, or intimidation while voting in-person during elections this November?", width = 95)
+    title = "Comparing increase in confidence when election staff/volunteers include veterans, lawyers, and college students",
+    subtitle = str_wrap("How would the following impact your confidence that voters are safe from violence, threats of violence, or intimidation while voting in-person during elections this November?", width = 85)
   )+
   theme_bw()+
   theme(legend.position = 'bottom', 
@@ -631,45 +640,83 @@ The proportion of people who said their confidence in voter safety would increas
 
 # Sample Demographics and Balance
 
-The decision was made to exclude any respondents who didn't complete the survey. There were a total of 125 respondents who started but didn't finish the survey. Of those 125, 105 quit before reaching `Q40_1`, whereas the rest exited the survey after that question[^3].
 
-`NA` missing values from the `Qset` variable removes those 105 partial survey responses, i.e., respondents who quit prior to reaching `Q40`.
 
 ```{r}
 #| label: tbl-demog
-#| tbl-cap: "Survey sample characteristics by treatment condition"
-#| column: page
-#| results: asis
+#| tbl-cap: "Survey sample Demographic characteristics"
+#| column: body-outset-right
 
-# descriptive stats for df
-t1.demog <- table1::table1(
-  ~age_cat
-  + gender_3cat
-  + race
-  + educ
-  + partyid_3cat
-  + milserv1
-  + milserv2
-  + milservfam
-  + voted2020.clps
-  + choice2020
-  + voteintent
-  | group,
-  data = df,
-  overall = "Overall",
-  footnote = "Table reflects column percentages.")
-
-
-t1.demog <- table1::t1kable(t1.demog) |> 
-  kableExtra::kable_styling(
-    bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
-    latex_options = "basic",
-    font_size = 13,
-    full_width = T,
-    fixed_thead = T
+# best method for html document
+df |>  
+  labelled::set_variable_labels(
+    age_cat = "Age group, in years"
+  ) |> 
+  gtsummary::tbl_summary(
+    by = group,
+    include = c(
+      age_cat, 
+      gender_3cat, 
+      race, 
+      educ, 
+      partyid_3cat, 
+      voted2020.clps,
+      choice2020, 
+      voteintent,
+      milserv1,
+      milserv2,
+      milservfam),
+    statistic = list(gtsummary::all_categorical()~ "{n} ({p}%)"),
+    type = list(milserv1 ~ "categorical",
+                milserv2 ~ "categorical",
+                milservfam ~"categorical"), 
+    missing = "no") |> 
+  gtsummary::add_n() |> 
+  gtsummary::add_overall() |> 
+  gtsummary::modify_header(label = "**Variable**") |> 
+  gtsummary::bold_labels() |> 
+  gtsummary::as_gt() |>  
+  gt::tab_footnote(
+    footnote = "'true' Independents do not identify nor 'lean' toward either political party",
+    placement = "left"
+    ) |>  
+  gt::cols_align(align = 'left', columns = everything()) |> 
+  gt::tab_options(
+    table.font.size = "small",
+    data_row.padding = gt::px(1)
   )
 
-print(t1.demog)
+
+# # descriptive stats for df
+# t1.demog <- table1::table1(
+#   ~age_cat
+#   + gender_3cat
+#   + race
+#   + educ
+#   + partyid_3cat
+#   + milserv1
+#   + milserv2
+#   + milservfam
+#   + voted2020.clps
+#   + choice2020
+#   + voteintent
+#   | group,
+#   data = df,
+#   overall = "Overall",
+#   footnote = "Table reflects column percentages.")
+# 
+# 
+# t1.demog <- table1::t1kable(t1.demog) |> 
+#   kableExtra::kable_styling(
+#     bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
+#     latex_options = "basic",
+#     font_size = 13,
+#     full_width = T,
+#     fixed_thead = T
+#   )
+# 
+# print(t1.demog)
+
 
 ```
 
@@ -703,8 +750,7 @@ Text of the Control Condition: Recruitment of Community Members
 Fabricated Article Vignettes utilized as Experimental Stimulus
 :::::
 
-[^1]: **All p-values are one-tailed as we have clear hypotheses that outcomes will be improved in the veterans and military veterans condition.**
+[^3]: **All p-values are 1 tailed as we have clear hypotheses that outcomes will be improved when respondents are exposed to information about the recruitment of veterans and military family members. **
 
-[^2]: Two different versions of this statement was presented to survey participants. Half of the sample read the statement as, "Election staff and volunteers *include* military veterans and their family members from the community", whereas the other half of the sample read, "The *majority* of election staff and volunteers consist of military veterans and their family members from the community." No significant differences in responses were observed between those who read one version of the statement over the other. However, the same was done for statements number 5 and 6 which concern "lawyers from the community" and "college students from the community". Significant differences were found when comparing responses between the different versions of these statements. See the appendix for further discussion on these results.
+[^4]: Two different versions of this statement was presented to survey participants. Half of the sample read the statement as, "Election staff and volunteers *include* military veterans and their family members from the community", whereas the other half of the sample read, "The *majority* of election staff and volunteers consist of military veterans and their family members from the community." No significant differences in responses were observed between those who read one version of the statement over the other. However, the same was done for statements number 5 and 6 which concern "lawyers from the community" and "college students from the community". Significant differences were found when comparing responses between the different versions of these statements. See the appendix for further discussion on these results.
 
-[^3]: Due to the programming of the survey, respondents were randomly assigned to either question set 'A' or question set 'B'. The grouping variable in the data set is `Qset`. Those respondents assigned to `Qset A` answered questions `Q41` and `Q43`; those assigned to `Qset B` answered question `Q44` and `Q46`. For each question, respondents were presented six statements and selected a response on a 5-point scale from "Decrease Confidence a lot" to "Increase confidence a lot". The six statements were the same for each question. This resulted in six variables per question within the data set (e.g., Q41_1 to Q41_6), where each variable consisted of responses to one of the six particular statements. Tests of differences in proportion between the question sets determined that responses were mostly equivalent between question sets (i.e., no statistically significant differences between proportions) except for the fifth and sixth statements pertaining to lawyers and college students. More detailed information on the results of this analysis are given in a supplementary document.

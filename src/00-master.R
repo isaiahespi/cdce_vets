@@ -57,8 +57,8 @@ df |>
          milserv2,
          milservfam) |>
   datawizard::data_tabulate(drop_levels = T,
-                            remove_na = F,
-                            collapse = T)
+                            remove_na = T,
+                            collapse = F)
 
 
 # best method ended up being the descriptive table from the `table1` R package
