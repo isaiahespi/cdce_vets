@@ -36,7 +36,7 @@ keywords:
 # bibliography: references.bib
 # csl: american-political-science-association.csl
 code-tools: 
-    source: https://github.com/isaiahespi/cdce_vets/blob/4953d971910f5040e0fe591e65e807adf5a198f5/index.qmd
+    source: repo
 funding: "This research was supported by funding from The Democracy Fund. The views expressed are those of the authors only as are any errors."
 citation:
   container-title: Center for Democracy and Civic Engagement, University of Maryland

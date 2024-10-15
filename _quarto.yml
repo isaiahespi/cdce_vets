@@ -7,6 +7,9 @@ project:
     - "!notebooks/01-data-import-clean-process.qmd"
     - "!notebooks/02-crosstables.qmd"
     - "!notebooks/03-plots.qmd"
+  preview: 
+    watch-inputs: true
+    timeout: 600 # exit preview after 10 minutes
 
 execute:
   freeze: auto
@@ -21,7 +24,7 @@ format:
     toc: true
     toc-depth: 3
     toc-expand: true
-    toc-location: left
+    toc-location: left-body
     title-block-style: default
     title-block-banner: images/CDCE.png
     appendix-style: none
