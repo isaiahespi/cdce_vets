@@ -135,8 +135,39 @@ df |>
 ### ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::####
 # trying to plot likert scales
 
-# attempting to use the ggstats::gglikert()
 # ggstats::gglikert works beautifully
+
+# Q19 by experiment condition, Likert style plot
+df |>
+  # create a likert-style bar plot where the grouping var is on the y-axis
+  ggstats::gglikert(
+    include = q19, # survey question, factor var
+    y = 'group',   # grouping var, factor var
+    symmetric = T, # make x-axis symmetric  
+    labels_hide_below = 0, # ensure no percentage values are hidden
+    labels_size = 3 # modify size of percentage values if needed 
+    )+
+  # the plot is faceted by responses to question (q19)
+  ggplot2::facet_grid(cols = vars(.question))+
+  # add a vertical line at the center point, 0 in this case
+  geom_vline(xintercept = 0, color = 'black', linewidth = 1.5)+
+  # customize labels, e.g., title, subtitle, bottom caption
+  labs(
+    title = "Confidence in Vote Count by Experiment Condition",
+    caption = "VMF Recruitment = 639, Standard Recruitment = 624",
+    subtitle = str_wrap("How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November?", width = 85)
+  )+
+  # customize color. Number of colors needs to match levels of factor
+  scale_fill_manual(
+    values = c("black", "grey35", "firebrick1", "firebrick3")
+  )+
+  theme_bw()+
+  # customize plot things
+  theme(legend.position = 'bottom',    # place legend on bottom
+        axis.text.x = element_blank(), # remove percentage text along x-axis
+        strip.text.x = element_blank()) # remove label of facet
+
+
 
 df |> 
   mutate(across(c(q28_1:q28_5), ~ forcats::fct_rev(.))) |> 
@@ -706,3 +737,38 @@ df |>
   theme(legend.position = 'bottom',    # place legend on bottom
         axis.text.x = element_blank(), # remove percentage text along x-axis
         )
+
+####:::::::::::::::::::::::: Just some Info ::::::::::::::::::::::::::::::::####
+# need to call ggstats as it adds 'geom_diverging' and 'geom_likert' to ggplot,
+# along with some other things
+library(ggstats)
+
+# 'diverging' centers at zero and gives counts for each response to y (q19) by
+# fill (group)
+# by default, the same number of categories are displayed on each side
+ggplot(df, aes(y = q19, fill = group))+
+  geom_bar(position = 'diverging')
+
+ggplot(df, aes(y = group, fill = q19))+
+  geom_diverging()+
+  geom_diverging_text()+
+  scale_fill_likert()+ # uses a particular color palette
+  scale_x_continuous(
+    limits = symmetric_limits,
+    labels = label_number_abs()
+  )
+  
+# 'likert' does the same except instead of counts, uses proportions
+# by default, the same number of categories are displayed on each side
+ggplot(df, aes(y = q19, fill = group))+
+  geom_bar(position = 'likert')
+
+ggplot(df, aes(y = group, fill = q19))+
+  geom_likert()+
+  geom_likert_text()+
+  scale_fill_likert()+ # uses a particular color palette
+  scale_x_continuous(
+    limits = symmetric_limits
+  )
+  
+#####:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::####

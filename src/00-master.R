@@ -66,12 +66,25 @@ df |>
 
 
 # best method for html document
-df |>  
+tbl.desc <- df |>  
+  labelled::set_variable_labels(
+    age_cat = "Age group, in years"
+  ) |> 
   gtsummary::tbl_summary(
     by = group,
-    include = c(age, gender, race, educ, milserv1, milserv2, milservfam),
-    statistic = list(age ~ "{mean} ({sd})",
-                     gtsummary::all_categorical()~ "{n} ({p}%)"),
+    include = c(
+      age_cat, 
+      gender_3cat, 
+      race, 
+      educ, 
+      partyid_3cat, 
+      voted2020.clps,
+      choice2020, 
+      voteintent,
+      milserv1,
+      milserv2,
+      milservfam),
+    statistic = list(gtsummary::all_categorical()~ "{n} ({p}%)"),
     type = list(milserv1 ~ "categorical",
                 milserv2 ~ "categorical",
                 milservfam ~"categorical"), 
@@ -80,13 +93,24 @@ df |>
   gtsummary::add_overall() |> 
   gtsummary::modify_header(label = "**Variable**") |> 
   gtsummary::bold_labels() |> 
-  gtsummary::as_gt() |> 
-  gt::tab_header("Table 1. Balance") |> 
-  gt::tab_footnote("NA omitted. Failure to complete survey, n = 120") |> 
+  gtsummary::as_gt() |>  
+  gt::tab_footnote(
+    footnote = "'true' Independents do not identify nor 'lean' toward either political party",
+    placement = "left"
+    ) |>  
+  gt::cols_align(align = 'left', columns = everything()) |> 
   gt::tab_options(
     table.font.size = "small",
     data_row.padding = gt::px(1)
   )
+
+tbl.desc
+
+# use gt::gtsave() to save image of gtsummary table
+gt::gtsave(
+  data = tbl.desc,
+  filename = "images/tbl-desc.png"
+)
 
 
 # table of treatment and control groups
@@ -983,9 +1007,12 @@ df |>
 # To avoid excessive copy/paste, I made a function to create Likert plots
 # it is mostly a wrapper around `ggstats::gglikert`, but with a specific set up
 # particular colors, theme, etc. 
-likert_plot <- function(data, x, y){
-  ggstats::gglikert(data = data, include = {{ x }}, y = {{ y }}, 
-                    facet_rows = vars(.question))+
+likert_plot <- function(data, x, y, symmetric, vline = FALSE, title = NULL, subtitle = NULL, caption = NULL, xlab = NULL){
+  p <- ggstats::gglikert(data = data,
+                    include = {{ x }},
+                    y = {{ y }},
+                    facet_rows = vars(.question),
+                    symmetric = symmetric)+
     # customize color
     scale_fill_manual(values = c("black", "grey35", "firebrick1", "firebrick3"))+
     theme_bw()+
@@ -994,15 +1021,86 @@ likert_plot <- function(data, x, y){
       axis.text.x = element_blank(), # remove percentage text along x-axis
       strip.text = element_blank() # remove label of facet
         )
+    if (vline==TRUE) {
+    p <- p + geom_vline(xintercept = 0, color = 'black', linewidth = 1.5)
+  } else {
+      p
+    } 
+  
+  p <- p + ggplot2::labs(
+    title = stringr::str_wrap(title, width = 85),
+    subtitle = stringr::str_wrap(subtitle, width = 85),
+    caption = stringr::str_wrap(caption, width = 85),
+    x = stringr::str_wrap(xlab, width = 85))
+  p
+
 }
 
 # it works! 
-likert_plot(data = df, x = q19, y = group)+
-  ggplot2::labs(x = attr(df$q19, "label"))
-  
+likert_plot(data = df, x = q19, y = group, symmetric = T, vline = T, title = "The title",
+            subtitle = "The long very long oh so very long subtitle",
+            caption = "My neck, My back",
+            xlab = "Whatever is supposed to be written along the x-axis")
+
+
+# can I pipe it? Yes I can
+df |> 
+  likert_plot(
+    x = q19,
+    y = group,
+    symmetric = T,
+    vline = T,
+    title = "The title",
+    subtitle = "The long very long oh so very long subtitle",
+    xlab = "Whatever is supposed to be written along the x-axis")
+
 
 # test
 df |> 
 likert_plot(q26, group)+
   ggplot2::labs(x = str_wrap(attr(df$q26, "label"), width = 95))
 
+################################################################################
+
+# center the split at a 0 mark that is always in the middle of the graph and
+# show the same scale on the left and right
+
+library(ggstats)
+
+# Q19 by experiment condition, Likert style plot
+df |>
+  
+  # create a likert-style bar plot where the grouping var is on the y-axis
+  ggstats::gglikert(
+    include = q19, # survey question, factor var
+    y = 'group',   # grouping var, factor var
+    symmetric = T, # make x-axis symmetric  
+    labels_hide_below = 0, # ensure no percentage values are hidden
+    labels_size = 3 # modify size of percentage values if needed 
+    )+
+  
+  # the plot is faceted by responses to question (q19)
+  ggplot2::facet_grid(cols = vars(.question))+
+  
+  # add a vertical line at the center point, 0 in this case
+  geom_vline(xintercept = 0, color = 'black', linewidth = 1.5)+
+  
+  # customize labels, e.g., title, subtitle, bottom caption
+  labs(
+    title = "Confidence in Vote Count by Experiment Condition",
+    caption = "VMF Recruitment = 639, Standard Recruitment = 624",
+    subtitle = str_wrap("How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November?", width = 85)
+  )+
+  
+  # customize color. Number of colors needs to match levels of factor
+  scale_fill_manual(
+    values = c("black", "grey35", "firebrick1", "firebrick3")
+  )+
+  theme_bw()+
+  
+  # customize plot things
+  theme(legend.position = 'bottom',    # place legend on bottom
+        axis.text.x = element_blank(), # remove percentage text along x-axis
+        strip.text.x = element_blank()) # remove label of facet
+
+################################################################################

@@ -1095,3 +1095,35 @@ df |>
     students = sum(q41.6 == "Increase confidence a lot" | q41.6 == "Increase confidence somewhat", na.rm = T),
     students_prop = students/sum(group == "Control" | group == "Treatment", na.rm = T)
   )
+
+
+# q43.4 vets
+df |> 
+  janitor::tabyl(group, q43.4, show_na = F) |>
+  janitor::adorn_totals('both') |> 
+  janitor::adorn_percentages(denominator = 'row') |>
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
+  janitor::adorn_ns() |> 
+  janitor::adorn_title(
+    'combined',
+    row_name = "Group")
+
+df |> 
+  janitor::tabyl(group, q43.5, show_na = F) |>
+  janitor::adorn_totals('both') |> 
+  janitor::adorn_percentages(denominator = 'row') |>
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
+  janitor::adorn_ns() |> 
+  janitor::adorn_title(
+    'combined',
+    row_name = "Group")
+
+df |> 
+  janitor::tabyl(group, q43.6, show_na = F) |>
+  janitor::adorn_totals('both') |> 
+  janitor::adorn_percentages(denominator = 'row') |>
+  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |>
+  janitor::adorn_ns() |> 
+  janitor::adorn_title(
+    'combined',
+    row_name = "Group")

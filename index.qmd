@@ -45,6 +45,7 @@ code-links:
 funding: "This research was supported by funding from The Democracy Fund. The views expressed are those of the authors only as are any errors."
 citation:
   container-title: Center for Democracy and Civic Engagement, University of Maryland
+fig-cap-location: top
 execute: 
   cache: false
   echo: false
@@ -85,9 +86,12 @@ df <- df |>
 # To avoid excessive copy/paste, I made a function to create Likert plots
 # it is mostly a wrapper around `ggstats::gglikert`, but with a specific set up
 # particular colors, theme, etc. 
-likert_plot <- function(data, x, y){
-  ggstats::gglikert(data = data, include = {{ x }}, y = {{ y }}, 
-                    facet_rows = vars(.question))+
+likert_plot <- function(data, x, y, symmetric, vline = FALSE, title = NULL, subtitle = NULL, caption = NULL, xlab = NULL){
+  p <- ggstats::gglikert(data = data,
+                    include = {{ x }},
+                    y = {{ y }},
+                    facet_rows = vars(.question),
+                    symmetric = symmetric)+
     # customize color
     scale_fill_manual(values = c("black", "grey35", "firebrick1", "firebrick3"))+
     theme_bw()+
@@ -96,8 +100,20 @@ likert_plot <- function(data, x, y){
       axis.text.x = element_blank(), # remove percentage text along x-axis
       strip.text = element_blank() # remove label of facet
         )
-}
+    if (vline==TRUE) {
+    p <- p + geom_vline(xintercept = 0, color = 'black', linewidth = 1.5)
+  } else {
+      p
+    } 
+  
+  p <- p + ggplot2::labs(
+    title = stringr::str_wrap(title, width = 85),
+    subtitle = stringr::str_wrap(subtitle, width = 85),
+    caption = stringr::str_wrap(caption, width = 85),
+    x = stringr::str_wrap(xlab, width = 85))
+  p
 
+}
 
 
 # function to compute the p-value for continuous or categorical variables
@@ -126,6 +142,7 @@ pvalue <- function(x, ...) {
 
 
 ```
+
 
 ::: {.callout-note}
 You are reading a work-in-progress.
@@ -164,27 +181,32 @@ Here's how to read @fig-q19-likert and all other plots like it. The question tex
 #| label: fig-q19-likert
 #| fig-cap: "Confidence Votes will be Counted as Intended by Condition (VMF recruitment vs. Standard Recruitment)"
 #| fig-cap-location: top
-#| column: page-right
 
 # Q19 by Recruitment Program, Likert style plot
-df |>
-  select(group, q7, q19, q19.clps) |>
-  drop_na() |> 
-  ggstats::gglikert(include = c(q19), y = 'group')+
-  ggplot2::facet_grid(cols = vars(.question))+
-  labs(
-    subtitle = str_wrap("How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November?", width = 85),
-    caption = "VMF Recruitment = 639, Standard Recruitment = 624"
-  )+
-  # customize color
-  scale_fill_manual(
-    values = c("black", "grey35", "firebrick1", "firebrick3")
-  )+
-  theme_bw()+
-  theme(legend.position = 'bottom',    # place legend on bottom
-        axis.text.x = element_blank(), # remove percentage text along x-axis
-        strip.text.x = element_blank() # remove label of facet
-        )
+df |> 
+  likert_plot(x = q19, y = group, symmetric = T,
+              subtitle = "How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November?",
+              caption = "VMF Recruitment = 639, Standard Recruitment = 624")
+
+
+# same plot, without the function
+# df |>
+#   ggstats::gglikert(include = c(q19), y = 'group', symmetric = T)+
+#   ggplot2::facet_grid(cols = vars(.question))+
+#   ggplot2::geom_vline(xintercept = 0, color = 'black', linewidth = 1.5)+
+#   ggplot2::labs(
+#     subtitle = str_wrap("How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November?", width = 85),
+#     caption = "VMF Recruitment = 639, Standard Recruitment = 624"
+#   )+
+#   # customize color
+#   ggplot2::scale_fill_manual(
+#     values = c("black", "grey35", "firebrick1", "firebrick3")
+#   )+
+#   ggplot2::theme_bw()+
+#   ggplot2::theme(legend.position = 'bottom',    # place legend on bottom
+#         axis.text.x = element_blank(), # remove percentage text along x-axis
+#         strip.text.x = element_blank()) # remove label of facet
+
 
 
 
@@ -198,24 +220,26 @@ Importantly, the effects are generally even larger among those expected to be th
 
 ```{r}
 #| label: fig-q19-legit
-#| fig-cap: "Confidence in Vote Count by Beliefs of 2020 Election Legitimacy and Recruitment Program"
+#| fig-cap: "Confidence Votes will be Counted as Intended by Beliefs of 2020 Election Legitimacy and Election Worker Recruitment Program"
 #| fig-cap-location: top
 
 
 df |> 
-  select(group, q7, q19, q19.clps) |>
+  select(group, q7, q19) |>
   drop_na() |> 
-  ggstats::gglikert(include = c(q19), y = 'group')+
+  ggstats::gglikert(include = c(q19), y = 'group', symmetric = T)+
   ggplot2::facet_grid(rows = vars(q7))+
   # customize color
   scale_fill_manual(values = c("black", "grey35", "firebrick1", "firebrick3"))+
   labs(
     subtitle = str_wrap("Do you think Joe Biden's election as president was legitimate, or was he not legitimately elected?", width = 85),
-    caption = "VMF Recruitment = 639, Standard Recruitment = 624",
+    caption = "VMF Recruitment = 634, Standard Recruitment = 624",
     x = str_wrap("How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November?", width = 85)
   )+
   theme_bw()+
-  theme(legend.position = 'bottom', axis.text.x = element_blank())
+  theme(legend.position = 'bottom', 
+        axis.text.x = element_blank(),
+        strip.text.y.right = element_text(angle = 0))
 
 
 
@@ -229,7 +253,10 @@ Veterans and military family members are also regarded highly by the public for 
 #| fig-cap-location: top
 
 df |>
-  ggstats::gglikert(include = c(q21), y = 'group')+
+  ggstats::gglikert(
+    include = c(q21),
+    y = 'group',
+    symmetric = T)+
   ggplot2::facet_grid(cols = vars(.question))+
   labs(
     caption = "VMF Recruitment = 639, Standard Recruitment = 624",
@@ -257,22 +284,13 @@ As shown in @fig-q21-likert, this increase is especially noteworthy as it brings
 #| fig-cap: "Confidence in Fair Voting Process by Condition (VMF recruitment vs. Standard Recruitment)"
 #| fig-cap-location: top
 
-df |>
-  ggstats::gglikert(include = c(q22), y = 'group')+
-  ggplot2::facet_grid(cols = vars(.question))+
-  labs(
-    caption = "VMF Recruitment = 639, Standard Recruitment = 624",
-    subtitle = str_wrap("How confident are you that the voting process will be fair in Maricopa County, AZ?", width = 85)
-  )+
-  # customize color
-  scale_fill_manual(
-    values = c("black", "grey35", "firebrick1", "firebrick3")
-  )+
-  theme_bw()+
-  theme(legend.position = 'bottom',    # place legend on bottom
-        axis.text.x = element_blank(), # remove percentage text along x-axis
-        strip.text.x = element_blank()) # remove label of facet
-
+df |> 
+  likert_plot(
+    x = q22,
+    y = group,
+    symmetric = T,
+    subtitle = "How confident are you that the voting process will be fair in Maricopa County, AZ?",
+    caption = "VMF Recruitment = 639, Standard Recruitment = 624")
 
 
 ```
@@ -284,15 +302,15 @@ The bulk of this shift comes from an increase in the percentage of people saying
 #| label: fig-q22-legit
 #| fig-cap: "Confidence in Fair Voting Process in Maricopa County, AZ by Beliefs of 2020 Election Legitimacy and Recruitment Program"
 #| fig-cap-location: top
-#| column: body-outset
+
 
 df |> 
-  select(group, q7, q22, q23, q22.clps) |>
+  select(group, q7, q22) |>
   drop_na() |> 
   ggstats::gglikert(
     include = c(q22), 
     y = 'group',
-    facet_rows = vars(q7), labels_accuracy = 0.1)+
+    facet_rows = vars(q7), symmetric = T, labels_size = 3)+
   # customize color
   scale_fill_manual(values = c("black", "grey35", "firebrick1", "firebrick3"))+
   labs(
@@ -301,7 +319,9 @@ df |>
     x = str_wrap("How confident are you that the voting process will be fair in Maricopa County, AZ?", width = 85)
   )+
   theme_bw()+
-  theme(legend.position = 'bottom', axis.text.x = element_blank())
+  theme(legend.position = 'bottom', 
+        axis.text.x = element_blank(),
+        strip.text.y.right = element_text(angle = 0))
 
 
 ```
@@ -314,7 +334,7 @@ Although outcomes are subject to a wider variety of factors, the veterans treatm
 #| fig-cap-location: top
 
 df |>
-  ggstats::gglikert(include = c(q23), y = 'group')+
+  ggstats::gglikert(include = c(q23), y = 'group', symmetric = T)+
   ggplot2::facet_grid(cols = vars(.question))+
   labs(
     caption = "VMF Recruitment = 639, Standard Recruitment = 624",
@@ -345,8 +365,11 @@ Attitudes relating to election security and safety were also improved as a resul
 df |>
   select(q24, group) |> 
   drop_na() |> 
-  ggstats::gglikert(include = c(q24), y = 'group')+
-  ggplot2::facet_grid(cols = vars(.question))+
+  ggstats::gglikert(
+    include = c(q24), 
+    y = 'group',
+    facet_rows = vars(.question),
+    symmetric = T)+
   labs(
     caption = "VMF Recruitment = 639, Standard Recruitment = 623",
     subtitle = str_wrap("How confident are you that election systems in Maricopa County, AZ will be secure from hacking and other technological threats?", width = 85)
@@ -358,7 +381,7 @@ df |>
   theme_bw()+
   theme(legend.position = 'bottom',    # place legend on bottom
         axis.text.x = element_blank(), # remove percentage text along x-axis
-        strip.text.x = element_blank()) # remove label of facet
+        strip.text.y.right = element_blank()) # remove label right of facet
 
 
 
@@ -376,7 +399,7 @@ df |>
   select(q25, group) |> 
   drop_na() |> 
   # dplyr::mutate(q25 = forcats::fct_rev(q25)) |> 
-  ggstats::gglikert(include = c(q25), y = 'group', reverse_likert = F)+
+  ggstats::gglikert(include = c(q25), y = 'group', symmetric = T)+
   ggplot2::facet_grid(cols = vars(.question))+
   labs(
     caption = "VMF Recruitment = 639, Standard Recruitment = 623",
@@ -407,7 +430,7 @@ df |>
   select(q26, group) |> 
   drop_na() |> 
   # dplyr::mutate(q26 = forcats::fct_rev(q26)) |> 
-  ggstats::gglikert(include = c(q26), y = 'group', reverse_likert = F)+
+  ggstats::gglikert(include = c(q26), y = 'group', symmetric = T)+
   ggplot2::facet_grid(cols = vars(.question))+
   labs(
     caption = "VMF Recruitment = 639, Standard Recruitment = 623",
@@ -434,11 +457,13 @@ Learning that Maricopa County, AZ was recruiting veterans and military family me
 #| fig-cap-location: top
 
 # Q27
-likert_plot(df, q27, group)+
-  labs(
-    caption = 'VMF Recruitment =  636, Standard Recruitment = 623',
-    subtitle = str_wrap(attr(df$q27, "label"), width = 95)
-    )
+likert_plot(
+  df,
+  q27,
+  group,
+  symmetric = T,
+  subtitle = "Do you approve or disapprove of the way election officials in Maricopa County, AZ are handling their jobs?",
+  caption = 'VMF Recruitment =  636, Standard Recruitment = 623')
 
 ```
 
@@ -450,11 +475,13 @@ We also asked a general question about confidence that Maricopa County, AZ elect
 #| fig-cap-location: top
 
 # Q20 by Recruitment program, likert plot
-likert_plot(df, q20, group)+
-  labs(
-    caption = 'VMF Recruitment =  638, Standard Recruitment = 624',
-    subtitle = str_wrap(attr(df$q20, "label"), width = 95)
-  )
+likert_plot(
+  df, 
+  q20, 
+  group, 
+  symmetric = T,
+  subtitle = "How confident are you that election officials, their staff, and volunteers in Maricopa County, AZ will do a good job conducting the elections this November?",
+  caption = 'VMF Recruitment =  638, Standard Recruitment = 624')
 
 
 ```
@@ -464,14 +491,17 @@ Before asking a series of questions about election administration in their own c
 
 ```{r}
 #| label: fig-q29-likert
-#| fig-cap: "Approval of Election Officials in Maricopa County, AZ by Condition (VMF recruitment vs. Standard Recruitment)"
+#| fig-cap: "Support for Adoption of Maricopa County, AZ Election Staff Recruitment Program in Local Area by Condition (VMF recruitment vs. Standard Recruitment)"
 #| fig-cap-location: top
 
 # Q29
-likert_plot(df, q29, group)+
-  labs(
-    subtitle = str_wrap(attr(df$q29, "label"), width = 95),
-    caption = 'VMF Recruitment = 638, Standard Recruitment = 622')
+likert_plot(
+  df,
+  q29,
+  group, 
+  symmetric = T,
+  subtitle = "How much would you like to see your local community adopt a program for recruiting elections staff like the one you read about in Maricopa County, AZ?",
+  caption = 'VMF Recruitment = 638, Standard Recruitment = 622')
 
 
 ```
@@ -496,17 +526,18 @@ Our survey also asked respondents a series of questions designed to assess an in
 df |>
   mutate(across(c(q28_1:q28_5), ~ forcats::fct_rev(.))) |>
   labelled::set_variable_labels(
-    q28_1 = "Voter fraud",
-    q28_2 = "Miscount",
-    q28_3 = "Rejected",
-    q28_4 = "Interference",
-    q28_5 = "Discouraged"
+    q28_1 = "Voter fraud will occur",
+    q28_2 = "Many Votes will not be counted",
+    q28_3 = "Many voters will be Rejected",
+    q28_4 = "Foreign Interference with votes cast",
+    q28_5 = "Election Officials will discourage people from Voting"
   ) |>
   ggstats::gglikert(
     include = q28_1:q28_5,
-    y = 'group',
-    facet_rows = vars(.question)
+    y = 'group', 
+    symmetric = T
   ) +
+  facet_grid(rows = vars(.question), labeller = label_wrap_gen(15))+
   # customize color
   scale_fill_manual(values = c("black", "grey35", "firebrick1", "firebrick3")) +
   labs(
@@ -516,8 +547,7 @@ df |>
   theme(
     legend.position = 'bottom',     # place legend on bottom
     axis.text.x = element_blank(),  # remove percentage text along x-axis
-    strip.text.x = element_blank()) # remove label of facet
-
+    strip.text.y.right = element_text(angle = 0)) 
 
 
 
@@ -574,23 +604,29 @@ The primary interest concerned whether confidence in election fairness would inc
 ```{r}
 #| label: fig-q41-likert
 #| fig-cap: "Impact on Confidence in Election Fairness and Accuracy by Condition (VMF recruitment vs. Standard Recruitment)"
-#| column: page-right
+
 
 
 # Q41.4 (vets), Q41.5 (lawyers), Q41.6 (students), by treatment
 df |> 
-  ggstats::gglikert(include = c(q41.4:q41.6), y = 'group',  symmetric = T, add_totals = F)+ 
+  select(group, q41.4:q41.6) |>
+  ggstats::gglikert(
+    include = c(q41.4:q41.6),
+    y = 'group',
+    symmetric = T,
+    add_totals = T)+ 
   facet_grid(rows = vars(.question), labeller = label_wrap_gen(15))+
   # customize color
-  scale_fill_manual(values = c("black", "grey20", "grey45", "firebrick1", "firebrick3")) +
+  scale_fill_manual(values = c("black", "grey35", "grey75", "firebrick1", "firebrick3")) +
   labs(
-    subtitle = str_wrap("How would the following impact your confidence in the fairness and accuracy of elections conducted this November?", width = 85)
+    subtitle = str_wrap("How would the following impact your confidence in the fairness and accuracy of elections conducted this November?", width = 85),
+    caption = 'VMF Recruitment = 638, Standard Recruitment = 623'
   )+
   theme_bw()+
   theme(legend.position = 'bottom',
-        legend.key.size = unit(0.3, "cm"),
-        legend.text = element_text(size = 8.5),
-        axis.text.x = element_blank())
+        axis.text.x = element_blank(),
+        strip.text.y.right = element_text(angle = 0))+
+  guides(fill= guide_legend(nrow = 2))
 
 
 
@@ -615,23 +651,30 @@ Again, the bar graph below displays a clear boost among participants in the trea
 ```{r}
 #| label: fig-q43-likert
 #| fig-cap: "Impact on Confidence in Voter Safety at Polling Sites by Condition (VMF recruitment vs. Standard Recruitment)"
-#| column: page-right
+#| fig-subcap: "Comparing increase in confidence when election staff/volunteers include veterans, lawyers, or college students"
+
 
 # Q43.4 (vets), Q43.5 (lawyers), Q43.6 (students) by treatment 
 df |> 
-  ggstats::gglikert(include = c(q43.4:q43.6), y = 'group', symmetric = T, add_totals = F)+ 
+  ggstats::gglikert(
+    include = c(q43.4:q43.6), 
+    y = 'group', 
+    symmetric = T, 
+    add_totals = T)+
   facet_grid(rows = vars(.question), labeller = label_wrap_gen(15))+
   # customize color
-  scale_fill_manual(values = c("black", "grey20", "grey45", "firebrick1", "firebrick3")) +
+  scale_fill_manual(
+    values = c("black", "grey20", "grey45", "firebrick1", "firebrick3")
+    ) +
   labs(
-    title = "Comparing increase in confidence when election staff/volunteers include veterans, lawyers, and college students",
-    subtitle = str_wrap("How would the following impact your confidence that voters are safe from violence, threats of violence, or intimidation while voting in-person during elections this November?", width = 85)
+    subtitle = str_wrap("How would the following impact your confidence that voters are safe from violence, threats of violence, or intimidation while voting in-person during elections this November?", width = 85),
+    caption = 'VMF Recruitment = 638, Standard Recruitment = 623'
   )+
   theme_bw()+
   theme(legend.position = 'bottom', 
-        legend.key.size = unit(0.3, "cm"),
-        legend.text = element_text(size = 8.5),
-        axis.text.x = element_blank())
+        axis.text.x = element_blank(),
+        strip.text.y.right = element_text(angle = 0))+
+  guides(fill= guide_legend(nrow = 2))
 
 
 ```
@@ -643,7 +686,7 @@ The proportion of people who said their confidence in voter safety would increas
 
 
 ```{r}
-#| label: tbl-demog
+#| label: tbl-desc
 #| tbl-cap: "Survey sample Demographic characteristics"
 #| column: body-outset-right
 

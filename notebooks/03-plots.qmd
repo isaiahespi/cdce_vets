@@ -26,9 +26,12 @@ load("data/df-2024-09-11.Rdata") # df set as factor with dummy vars
 # To avoid excessive copy/paste, I made a function to create Likert plots
 # it is mostly a wrapper around `ggstats::gglikert`, but with a specific set up
 # particular colors, theme, etc. 
-likert_plot <- function(data, x, y){
-  ggstats::gglikert(data = data, include = {{ x }}, y = {{ y }}, 
-                    facet_rows = vars(.question))+
+likert_plot <- function(data, x, y, symmetric, vline = FALSE, title = NULL, subtitle = NULL, caption = NULL, xlab = NULL){
+  p <- ggstats::gglikert(data = data,
+                    include = {{ x }},
+                    y = {{ y }},
+                    facet_rows = vars(.question),
+                    symmetric = symmetric)+
     # customize color
     scale_fill_manual(values = c("black", "grey35", "firebrick1", "firebrick3"))+
     theme_bw()+
@@ -37,8 +40,20 @@ likert_plot <- function(data, x, y){
       axis.text.x = element_blank(), # remove percentage text along x-axis
       strip.text = element_blank() # remove label of facet
         )
-}
+    if (vline==TRUE) {
+    p <- p + geom_vline(xintercept = 0, color = 'black', linewidth = 1.5)
+  } else {
+      p
+    } 
+  
+  p <- p + ggplot2::labs(
+    title = stringr::str_wrap(title, width = 85),
+    subtitle = stringr::str_wrap(subtitle, width = 85),
+    caption = stringr::str_wrap(caption, width = 85),
+    x = stringr::str_wrap(xlab, width = 85))
+  p
 
+}
 
 
 ```
@@ -48,32 +63,77 @@ likert_plot <- function(data, x, y){
 
 ```{r}
 #| label: fig-q19-likert
-#| fig-cap: "Confidence in Accurate Vote Count by Experiment Condition"
+#| fig-cap: "Confidence Votes will be Counted as Intended by Condition (VMF recruitment vs. Standard Recruitment)"
 #| fig-cap-location: top
 
-# Q19 by experiment condition, Likert style plot
-likert_plot(df, q19, group)+
-  labs(
-    title = "Confidence in Vote Count by Recruitment Program",
-    caption = "VMF Recruitment = 639, Standard Recruitment = 624",
-    x = str_wrap(attr(df$q19, "label"), width = 95))
+# Q19 by Recruitment Program, Likert style plot
+df |> 
+  likert_plot(x = q19, y = group, symmetric = T, vline = T,
+              subtitle = "How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November?",
+              caption = "VMF Recruitment = 639, Standard Recruitment = 624")
+```
+
+
+```{r}
+#| fig-cap: "Confidence Votes will be Counted as Intended by Condition (VMF recruitment vs. Standard Recruitment)"
+#| fig-cap-location: top
 
 # same plot, without the function
 df |>
-  ggstats::gglikert(include = c(q19), y = 'group')+
+  ggstats::gglikert(include = c(q19), y = 'group', symmetric = T)+
   ggplot2::facet_grid(cols = vars(.question))+
-  labs(
-    title = "Confidence in Vote Count by Experiment Condition",
-    caption = "VMF Recruitment = 639, Standard Recruitment = 624",
-    x = "How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November?"
+  ggplot2::geom_vline(xintercept = 0, color = 'black', linewidth = 1.5)+
+  ggplot2::labs(
+    subtitle = str_wrap("How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November?", width = 85),
+    caption = "VMF Recruitment = 639, Standard Recruitment = 624"
   )+
   # customize color
+  ggplot2::scale_fill_manual(
+    values = c("black", "grey35", "firebrick1", "firebrick3")
+  )+
+  ggplot2::theme_bw()+
+  ggplot2::theme(legend.position = 'bottom',    # place legend on bottom
+        axis.text.x = element_blank(), # remove percentage text along x-axis
+        strip.text.x = element_blank()) # remove label of facet
+
+```
+
+```{r}
+#| label: fig-q19-likert-alt
+#| fig-cap: "Confidence Votes will be Counted as Intended by Condition (VMF recruitment vs. Standard Recruitment)"
+#| fig-cap-location: top
+
+# alternative Likert plot with minor differences in style and look
+# symmetric x-axis 
+# added vertical line at center
+# modified label size of percentage values
+# Q19 by experiment condition, Likert style plot
+df |>
+  # create a likert-style bar plot where the grouping var is on the y-axis
+  ggstats::gglikert(
+    include = q19, # survey question, factor var
+    y = 'group',   # grouping var, factor var
+    symmetric = T, # make x-axis symmetric  
+    labels_hide_below = 0, # ensure no percentage values are hidden
+    labels_size = 3 # modify size of percentage values if needed 
+    )+
+  # the plot is faceted by responses to question (q19)
+  ggplot2::facet_grid(cols = vars(.question))+
+  # add a vertical line at the center point, 0 in this case
+  geom_vline(xintercept = 0, color = 'black', linewidth = 1.5)+
+  # customize labels, e.g., title, subtitle, bottom caption
+  labs(
+    subtitle = str_wrap("How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November?", width = 85),
+    caption = "VMF Recruitment = 639, Standard Recruitment = 624"
+  )+
+  # customize color. Number of colors needs to match levels of factor
   scale_fill_manual(
     values = c("black", "grey35", "firebrick1", "firebrick3")
   )+
   theme_bw()+
+  # customize plot things
   theme(legend.position = 'bottom',    # place legend on bottom
-        axis.text.x = element_blank(), # remove percentage text along x-axis
+        # axis.text.x = element_blank(), # remove percentage text along x-axis
         strip.text.x = element_blank()) # remove label of facet
 
 ```
@@ -148,9 +208,10 @@ df |>
 
 ```{r}
 #| label: fig-q19-legit
-#| fig-cap: "Confidence in Accuracy of Vote counts in Maricopa County, AZ among those who believe Biden's 2020 election was or was not legitimate"
-#| fig-subcap: "Proportion of confidence in vote count by 2020 election legitimacy and group condition "
+#| fig-cap: "Confidence Votes will be Counted as Intended by Beliefs of 2020 Election Legitimacy and Election Worker Recruitment Program"
 #| fig-cap-location: top
+#| fig-subcap: "Proportion of confidence in vote count by 2020 election legitimacy and group condition "
+
 
 df |> 
   select(group, q7, q19, q19.clps) |>
@@ -160,13 +221,39 @@ df |>
   # customize color
   scale_fill_manual(values = c("black", "grey35", "firebrick1", "firebrick3"))+
   labs(
-    title = "Confidence in Vote Count by Beliefs of 2020 Election Legitimacy and Election Staff Recruitment",
-    subtitle = "Do you think Joe Biden's election as president was legitimate, or was he not legitimately elected?",
-    caption = "VMF Recruitment = 639, Standard Recruitment = 624",
-    x = "How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November?"
+    subtitle = str_wrap("Do you think Joe Biden's election as president was legitimate, or was he not legitimately elected?", width = 85),
+    caption = "VMF Recruitment = 634, Standard Recruitment = 624",
+    x = str_wrap("How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November?", width = 85)
   )+
   theme_bw()+
   theme(legend.position = 'bottom', axis.text.x = element_blank())
+
+
+df |> 
+  select(group, q7, q19, q19.clps) |>
+  drop_na() |> 
+  ggstats::gglikert(
+    include = c(q19), 
+    y = 'group', 
+    symmetric = T)+
+  ggplot2::facet_grid(rows = vars(q7))+
+  # add a vertical line at the center point, 0 in this case
+  geom_vline(xintercept = 0, color = 'black', linewidth = 1.5)+
+  
+  # customize color
+  scale_fill_manual(values = c("black", "grey35", "firebrick1", "firebrick3"))+
+  labs(
+    subtitle = str_wrap("Do you think Joe Biden's election as president was legitimate, or was he not legitimately elected?", width = 85),
+    caption = "VMF Recruitment = 634, Standard Recruitment = 624",
+    x = str_wrap("How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November?", width = 85)
+  )+
+  theme_bw()+
+  theme(legend.position = 'bottom', axis.text.x = element_blank())
+
+
+  
+
+
 
 ```
 
