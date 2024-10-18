@@ -8,279 +8,129 @@ library(kableExtra)
 library(gt)
 library(table1)
 
-
-## Building tables using the table1 package ::::::::::::::::::::::::::::::::####
-# descriptive stats for df
-t1.demog <- table1::table1(
-  ~age_cat
-  + gender_3cat
-  + race
-  + educ
-  + partyid_3cat
-  + milserv1
-  + milserv2
-  + milservfam
-  + voted2020.clps
-  + choice2020
-  + voteintent
-  | group,
-  data = df,
-  overall = "Overall", 
-  caption = "Survey sample characteristics by treatment condition",
-  footnote = "Table reflects column percentages.")
-
-
-t1.demog <- table1::t1kable(
-  t1.demog,
-  format = "html",
-  booktabs = F ) |>
-  kableExtra::kable_styling(
-    bootstrap_options = "basic",
-    latex_options = "basic",
-    fixed_thead = T
-  )
-
-# Now I'm going to try to build a 3-way crosstable using the table1 package ####
-
-# need to 
-df <- df |>
-  mutate(group = forcats::fct_rev(group))
-
-
+## :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::####
+# function to create crosstabs using janitor::tabyl()
+tabyl.crabs <- function(dat, var1, var2, var3, show_na, totals = TRUE, margin_pcts = "row", digits = 2, affix_sign = F, ...){
   
-# This is great. Only the iv is in the columns, and dv is in rows.
-# first three post-vignette questions by experiment condition and q5 (attention to politics)
-table1::table1(~q19.clps + q20.clps + q21.clps | group*q5.clps, data = df,
-               transpose = F, overall = "Overall")
-
-# function to compute the p-value for continuous or categorical variables
-pvalue <- function(x, ...) {
-    # Construct vectors of data y, and groups (strata) g
-    y <- unlist(x)
-    g <- factor(rep(1:length(x), times=sapply(x, length)))
-    if (is.numeric(y)) {
-        # For numeric variables, perform a standard 2-sample t-test
-        p <- t.test(y ~ g)$p.value
-    } else {
-        # For categorical variables, perform a chi-squared test of independence
-        p <- chisq.test(table(y, g))$p.value
-    }
-    # Format the p-value, using an HTML entity for the less-than sign.
-    # The initial empty string places the output on the line below the variable label.
-    c("", sub("<", "&lt;", format.pval(p, digits=3, eps=0.001)))
+  if (!missing(var1) && !missing(var2) && !missing(var3)){
+    crab_df <- dat |> janitor::tabyl({{ var1 }}, {{ var2 }}, {{var3}})
+  } else if (missing(var3) && !missing(var1) && !missing(var2)){
+    crab_df <- dat |> janitor::tabyl({{ var1 }}, {{ var2 }})
+  } else {
+    stop("please specify var1 & var2 or var1 & var2 & var3. Use janitor::tabyl for tabyl call on single vector")
+  }
+  
+  if (totals == TRUE) {
+    crab_df |> 
+      janitor::adorn_totals("both") |>
+      janitor::adorn_percentages(margin_pcts) |>
+      janitor::adorn_pct_formatting(digits = digits, affix_sign = affix_sign) |>
+      janitor::adorn_ns("rear") |>
+      janitor::adorn_title("combined")
+  } else {
+    crab_df |> 
+      janitor::adorn_percentages(margin_pcts) |>
+      janitor::adorn_pct_formatting(digits = digits, affix_sign = affix_sign) |>
+      janitor::adorn_ns("rear") |>
+      janitor::adorn_title("combined")
+  }
+  
 }
 
-# Pearson's chi-squared test is performed of the null hypothesis that the joint
-# distribution of the cell counts in a 2-dimensional contingency table is the
-# product of the row and column marginals
-
-# The p-value function in R takes the "Overall" column into account. Have to run
-# Table 1 without 'Overall'
-
-pvalue <- function(x, ...) {
-    # Construct vectors of data y, and groups (strata) g
-    y <- unlist(x)
-    g <- factor(rep(1:length(x), times=sapply(x, length)))
-    if (is.numeric(y)) {
-        # For numeric variables, perform a standard 2-sample t-test
-        p <- t.test(y ~ g)$p.value
-    } else {
-        # For categorical variables, perform a chi-squared test of independence
-        p <- chisq.test(table(y, g))$p.value
-    }
-    # Format the p-value, using an HTML entity for the less-than sign.
-    # The initial empty string places the output on the line below the variable label.
-    c("", sub("<", "&lt;", format.pval(p, digits=3, eps=0.001)))
-}
-
-
-# q19 to q27 by treatment condition. p-value based on chi^2 test of indpendence
-t2 <- table1::table1(
-  ~ q19.clps
-  + q20.clps
-  + q21.clps
-  + q22.clps
-  + q23.clps
-  + q24.clps
-  + q25.clps
-  + q26.clps
-  + q27.clps
-  + q29.clps 
-  | group,
-  data = df,
-  transpose = F,
-  render.continuous = "MEAN (SD)",
-  render.missing = NULL,
-  overall = F,
-  extra.col = list('P-value' = pvalue),
-  caption = "Trust and Confidence in Maricopa County, AZ Elections by Treatment Condition",
-  footnote = "Table reflects column percentages. \nP-values based on Pearson's Chi-squared test of independence."
+# test it out. It works
+tabyl.crabs(
+  dat = df,
+  var1 = group,
+  var2 = q19,
+  show_na = F,
+  totals = T,
+  margin_pcts = "row",
+  digits = 2,
+  affix_sign = F
 )
 
-t2 <- table1::t1kable(
-  t2,
-  format = "html", align = "l",
-  booktabs = F ) |>
-  kableExtra::kable_styling(
-    bootstrap_options = "basic",
-    latex_options = "basic",
-    fixed_thead = T
-  )
-
-print(t2)
-
-# q28_1 to q29 by treatment condition p-value based on chi^2 test of
-# independence
-t3 <- table1::table1(
-  ~ q28_1.clps
-  + q28_2.clps
-  + q28_3.clps
-  + q28_4.clps
-  + q28_5.clps
-  | group,
-  data = df,
-  transpose = F,
-  overall = F,
-  extra.col = list('P-value' = pvalue),
-  caption = "Expectation of Electoral Fraud in Maricopa County, AZ \nby Treatment Condition",
-  footnote = "Table reflects column percentages. \nP-values based on Pearson's Chi-squared test of independence."
+# works with 3 variables
+tabyl.crabs(
+  dat = df,
+  var1 = group,
+  var2 = q19,
+  var3 = q7,
+  show_na = F,
+  totals = T,
+  margin_pcts = "row",
+  digits = 2,
+  affix_sign = F
 )
 
-t3 <- table1::t1kable(
-  t3,
-  format = "html",
-  booktabs = F ) |>
-  kableExtra::kable_styling(
-    bootstrap_options = "basic",
-    latex_options = "basic",
-    fixed_thead = T
-  )
+# works with minimal input
+tabyl.crabs(df, group, q19)
 
-print(t3)
+## process for creating multiple crosstabs at once :::::::::::::::::::::::::####
 
-
-# confidence impact by treatment condition ::::::::::::::
-# q41_1 to q43_6 by treatment condition p-value based on chi^2 test
-t4 <- table1::table1(
-  ~ q41_1.clps
-  + q41_2.clps
-  + q41_3.clps
-  + q41_4.clps
-  + q41_5.clps
-  + q41_6.clps
-  | group,
-  data = df,
-  transpose = F,
-  overall = "Overall",
-  render.categorical="FREQ (PCTnoNA%)",
-  render.missing = NULL,
-  # extra.col = list('P-value' = pvalue),
-  caption = "Circumstantial Impact on Confidence in Fairness and Accuracy of Elections \nby Treatment Condition",
-  footnote = "Table reflects column percentages. Percentages reflect of relative frequencies where NA are excluded from the denominator. \nP-values based on Pearson's Chi-squared test of independence.\n Each question listed here was prefaced with the following: Regardless of whether any of these are actually the case, how would the following impact your confidence in the fairness and accuracy of elections conducted this November?" 
-)
-
-t4 <- table1::t1kable(
-  t4,
-  format = "html",
-  booktabs = F ) |>
-  kableExtra::kable_styling(
-    bootstrap_options = "basic",
-    latex_options = "basic",
-    fixed_thead = T
-  )
-
-stats.default(is.na(t4))
-
-print(t4)
-
-
-
-
-
-t5 <- table1::table1(
-  ~ q43_1.clps
-  + q43_2.clps
-  + q43_3.clps
-  + q43_4.clps
-  + q43_5.clps
-  + q43_6.clps
-  | group,
-  data = df,
-  transpose = F,
-  overall = F,
-  extra.col = list('P-value' = pvalue),
-  caption = "Circumstantial Impact on Confidence of voter safety \nby Treatment Condition",
-  footnote = "Table reflects column percentages. \nP-values based on Pearson's Chi-squared test of independence.\n Each question listed here was prefaced with the following: How would the following impact your confidence that voters are safe from violence, threats of violence, or intimidation while voting in-person during elections this November?" 
-)
-
-t5 <- table1::t1kable(
-  t5,
-  format = "html",
-  booktabs = F ) |>
-  kableExtra::kable_styling(
-    bootstrap_options = "basic",
-    latex_options = "basic",
-    fixed_thead = T
-  )
-
-print(t5)
-
-
-
-#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::####
-# 
-
+# selected survey questions/vars from dataframe 
+qs <- df |>
+  select(
+    age_cat, gender_3cat, hisp, race, milserv1, milserv2, milservfam,
+    voted2020, voted2020.clps, choice2020, voteintent,
+    partyid_3cat, ideo, ideolean,
+    q5, q6, q7, q8,
+    q19,
+    q20,
+    q21,
+    q22,
+    q23,
+    q24,
+    q25,
+    q26,
+    q27,
+    q28_1,
+    q28_2,
+    q28_3,
+    q28_4,
+    q28_5,
+    q29,
+    q30:q39,
+    q40_1:q40_5,
+    q41.1:q43.6,
+    q48,
+    q49,
+    q50
+  ) |>
+  colnames()
 
 # function to create crosstabs using janitor::tabyl()
-tabyl.crabs <- function(x){
-  crab_df <- df |> select(group, all_of(x)) |> 
-    janitor::tabyl(group, !!sym(x), show_na = F)
+tabyl.maps <- function(x){
+  crabs <- df |> select(group, all_of(x)) |> 
+    tabyl.crabs(var1= group, var2 = !!sym(x), 
+                show_na = F, 
+                totals = T, 
+                margin_pcts = "row", digits = 2, affix_sign = F)
 }
 
-az_crabs <- map(qs_az, tabyl.crabs)
+# this will run the function tabyl.maps over every question of interest in the
+# survey. A tabyl style cross tab will be constructed for each question by group
+# condition, and all the crosstabs will be assigned to a list.
+crabs <- map(qs, tabyl.maps)
 
+# run this to output all the crosstabs in the console
+crabs |> kableExtra::kbl(format = 'simple')
 
+# to avoid having to call it ever again, save all the results output to a text
+# file (.txt) using the sink() function.
+sink(file = "~/R/GA_work/CDCE/cdce_vets/notes/crosstabs.txt") # Redirect output to file
+
+crabs |> kableExtra::kbl(format = 'simple')
+
+sink() # Resume writing output to console
+
+crabs[[19]]
 
 # run the following to get the list into one dataframe
 # warning: questions are no longer apparent
-purrr::reduce(az_crabs, dplyr::full_join)
-purrr::reduce(az_crabs.clps, dplyr::full_join)
+purrr::reduce(crabs, dplyr::full_join)
 
-
-
-# print the plot
-az_crabs[[1]] |> 
-  tidyr::pivot_longer(
-    cols = -group,
-    names_to = 'response',
-    values_to = 'n'
-  ) |> 
-  group_by(group) |> 
-  mutate(prop = round(n/sum(n),3),
-         pct = prop*100,
-         res = str_c(pct,'% (', n, ')', sep = "")) |> 
-  ggplot(aes(x = response, y = pct, fill = group))+
-  geom_col(position = 'dodge')+
-  geom_text(aes(label = res), position = position_dodge(1.0), vjust = -0.5)+
-  scale_fill_grey(start = 0.5, end = 0.1)+
-  # \n in a string tells R to break the line there
-  labs(y = "Percentage",
-       x = "Q19. How confident are you that votes in Maricopa County, AZ \nwill be counted as voters intend in the elections this November?",
-       fill = "Group\nExperiment\nCondition")+
-  theme_bw()
-
-
-
-# print the crab
-az_crabs[[1]] |> 
-  janitor::adorn_totals('both') |> 
-  janitor::adorn_percentages(denominator = 'row') |> 
-  janitor::adorn_pct_formatting(digits = 2, affix_sign = F) |> 
-  janitor::adorn_ns() |> 
-  janitor::adorn_title(
-    'combined',
-    row_name = "Group",
-    col_name = 'Q19') |> 
+# print the crosstab to kable style output
+crabs[[19]] |> 
   kableExtra::kbl() |> 
   kableExtra::kable_styling(
     bootstrap_options = c("striped", "bordered", "condensed", "responsive"),
@@ -290,6 +140,8 @@ az_crabs[[1]] |>
 
 #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::####
 # Basic 2-way cross tables for reference
+
+# instead of using the function, this is the manual way to go about it
 
 # q19, group
 df |> 
@@ -301,6 +153,8 @@ df |>
   janitor::adorn_title("combined", 
                        row_name = "Group",
                        col_name = "Q19")
+
+
 
 # q20, group
 df |> 
