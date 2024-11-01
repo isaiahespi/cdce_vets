@@ -58,14 +58,10 @@ execute:
 
 # load packages
 library(tidyverse)
-library(janitor)
-library(table1)
 
 # load data
 load("data/df-2024-09-11.Rdata") # df set as factor with dummy vars
 
-# load data dictionary/codebook
-df_dict <- read.csv("codebooks/df_dict.csv")
 
 # changing "Treatment" and "Control"
 df <- df |> 
@@ -143,36 +139,41 @@ pvalue <- function(x, ...) {
 
 ```
 
+\pagebreak
 
-::: {.callout-note}
-You are reading a work-in-progress.
-:::
 
 # Introduction
+
+[This research has been featured in articles by multiple media outlets. 
+-   [We Are the Mighty](https://www.wearethemighty.com/military-news/why-veterans-and-milspouses-should-work-the-polls-this-election/);
+-   [MilitaryTimes](https://www.militarytimes.com/news/your-military/2024/10/30/recruiting-vets-to-work-polls-boosts-election-trust-study-finds/)
+-   [Maryland Today](https://today.umd.edu/study-veterans-and-military-family-members-improve-election-confidence)]{.aside}
+
+
 
 This report presents results from a survey experiment designed to examine how information that election officials are hiring veterans and military family members for the elections workforce influences the public’s attitudes about elections. The survey was developed by the Center for Democracy and Civic Engagement ([CDCE](https://cdce.umd.edu/)) at the University of Maryland (UMD) in consultation from [We the Veterans and Military Families](https://www.wetheveterans.us/). The survey was fielded from August 29 through September 9, 2024 on a sample of 1,263 US citizens of voting age purchased from Lucid and drawn to be representative of the US adult citizen population[^1].
 
 [^1]: It is important to note that because the sample is a non-probability sample, we focus on the differences across the conditions into which respondents were randomly assigned rather than the overall estimates for either group or the combined groups. Non-probability sampling uses non-random ways to select a group of people to participate in a research study or survey.
 
-After answering several background questions, participants were randomly assigned to read one of two vignettes we described as short excerpts from news stories. These vignettes were not from actual news stories, but they were modeled after relevant published articles. Both vignettes were set in Maricopa County, AZ and explained that local election officials were seeking to expand the elections workforce in advance of the upcoming presidential elections. We chose Maricopa County, AZ because it was a place where election administration was under close scrutiny in 2020 and could be again in 2024.
+After answering several background questions, participants were randomly assigned to read one of two vignettes we described as short excerpts from news stories. These vignettes were not from actual news stories, but they were modeled after relevant published news articles. Both vignettes were set in Maricopa County, AZ and explained that local election officials were seeking to expand the elections workforce in advance of the upcoming presidential elections. We chose Maricopa County, AZ because it was a place where election administration was under close scrutiny in 2020 and could be again in 2024.
 
 The vignette of primary interest focused on the recruitment of veterans and military family members from the local community to serve in elections jobs (VMF recruitment), while the comparison condition focused on a standard recruitment of people from the local community without reference to any populations to which they might belong (standard recruitment). Due to the randomization into conditions, any differences in responses can be attributed to the inclusion of information about veterans and military family members[^2]. The text of the treatment and control conditions appears in the Appendix.
 
-[^2]: It is worth emphasizing that the differences between the VMF recruitment vignette and Standard Recruitment vignette are minimal. The former refers to a program designed to recruit veterans and their family members and describes the interviewee "Jordan Braxton" as an Army veteran; whereas the latter vignette simply omits any mention of veterans and their family members, and doesn't describe "Jordan Braxton" as an Army veteran. Beyond those small differences and the headlines, the article vignettes are identical. Thus, the effects discussed throughout this study refer to the effect of this difference.
+[^2]: It is worth emphasizing that the differences between the VMF recruitment vignette and Standard Recruitment vignette are minimal. The 'VMF recruitment' vignette refers to a program designed to recruit veterans and their family members and describes the interviewee "Jordan Braxton" as an Army veteran; whereas the 'Standard recruitment' vignette simply omits any mention of veterans and their family members, and doesn't describe "Jordan Braxton" as an Army veteran. Beyond those small differences and the headlines, the article vignettes are identical. Thus, the effects discussed throughout this study refer to the effect of this difference.
 
-We examined the potential effect of the treatment on a variety of attitudes about elections in Maricopa County, AZ such as confidence, concern about the potential for violence, and expectations of fraud. **Across all of the questions we asked, information about the recruitment of veterans and military family members to elections jobs led to improved outcomes. The implications are clear---elections officials who are recruiting veterans and military family members should publicize this fact and those who are not doing this recruitment should do so.**
+We examined the potential effect of the treatment on a variety of attitudes about elections in Maricopa County, AZ such as confidence, concern about the potential for violence, and expectations of fraud. **Across all of the questions we asked, information about the recruitment of veterans and military family members to elections jobs led to improved outcomes (such as improved confidence, and less concern about the potential for violence). The implications are clear---elections officials who are recruiting veterans and military family members should publicize this fact and those who are not doing this recruitment should do so.**
 
-The results also lead to the recommendation that election officials seek information about the status of their current workforce, full-time and temporary alike, as members of the VMF community. Given the usual age composition of individuals who sign up to be poll workers, it is highly likely that many served in the military themselves or members of their immediate family have done so. That is, it is likely that our elections workforce is already populated with veterans and military family members. Where this is the case, our results suggest that publicizing this information can help increase confidence in elections.
+The results also lead to the recommendation that election officials seek information about the status of their current workforce, full-time and temporary alike, as members of the VMF community. Given the usual composition of individuals who sign up to be poll workers, it is highly likely that many served in the military themselves or members of their immediate family did so. That is, it is likely that our elections workforce is already populated with significant numbers of veterans and military family members. Where this is the case, our results suggest that publicizing this information can help increase confidence in elections.
 
-# Results 
+## Results 
 
-## Trust and Confidence in Election Process and Administration
+### Trust and Confidence in Election Process and Administration
 
 One of the most widely used questions in the study of attitudes about election administration asks how confident the respondent is that votes will be counted as intended. This question gets to the fundamental issue of how the process translates the voter’s behavior into the outcome. 
 
-@fig-q19-likert shows that **information that election officials are recruiting veterans and military family members (VMF recruitment) boosts the rate at which respondents indicate they are very confident that votes in Maricopa County, AZ will be counted as intended by 7 percentage points, from 30% to 37% (p\<0.025, one-tailed**[^3]).
+As @fig-q19-likert shows, **information that election officials are recruiting veterans and military family members (VMF recruitment) boosts the rate at which respondents indicate they are very confident that votes in Maricopa County, AZ will be counted as intended (by 7 percentage points, from 30% to 37% p\<0.025, one-tailed**[^3]).
 
-::: {.aside}
+::: {.aside .content.hidden unless-format="html"}
 Here's how to read @fig-q19-likert and all other plots like it. The question text that was presented to survey participants is displayed on top of the plot (i.e., bar graph). The horizontal bars represent the proportion of the sample separated according to which phony article (i.e., vignette) was read; either the `VMF Recruitment` vignette or the `Standard Recruitment` vignette. The bottom of the graph tells us that there were 624 who read the `Standard Recruitment` vignette, and 639 who read the `VMF Recruitment` vignette. Each horizontal bar is cut into four boxes that reflect the four response choices for the question and the percentage values inside each box represent the proportion of the sample in that group who chose the associated response. For instance, for those in the `Standard Recruitment` condition, 30% said they were "Very confident" and 49% said they were "Somewhat confident" that votes would be counted as voters intend. The percentage value on the far right (79%) represents the combined proportion of "Very confident" and "Somewhat confident" responses in the `Standard Recruitment` group condition. The percentage value on the far left (21%) represents the combined proportion of "Not at all confident" and "Not too confident" responses for that same group.
 :::
 
@@ -183,29 +184,29 @@ Here's how to read @fig-q19-likert and all other plots like it. The question tex
 #| fig-cap-location: top
 
 # Q19 by Recruitment Program, Likert style plot
-df |> 
-  likert_plot(x = q19, y = group, symmetric = T,
-              subtitle = "How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November?")
-
-
-# same plot, without the function
-# df |>
-#   ggstats::gglikert(include = c(q19), y = 'group', symmetric = T)+
-#   ggplot2::facet_grid(cols = vars(.question))+
-#   ggplot2::geom_vline(xintercept = 0, color = 'black', linewidth = 1.5)+
-#   ggplot2::labs(
-#     subtitle = str_wrap("How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November?", width = 85),
-#     caption = "VMF Recruitment = 639, Standard Recruitment = 624"
-#   )+
-#   # customize color
-#   ggplot2::scale_fill_manual(
-#     values = c("black", "grey35", "firebrick1", "firebrick3")
-#   )+
-#   ggplot2::theme_bw()+
-#   ggplot2::theme(legend.position = 'bottom',    # place legend on bottom
-#         axis.text.x = element_blank(), # remove percentage text along x-axis
-#         strip.text.x = element_blank()) # remove label of facet
-
+df |>
+  ggstats::gglikert(
+    include = c(q19),
+    y = 'group',
+    facet_rows = vars(.question),
+    symmetric = T
+  ) +
+  ggplot2::labs(
+    subtitle = str_wrap(
+      "How confident are you that votes in Maricopa County, AZ will be counted as voters intend in the elections this November?",
+      width = 85
+    )
+  ) +
+  # customize color
+  ggplot2::scale_fill_manual(values = c("black", "grey35", "firebrick1", "firebrick3")) +
+  ggplot2::theme_bw() +
+  ggplot2::theme(
+    legend.position = 'bottom',
+    # place legend on bottom
+    axis.text.x = element_blank(),
+    # remove percentage text along x-axis
+    strip.text.y.right = element_blank()
+  ) # remove label of facet
 
 
 
@@ -215,7 +216,7 @@ df |>
 
 
 
-Importantly, the effects are generally even larger among those expected to be the most skeptical. For example, **among those who said that they thought Joe Biden’s election to president was not legitimate, exposure to information about veterans and military family members increases confidence overall by 15 percentage points from 60% to 75% (p\<0.025)**. The bulk of this increase is driven by a shift in the rate at which respondents feel very confident, going from 9% in the control (community) condition to 19% in the treatment (veterans) condition. The following figures illustrate these results.
+Importantly, the effects are generally even larger among those expected to be the most skeptical. For example @fig-q19-legit shows that **among those who said that they thought Joe Biden’s election to president was not legitimate, exposure to information about veterans and military family members increases confidence overall by 15 percentage points from 60% to 75% (p\<0.025)**. The bulk of this increase is driven by a shift in the rate at which respondents feel very confident, going from 9% in the control (community) condition to 19% in the treatment (veterans) condition. The following figures illustrate these results.
 
 ```{r}
 #| label: fig-q19-legit
@@ -241,7 +242,7 @@ df |>
 
 ```
 
-Veterans and military family members are also regarded highly by the public for their commitment. *Respondents were more likely to say the elections workforce would be very committed to making sure the elections held this November are fair and accurate when they heard that veterans and military family members were being recruited to elections jobs (by 9 percentage points, p\<0.01)*.
+Veterans and military family members are also regarded highly by the public for their commitment. **Respondents were more likely to say the elections workforce would be very committed to making sure the elections held this November are fair and accurate when they heard that veterans and military family members were being recruited to elections jobs (by 9 percentage points, p\<0.01)**.
 
 ```{r}
 #| label: fig-q21-likert
@@ -271,27 +272,36 @@ df |>
 
 ```
 
-As shown in @fig-q21-likert, this increase is especially noteworthy as it brings the percentage of those saying very committed to nearly 50% (from just under 38.5% % to 48%).
+This increase seen in @fig-q21-likert is especially noteworthy as it brings the percentage of those saying "Very committed" to nearly 50% (from just under 38.5% % to 48%).
 
-**Information that election officials were recruiting veterans and military family members also increased confidence that the voting process in Maricopa County, AZ would be fair (by 7 percentage points, p\<0.01)**.
+Information that election officials were recruiting veterans and military family members also increased confidence that the **voting process** in Maricopa County, AZ would be fair (by 7 percentage points, p\<0.01).
 
 ```{r}
 #| label: fig-q22-likert
 #| fig-cap: "Confidence in Fair Voting Process by Condition (VMF recruitment vs. Standard Recruitment)"
 #| fig-cap-location: top
 
-df |> 
-  likert_plot(
-    x = q22,
-    y = group,
-    symmetric = T,
-    subtitle = "How confident are you that the voting process will be fair in Maricopa County, AZ?")
+df |>
+  ggstats::gglikert(include = c(q22), y = 'group', facet_rows = vars(.question), symmetric = T)+
+  labs(
+    subtitle = str_wrap("How confident are you that the voting process will be fair in Maricopa County, AZ?",
+                        width = 85)
+  )+
+  # customize color
+  scale_fill_manual(
+    values = c("black", "grey35", "firebrick1", "firebrick3")
+  )+
+  theme_bw()+
+  theme(legend.position = 'bottom',    # place legend on bottom
+        axis.text.x = element_blank(), # remove percentage text along x-axis
+        strip.text.y.right = element_blank()) # remove label of facet
+
 
 
 ```
 
 
-The bulk of this shift comes from an increase in the percentage of people saying they were very confident (6 points, p\<0.025). **Again, the treatment effect was largest for those who said that Joe Biden was not elected legitimately**. Whereas 57% of those saying Biden’s victory was not legitimate were confident in the control (community) condition, confidence rose 16 percentage points to 73% among those who believe Biden's election was not legitimate in the treatment (veterans) condition.
+The bulk of this shift comes from an increase in the percentage of people saying they were very confident (6 points, p\<0.025). **Again, the treatment effect was largest for those who said that Joe Biden was not elected legitimately (see @fig-q22-legit)**. Whereas 57% of those saying Biden’s victory was not legitimate were confident in the control (community) condition, confidence rose 16 percentage points to 73% among those who believe Biden's election was not legitimate in the VMF recruitment condition.
 
 ```{r}
 #| label: fig-q22-legit
@@ -319,7 +329,7 @@ df |>
 
 ```
 
-Although outcomes are subject to a wider variety of factors, the veterans treatment also increased confidence that the outcomes would be fair (by 4 percentage points, p\<0.05), with a shift of 7 percentage points in the percentage saying they were very confident (p\<0.025).
+Although outcomes are subject to a wider variety of factors, @fig-q23-likert shows that information about VMF recruitment also **increased confidence that voting outcomes would be fair** (by 4 percentage points, p\<0.05), with a shift of 7 percentage points in the percentage saying they were very confident (p\<0.025).
 
 ```{r}
 #| label: fig-q23-likert
@@ -327,10 +337,10 @@ Although outcomes are subject to a wider variety of factors, the veterans treatm
 #| fig-cap-location: top
 
 df |>
-  ggstats::gglikert(include = c(q23), y = 'group', symmetric = T)+
-  ggplot2::facet_grid(cols = vars(.question))+
+  ggstats::gglikert(include = c(q23), y = 'group', facet_rows = vars(.question), symmetric = T)+
   labs(
-    subtitle = str_wrap("How confident are you that the voting outcomes will be fair in Maricopa County, AZ?", width = 85)
+    subtitle = str_wrap("How confident are you that the voting outcomes will be fair in Maricopa County, AZ?",
+                        width = 85)
   )+
   # customize color
   scale_fill_manual(
@@ -339,7 +349,7 @@ df |>
   theme_bw()+
   theme(legend.position = 'bottom',    # place legend on bottom
         axis.text.x = element_blank(), # remove percentage text along x-axis
-        strip.text.x = element_blank()) # remove label of facet
+        strip.text.y.right = element_blank()) # remove label of facet
 
 
 
@@ -347,7 +357,7 @@ df |>
 
 ### Trust and Confidence in Election Security and Voter Safety
 
-Attitudes relating to election security and safety were also improved as a result of exposure to information that veterans and military family members were being recruited to elections jobs. **The percentage saying they were confident the election would be secure from hacking and other technological threats was 7 points higher (p\<0.01) in the veterans condition**.
+Attitudes relating to election security and safety were also improved as a result of exposure to information that veterans and military family members were being recruited to elections jobs. **The percentage saying they were confident the election would be secure from hacking and other technological threats was 7 points higher (p\<0.01)in the VMF recruitment condition**.
 
 ```{r}
 #| label: fig-q24-likert
@@ -379,7 +389,10 @@ df |>
 ```
 
 
-We assessed concerns for violence by asking how concerned voters in Maricopa County, AZ should feel about potential violence, threats of violence, or intimidation while voting in person at their local polling place. The level of concern with potential violence, threats, and intimidation was considerably lower (by 8 percentage points, p\<0.01) among those who read that veterans and military family members were being recruited to the elections workforce. **In other words, concerns over the prospect of violence, threats of violence, and voter intimidation at election polling sites was far lower among those who were given information that veterans and their family members are being recruited to work as election staff compared to those who were given information that made no mention of veterans and family members.**
+
+We assessed perceptions of violence by asking how concerned voters in Maricopa County, AZ should feel about potential violence, threats of violence, or intimidation while voting in person at their local polling place. @fig-q25-likert shows that the level of concern for potential violence, threats, and intimidation was considerably lower (by 8 percentage points, p\<0.01) among those who read that veterans and military family members were being recruited to the elections workforce. 
+
+**In other words, concerns over the prospect of violence, threats of violence, and voter intimidation at election polling sites was far lower among those who were given information that veterans and their family members are being recruited to work as election staff compared to those who were given information that made no mention of veterans and family members.**
 
 ```{r}
 #| label: fig-q25-likert
@@ -390,8 +403,7 @@ df |>
   select(q25, group) |> 
   drop_na() |> 
   # dplyr::mutate(q25 = forcats::fct_rev(q25)) |> 
-  ggstats::gglikert(include = c(q25), y = 'group', symmetric = T)+
-  ggplot2::facet_grid(cols = vars(.question))+
+  ggstats::gglikert(include = c(q25), y = 'group', facet_rows = vars(.question), symmetric = T)+
   labs(
     subtitle = str_wrap("Thinking about Maricopa County, AZ, how concerned should voters feel about \npotential violence, threats of violence, or intimidation while voting in person at their local polling place?", width = 75)
   )+
@@ -402,13 +414,13 @@ df |>
   theme_bw()+
   theme(legend.position = 'bottom',    # place legend on bottom
         axis.text.x = element_blank(), # remove percentage text along x-axis
-        strip.text.x = element_blank()) # remove label of facet
+        strip.text.y.right = element_blank()) # remove label of facet
 
 
 
 ```
 
-The size of this effect is especially significant because it brings the level of concern ("Somewhat concerned" and "Very concerned") below the 50% mark. That is, while a majority (53%) of those who read about a standard election staff recruitment program were at least somewhat concerned, concerns for violence drop down to 45% among those who learned that officials of Maricopa County, AZ launched a program designed specifically to recruit veterans and family members. Additionally, those who learned about the VMF recruitment program were more likely to say they were confident that polling places would be safe places for voting in-person by 7 percentage points (p\<0.01).
+The size of this effect is especially significant because it brings the level of concern ("Somewhat concerned" and "Very concerned") below the 50% mark. That is, while a majority (53%) of those who read about a standard election staff recruitment program were at least "Somewhat concerned", concerns for violence drop down to 45% among those who learned that officials of Maricopa County, AZ launched a program designed specifically to recruit veterans and family members. **Additionally, those who learned about the VMF recruitment program were more likely to say they were confident that polling places would be safe places for voting in-person (by 7 percentage points p\<0.01)**. See @fig-q26-likert.
 
 ```{r}
 #| label: fig-q26-likert
@@ -420,8 +432,7 @@ df |>
   select(q26, group) |> 
   drop_na() |> 
   # dplyr::mutate(q26 = forcats::fct_rev(q26)) |> 
-  ggstats::gglikert(include = c(q26), y = 'group', symmetric = T)+
-  ggplot2::facet_grid(cols = vars(.question))+
+  ggstats::gglikert(include = c(q26), y = 'group', facet_rows = vars(.question), symmetric = T)+
   labs(
     subtitle = str_wrap("How confident, if at all, are you that in person polling places in Maricopa County, AZ will be safe places for voters to cast their ballots during the upcoming elections in November?", width = 85)
   )+
@@ -432,13 +443,13 @@ df |>
   theme_bw()+
   theme(legend.position = 'bottom',    # place legend on bottom
         axis.text.x = element_blank(), # remove percentage text along x-axis
-        strip.text.x = element_blank()) # remove label of facet
+        strip.text.y.right = element_blank()) # remove label of facet
 
 ```
 
-Note the nuanced distinction between the survey questions of @fig-q25-likert and @fig-q26-likert: the former asks how concerned *the voters of Maricopa County, AZ should be* about violence, etc., whereas the latter asks for the respondent's personal judgement of *how safe it will be in Maricopa County, AZ* to cast a vote in-person. These two survey items use slightly different questions to inquire about the same essential attitude---i.e., perceptions of voter safety at the polls. While there were still a hefty proportion of concern over the prospect of violence and voter safety at the polls across the board, these results suggest that special efforts to recruit veterans and their family members to work as election staff and volunteers eases such concerns quite significantly. 
+The latter two survey items use slightly different questions to inquire about the same essential issue—i.e., perceptions of physical safety at the polls. While there was still a hefty proportion of concern over the prospect of violence and general safety at the polls across the board, these results suggest that special efforts to recruit veterans and military family members to work as election staff and volunteers significantly eases such concerns.
 
-Learning that Maricopa County, AZ was recruiting veterans and military family members for elections jobs also led to improved performance ratings for election officials there. In the veterans condition, those saying they somewhat or strongly approve of the way election officials are handling their jobs was 5 percentage points higher (p\<0.05), driven by a nearly 8 point increase in the percentage saying they strongly approve of election officials (p\<0.01).
+Learning that Maricopa County, AZ was recruiting veterans and military family members for elections jobs also led to improved performance ratings for election officials there. In the VMF recruitment condition, those saying they somewhat or strongly approve of the way election officials are handling their jobs was 5 percentage points higher (p\<0.05), driven by a nearly 8 point increase in the percentage saying they strongly approve of election officials (p\<0.01).
 
 ```{r}
 #| label: fig-q27-likert
@@ -455,48 +466,11 @@ likert_plot(
 
 ```
 
-We also asked a general question about confidence that Maricopa County, AZ elections officials would do a good job conduction elections this November. Those who read about veterans and military family members were more confident that election officials would do a good job conducting the election than those who read about community members (by 4.5 percentage points, p \<0.05).
-
-```{r}
-#| label: fig-20-likert
-#| fig-cap: "Confidence Election Officials in Maricopa County, AZ will do a good job by Condition (VMF recruitment vs. Standard Recruitment)"
-#| fig-cap-location: top
-
-# Q20 by Recruitment program, likert plot
-likert_plot(
-  df, 
-  q20, 
-  group, 
-  symmetric = T,
-  subtitle = "How confident are you that election officials, their staff, and volunteers in Maricopa County, AZ will do a good job conducting the elections this November?")
-
-
-```
-
-
-Before asking a series of questions about election administration in their own community, we asked how much respondents would like to see their local community adopt a program for recruiting elections staff similar to the one they read about in Maricopa County, AZ. Among those in the community condition just under 73% said their local area should probably or definitely adopt the policy compared to over 77% in the veterans condition (difference of 5 percentage points, p\<0.03). The difference is driven entirely by an increase in enthusiasm (i.e., the likelihood of saying definitely should adopt is 5 points higher in the veterans condition, p\<0.025).
-
-```{r}
-#| label: fig-q29-likert
-#| fig-cap: "Support for Adoption of Maricopa County, AZ Election Staff Recruitment Program in Local Area by Condition (VMF recruitment vs. Standard Recruitment)"
-#| fig-cap-location: top
-
-# Q29
-likert_plot(
-  df,
-  q29,
-  group, 
-  symmetric = T,
-  subtitle = "How much would you like to see your local community adopt a program for recruiting elections staff like the one you read about in Maricopa County, AZ?")
-
-
-```
-
 {{< pagebreak >}}
 
-## Expectation of Electoral Fraud
+### Expectation of Electoral Fraud
 
-Our survey also asked respondents a series of questions designed to assess an individual's expectation of electoral fraud and voter suppression in Maricopa County, AZ. Five statements were prefaced with the question, "How likely do you think any or all of the following will happen during this year´s elections in Maricopa County, AZ?". Survey participants gave their expectations of the likelihood that each of the following would occur in Maricopa County, Arizona this election cycle on a scale of "Not likely at all", "Not too likely", "Somewhat likely", and "Very likely".
+Our survey also asked respondents a series of questions designed to assess individuals’ expectations of electoral fraud and voter suppression in Maricopa County, AZ. Five statements, listed below, were prefaced with the question, “How likely do you think any or all of the following will happen during this year´s elections in Maricopa County, AZ?”. Survey participants gave their expectations of the likelihood that each of the following would occur in Maricopa County, Arizona this election cycle on a scale of “Not likely at all”, “Not too likely”, “Somewhat likely”, and “Very likely.” The 5 statements we asked respondents to consider follow.
 
 1.  There will be voter fraud, that is, people who are not eligible to vote will vote, or vote more than once;
 2.  Many votes will not actually be counted
@@ -546,18 +520,52 @@ When we asked about the likelihood that a foreign country would tamper with vote
 
 {{< pagebreak >}}
 
+We also asked a general question about confidence that Maricopa County, AZ elections officials would do a good job conducting elections this November. Those who read about veterans and military family members were more confident that election officials would do a good job conducting the election than those who read about community members (by 4.5 percentage points, p \<0.05).
+
+```{r}
+#| label: fig-20-likert
+#| fig-cap: "Confidence Election Officials in Maricopa County, AZ will do a good job by Condition (VMF recruitment vs. Standard Recruitment)"
+#| fig-cap-location: top
+
+# Q20 by Recruitment program, likert plot
+likert_plot(
+  df, 
+  q20, 
+  group, 
+  symmetric = T,
+  subtitle = "How confident are you that election officials, their staff, and volunteers in Maricopa County, AZ will do a good job conducting the elections this November?")
+
+
+```
+
+
+Before asking a series of questions about election administration in their own community, we asked how much respondents would like to see their local community adopt a program for recruiting elections staff similar to the one they read about in Maricopa County, AZ. Among those in the community condition just under 73% said their local area should probably or definitely adopt the policy compared to over 77% in the veterans condition (difference of 5 percentage points, p\<0.03). The difference is driven entirely by an increase in enthusiasm (i.e., the likelihood of saying definitely should adopt is 5 points higher in the veterans condition, p\<0.025).
+
+```{r}
+#| label: fig-q29-likert
+#| fig-cap: "Support for Adoption of Maricopa County, AZ Election Staff Recruitment Program in Local Area by Condition (VMF recruitment vs. Standard Recruitment)"
+#| fig-cap-location: top
+
+# Q29
+likert_plot(
+  df,
+  q29,
+  group, 
+  symmetric = T,
+  subtitle = "How much would you like to see your local community adopt a program for recruiting elections staff like the one you read about in Maricopa County, AZ?")+
+  guides(fill= guide_legend(nrow = 2))
+
+
+```
+
+
+{{< pagebreak >}}
+
 ## Impacts on Confidence
 
-::: {.callout-note}
-This section is subject to change.
-:::
 
 
-We asked respondents to report how various features of election administration would: 1) influence their confidence in the fairness and accuracy of elections this November; and 2) influence their confidence that voters would be safe from violence, threats of violence, or intimidation while voting in-person this election.
-
-::: {.aside}
-These questions were more general as they did not reference any particular place.
-:::
+After asking about one’s local community we asked respondents to report how various features of election administration would: 1) influence their confidence in the fairness and accuracy of elections this November; and 2) influence their confidence that voters would be safe from violence, threats of violence, or intimidation while voting in-person this election. These questions were more general as they did not reference any particular place.
 
 One of the primary objectives was to determine whether recruiting veterans was preferable to recruiting lawyers and college students, two other groups that are commonly discussed as potential additions to the elections workforce.
 
@@ -565,7 +573,7 @@ Our evidence is clear: **public confidence would increase more when veterans and
 
 ### Impact on confidence in fairness and accuracy of elections
 
-Survey participants responded to six statements, all prefaced with the following,
+Survey participants responded to a series of six statements, all prefaced with the following,
 
 > "Regardless of whether any of these are actually the case, how would the following impact your confidence in the fairness and accuracy of elections conducted this November?"
 
@@ -576,6 +584,8 @@ Survey participants responded to six statements, all prefaced with the following
 5.  Election staff and volunteers include lawyers from the community.
 6.  Election staff and volunteers include college students from the community.
 
+[^4]: Two different versions of this statement was presented to survey participants. Half of the sample read the statement as, "Election staff and volunteers *include* military veterans and their family members from the community", whereas the other half of the sample read, "The *majority* of election staff and volunteers consist of military veterans and their family members from the community." 
+
 For each statement, survey participants responded by selecting one of five response options:
 
 1.  Decrease confidence a lot
@@ -584,7 +594,10 @@ For each statement, survey participants responded by selecting one of five respo
 4.  Increase confidence somewhat
 5.  Increase confidence a lot
 
-The primary interest concerned whether confidence in election fairness would increase or decrease based on the composition of election staff and volunteers. Of particular importance are responses to the statement which asked respondents to consider whether inclusion of military veterans and veteran's family members as election staff and volunteers has any impact on their confidence in the fairness and accuracy of elections in November.
+The primary interest concerned whether confidence in election fairness and accuracy would increase or decrease based on the stated composition of election staff and volunteers, e.g., whether inclusion of military veterans and veteran's family members as election staff and volunteers has any impact on their confidence in the fairness and accuracy of elections in November.
+
+
+Looking first just at those who did not previously read about the recruitment of veterans and military family members in Maricopa County, AZ, the results strongly suggest that when it comes to confidence in the fairness and accuracy of elections, veterans are preferred to lawyers and college students.
 
 ```{r}
 #| label: fig-q41-likert
@@ -615,13 +628,13 @@ df |>
 
 ```
 
-Results displayed in @fig-q41-likert suggest that county efforts to recruit veterans as election staff and volunteers does more to increase one’s confidence in the fairness and accuracy of elections regardless of the experimental condition. That is, even for those who were in the *control* group, respondents reported that the inclusion of veterans and their family members as election staff and volunteers would increase confidence in the fairness and accuracy of elections more than when election staff includes lawyers or college students. This increase in confidence was 9% percentage points higher compared to when lawyers are included as election staff, and 16% percentage points higher than when election staff and volunteers are said to include college students.
+Results displayed in @fig-q41-likert suggest that county efforts to recruit veterans as election staff and volunteers does more to increase one’s confidence in the fairness and accuracy of elections regardless of election staff recruitment strategy. That is, for those who read about standard recruitment efforts (i.e., the *control* group), respondents reported that the inclusion of veterans and their family members as election staff and volunteers would increase confidence in the fairness and accuracy of elections approximately 9 percentage points more (9.47%) than when election staff includes lawyers, and about 15 percentage points more (15.24%) than when election staff is said to include college students. 
 
-Moreover, @fig-q41-likert demonstrates a clear boost in confidence when election staff includes veterans and family members, especially for those who were in the treatment group. The percentage of people who said their confidence in election fairness would increase when election staff includes veterans was about 11.6% percentage points higher than those who said the same in the control group.
+Of those in the Standard Recruitment condition, approximately 29% (28.89%, n = 180) said their confidence would "increase somewhat" and about 16% (16.21%, n = 101) said their confidence would "increase a lot". This accumulates to a proportion of **45.1% in the Standard Recruitment condition who said their confidence in the fairness and accuracy of elections would increase when election staff and volunteers includes veterans and military family members**.
 
-These results suggest that county efforts to recruit veterans as election staff and volunteers does more to increase one’s confidence in the fairness and accuracy of elections, especially under the prospect that election staff and volunteers would include veterans and their family members.
+Moreover, @fig-q41-likert demonstrates a clear boost in confidence when election staff includes veterans and family members for those who read about the VMF recruitment program in Maricopa County, AZ. The proportion of people who said their confidence in election fairness would increase when election staff includes veterans was about 11.6% percentage points higher than those who said the same in the control group. When election staff is said to include either lawyers or college students, the difference between those who read the Standard Recruitment vignette compared to those who read the VMF Recruitment vignette is not significantly different from no difference at all.
 
-These results suggest that reading a vignette about county efforts to recruit veterans as election staff and volunteers does more to increase one's confidence in the fairness and accuracy of elections, especially under the prospect that election staff and volunteers would include veterans and their family members.
+These results suggest that reading about **county efforts to recruit veterans and military family members as election staff and volunteers does more to increase one's confidence in the fairness and accuracy of elections than standard recruitment programs, especially under the prospect that election staff and volunteers would include veterans and military family members**.
 
 ### Impact on Confidence in Voter Safety at polling sites
 
@@ -629,7 +642,7 @@ The same analysis was conducted for questions that assessed the reported impact 
 
 > "How would the following impact your confidence that voters are safe from violence, threats of violence, or intimidation while voting in-person during elections this November?"
 
-Again, the bar graph below displays a clear boost among participants in the treatment group who reported that their confidence in voter safety would increase when election staff is said to include veterans and their family members.
+Again, @fig-q43-likert displays a clear boost among participants in the treatment group who reported that their confidence in voter safety would increase when election staff is said to include veterans and their family members.
 
 ```{r}
 #| label: fig-q43-likert
@@ -660,10 +673,10 @@ df |>
 
 ```
 
-The proportion of people who said their confidence in voter safety would increase when election staff includes veterans was about 8.4 percentage points higher than those who said the same in the control group.
+The proportion of people who said their confidence in voter safety at the polls would increase when election staff includes veterans was about 8.4 percentage points higher than those who said the same in the control group. There is a 25 percentage point difference compared to when election staff is said to include lawyers, and about a 30 percentage point difference compared to when election staff is said to include college students. 
 
 
-# Appendix A: Survey Experiment Vignettes {.appendix}
+# Appendix A: Survey Experiment Vignettes {#sec-appendix-a}
 
 ::::: {#fig-vignettes layout-ncol=2}
 ::: {#fig-treatment}
@@ -695,9 +708,7 @@ Fabricated Article Vignettes utilized as Experimental Stimulus
 
 [^3]: **All p-values are 1 tailed as we have clear hypotheses that outcomes will be improved when respondents are exposed to information about the recruitment of veterans and military family members. **
 
-[^4]: Two different versions of this statement was presented to survey participants. Half of the sample read the statement as, "Election staff and volunteers *include* military veterans and their family members from the community", whereas the other half of the sample read, "The *majority* of election staff and volunteers consist of military veterans and their family members from the community." No significant differences in responses were observed between those who read one version of the statement over the other. However, the same was done for statements number 5 and 6 which concern "lawyers from the community" and "college students from the community". Significant differences were found when comparing responses between the different versions of these statements. See the appendix for further discussion on these results.
-
-# Appendix B: Sample Demographics and Balance
+# Appendix B: Sample Demographics and Balance {#sec-appendix-b}
 
 
 
@@ -778,3 +789,5 @@ df |>
 
 
 ```
+
+:::
